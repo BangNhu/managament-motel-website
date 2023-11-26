@@ -2,7 +2,7 @@ import { MainLayout } from '@/components/common/layout/main';
 import { AppPropsWithLayout } from '@/models/common';
 
 import { ThemeProvider, createTheme } from '@mui/material';
-
+import '@/styles/font.css';
 import { useMemo, useState } from 'react';
 import { Provider } from 'react-redux';
 import store from '@/store/store';

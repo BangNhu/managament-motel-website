@@ -27,6 +27,16 @@ const theme = createTheme({
         button: {
             fontStyle: 'italic',
         },
+        h1: {
+            fontFamily: 'Verdana',
+            fontSize: '32px',
+            '@media (min-width:600px)': {
+                fontSize: '18px',
+            },
+            '@media (min-width:900px)': {
+                fontSize: '18px',
+            },
+        },
     },
 });
 

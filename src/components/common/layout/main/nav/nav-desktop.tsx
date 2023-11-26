@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 export interface INavDesktopProps {}
 const NavItem = [
     { title: 'Trang Chủ', path: '/' },
@@ -10,6 +11,11 @@ const NavItem = [
 ];
 export function NavDesktop(props: INavDesktopProps) {
     const MENU_HEIGHT = '80px';
+
+    const router = useRouter();
+    const handleRegisterClick = () => {
+        router.push('/register');
+    };
 
     return (
         <>
@@ -109,6 +115,7 @@ export function NavDesktop(props: INavDesktopProps) {
                         }}
                     >
                         <Button
+                            onClick={handleRegisterClick}
                             sx={{
                                 textTransform: 'uppercase',
                                 fontSize: { xs: '12px', md: '15px', lg: '16px' },
