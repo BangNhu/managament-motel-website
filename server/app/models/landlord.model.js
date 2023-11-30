@@ -1,4 +1,8 @@
 const db = require('../common/connect');
+
+//Mã hóa mật khẩu
+const bcrypt = require('bcrypt');
+
 const Landlord = function (landlord) {
     this.id = landlord.id;
     this.landlord_name = landlord.landlord_name;
@@ -74,4 +78,48 @@ Landlord.update = function (l, result) {
         }
     );
 };
+
+Landlord.signUp = function (data, result) {
+    db.query(
+        'SELECT * FROM landlord WHERE email = ? OR number_phone = ?',
+        [data.email, data.number_phone],
+        function (error, results, fields) {
+            if (error) {
+                result(error, null);
+                console.log('lỗi if đầu', error);
+            } else {
+                if (results.length > 0) {
+                    if (results[0].email === data.email) {
+                        result(null, { success: false, message: 'Email đã được đăng ký' });
+                    } else if (results[0].number_phone === data.number_phone) {
+                        result(null, { success: false, message: 'Số điện thoại đã được đăng ký ' });
+                    }
+                } else {
+                    // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+                    bcrypt.hash(data.password, 10, function (err, hashedPassword) {
+                        if (err) {
+                            result(err, null);
+                            console.log('lỗi mã hóa', error);
+                        } else {
+                            data.password = hashedPassword;
+                            db.query(
+                                'INSERT INTO landlord SET ?',
+                                [data],
+                                function (error, landlord, fields) {
+                                    if (error) {
+                                        result(error, null);
+                                        console.log('lỗi insert', error);
+                                    } else {
+                                        result({ id: landlord.insertId, ...data });
+                                    }
+                                }
+                            );
+                        }
+                    });
+                }
+            }
+        }
+    );
+};
+
 module.exports = Landlord;

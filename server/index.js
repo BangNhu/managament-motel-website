@@ -8,8 +8,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 //các
+require('./app/routes/auth.router')(app);
 require('./app/routes/home.router')(app);
-app.use(_AuthMiddleware.isAuth);
+// app.use(_AuthMiddleware.isAuth);
 require('./app/routes/landlord.router')(app);
 
 app.listen(5000, function () {

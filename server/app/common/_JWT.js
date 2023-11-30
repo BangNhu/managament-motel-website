@@ -2,10 +2,10 @@ const jwt = require('jsonwebtoken');
 const _APP = require('./_APP');
 
 // make: tạo mã token
-let make = function (user) {
+let make = function (email, userType) {
     return new Promise(function (resolve, reject) {
         jwt.sign(
-            { data: user },
+            { email, userType },
             _APP.ACCESS_TOKEN,
             {
                 algorithm: 'HS256',
