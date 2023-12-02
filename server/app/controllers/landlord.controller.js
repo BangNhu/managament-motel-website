@@ -1,7 +1,5 @@
 var Landlord = require('../models/landlord.model');
 
-//Mã hóa mật khẩu
-
 exports.get_list = function (req, res) {
     Landlord.get_all(function (data) {
         res.send({ result: data });

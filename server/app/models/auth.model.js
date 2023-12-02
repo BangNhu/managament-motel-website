@@ -1,6 +1,12 @@
 const db = require('../common/connect');
 const bcrypt = require('bcrypt');
 
+const Admin = function (admin) {
+    this.id = admin.id;
+    this.user_name = admin.user_name;
+    this.password = admin.password;
+};
+
 const Landlord = function (landlord) {
     this.id = landlord.id;
     this.landlord_name = landlord.landlord_name;
@@ -31,13 +37,79 @@ const Tenant = function (tenant) {
     this.tenant_name = tenant.tenant_name;
     this.birthday = tenant.birthday;
     this.citizen_identification = citizen_identification;
-    this.phone_number = tenant.phone_number;
+    this.number_phone = tenant.number_phone;
     this.email = tenant.email;
     this.password = password;
     this.gender = tenant.gender;
 };
 
-Landlord.loginAccount = function (data, res, result) {
+Landlord.signUp = function (data, result) {
+    db.query(
+        'SELECT * FROM landlord WHERE email = ? OR number_phone = ?',
+        [data.email, data.number_phone],
+        function (error, results, fields) {
+            if (error) {
+                result(error, null);
+                console.log('lỗi if đầu', error);
+            } else {
+                if (results.length > 0) {
+                    if (results[0].email === data.email) {
+                        result(null, { success: false, message: 'Email đã được đăng ký' });
+                    } else if (results[0].number_phone === data.number_phone) {
+                        result(null, { success: false, message: 'Số điện thoại đã được đăng ký ' });
+                    }
+                } else {
+                    // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+                    bcrypt.hash(data.password, 10, function (err, hashedPassword) {
+                        if (err) {
+                            result(err, null);
+                            console.log('lỗi mã hóa', error);
+                        } else {
+                            data.password = hashedPassword;
+                            db.query(
+                                'INSERT INTO landlord SET ?',
+                                [data],
+                                function (error, landlord, fields) {
+                                    if (error) {
+                                        result(error, null);
+                                        console.log('lỗi insert', error);
+                                    } else {
+                                        result({ id: landlord.insertId, ...data });
+                                    }
+                                }
+                            );
+                        }
+                    });
+                }
+            }
+        }
+    );
+};
+
+//Admin login
+Admin.loginAccount = function (data, result) {
+    db.query(`SELECT * FROM admin WHERE user_name = ?`, [data.user_name], (err, admin) => {
+        if (err) throw err;
+
+        if (admin.length > 0) {
+            const user = admin[0];
+
+            bcrypt.compare(data.password, user.password, (bcryptErr, bcryptResult) => {
+                if (bcryptErr) throw bcryptErr;
+                if (bcryptResult) {
+                    result(admin);
+                } else {
+                    result(0);
+                }
+            });
+        } else {
+            result(0);
+        }
+    });
+};
+
+//Account customer login
+Landlord.loginAccount = function (data, result) {
     db.query(`SELECT * FROM landlord WHERE email = ?`, [data.email], (err, landlords) => {
         if (err) throw err;
 
@@ -51,24 +123,16 @@ Landlord.loginAccount = function (data, res, result) {
                 } else {
                     result(0);
                 }
-                // else {
-                //     res.status(401).json({ message: 'Mật khẩu không đúng' });
-                //     console.log(
-                //         'Mật khẩu nhập: ' + data.password + ', Mật khẩu database: ' + user.password
-                //     );
-                //     console.log(bcryptResult);
-                // }
             });
+        } else {
+            result(0);
         }
-        //  else {
-        //     res.status(401).json({ message: 'Email không tồn tại' });
-        // }
     });
 };
 
-Staff.loginAccount = function (data, res, result) {
-    db.query(`SELECT * FROM staff WHERE email = ?`, [data.email], (err, staffs) => {
-        if (err) throw err;
+Staff.loginAccount = function (data, result) {
+    db.query(`SELECT * FROM staff WHERE number_phone = ?`, [data.email], (err, staffs) => {
+        if (err) result(0);
 
         if (staffs.length > 0) {
             const user = staffs[0];
@@ -78,21 +142,17 @@ Staff.loginAccount = function (data, res, result) {
                 if (bcryptResult) {
                     result(staffs);
                 } else {
-                    res.status(401).json({ message: 'Mật khẩu không đúng' });
-                    console.log(
-                        'Mật khẩu nhập: ' + data.password + ', Mật khẩu database: ' + user.password
-                    );
-                    console.log(bcryptResult);
+                    result(0);
                 }
             });
         } else {
-            res.status(401).json({ message: 'Email hoặc mật khẩu không đúng' });
+            result(0);
         }
     });
 };
 
-Tenant.loginAccount = function (data, res, result) {
-    db.query(`SELECT * FROM tenant WHERE email = ?`, [data.email], (err, tenants) => {
+Tenant.loginAccount = function (data, result) {
+    db.query(`SELECT * FROM tenant WHERE number_phone = ?`, [data.email], (err, tenants) => {
         if (err) throw err;
 
         if (tenants.length > 0) {
@@ -103,17 +163,12 @@ Tenant.loginAccount = function (data, res, result) {
                 if (bcryptResult) {
                     result(tenants);
                 } else {
-                    res.status(401).json({ message: 'Mật khẩu không đúng' });
-                    console.log(
-                        'Mật khẩu nhập: ' + data.password + ', Mật khẩu database: ' + user.password
-                    );
-                    console.log(bcryptResult);
+                    result(0);
                 }
             });
+        } else {
+            result(0);
         }
-        //  else {
-        //     res.status(401).json({ message: 'Email hoặc mật khẩu không đúng' });
-        // }
     });
 };
 
@@ -121,4 +176,5 @@ module.exports = {
     Landlord,
     Staff,
     Tenant,
+    Admin,
 };

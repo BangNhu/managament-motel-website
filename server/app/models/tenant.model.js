@@ -3,41 +3,40 @@ const db = require('../common/connect');
 //Mã hóa mật khẩu
 const bcrypt = require('bcrypt');
 
-const Landlord = function (landlord) {
-    this.id = landlord.id;
-    this.landlord_name = landlord.landlord_name;
-    this.email = landlord.email;
-    this.number_phone = landlord.number_phone;
-    this.password = landlord.password;
-    this.birthday = landlord.birthday;
-    this.gender = landlord.gender;
-    this.account_type = landlord.account_type;
-    this.expiration_date = landlord.expiration_date;
+const Tenant = function (tenant) {
+    this.id = tenant.id;
+    this.tenant_name = tenant.tenant_name;
+    this.birthday = tenant.birthday;
+    this.citizen_identification = citizen_identification;
+    this.number_phone = tenant.number_phone;
+    this.email = tenant.email;
+    this.password = password;
+    this.gender = tenant.gender;
 };
 
-Landlord.get_all = function (result) {
-    db.query('SELECT * FROM landlord', function (err, landlords) {
+Tenant.get_all = function (result) {
+    db.query('SELECT * FROM tenant', function (err, tenants) {
         if (err) {
             result(null);
         } else {
-            result(landlords);
+            result(tenants);
         }
     });
 };
 
-Landlord.getById = function (id, result) {
-    db.query('SELECT * FROM landlord WHERE id=?', id, function (err, landlords) {
-        if (err || landlords.length === 0) {
+Tenant.getById = function (id, result) {
+    db.query('SELECT * FROM tenant WHERE id=?', id, function (err, tenants) {
+        if (err || tenants.length === 0) {
             result(null);
         } else {
-            result(landlords[0]);
+            result(tenants[0]);
         }
     });
 };
 
-Landlord.create = function (data, result) {
+Tenant.create = function (data, result) {
     db.query(
-        'SELECT * FROM landlord WHERE email = ? OR number_phone = ?',
+        'SELECT * FROM tenant WHERE email = ? OR number_phone = ?',
         [data.email, data.number_phone],
         function (error, results, fields) {
             if (error) {
@@ -49,6 +48,8 @@ Landlord.create = function (data, result) {
                         result(null, { success: false, message: 'Email đã được đăng ký' });
                     } else if (results[0].number_phone === data.number_phone) {
                         result(null, { success: false, message: 'Số điện thoại đã được đăng ký ' });
+                    } else if (results[0].citizen_identification === data.citizen_identification) {
+                        result(null, { success: false, message: 'Số định danh đã được đăng ký ' });
                     }
                 } else {
                     // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
@@ -59,14 +60,14 @@ Landlord.create = function (data, result) {
                         } else {
                             data.password = hashedPassword;
                             db.query(
-                                'INSERT INTO landlord SET ?',
+                                'INSERT INTO tenant SET ?',
                                 [data],
-                                function (error, landlord, fields) {
+                                function (error, tenant, fields) {
                                     if (error) {
                                         result(error, null);
                                         console.log('lỗi insert', error);
                                     } else {
-                                        result({ id: landlord.insertId, ...data });
+                                        result({ id: tenant.insertId, ...data });
                                     }
                                 }
                             );
@@ -76,10 +77,17 @@ Landlord.create = function (data, result) {
             }
         }
     );
+    // db.query('INSERT INTO tenant SET ?', data, function (err, tenant) {
+    //     if (err) {
+    //         result(null);
+    //     } else {
+    //         result({ id: tenant.insertId, ...data });
+    //     }
+    // });
 };
 
-Landlord.remove = function (id, result) {
-    db.query('DELETE FROM landlord WHERE id=?', id, function (err, landlord) {
+Tenant.remove = function (id, result) {
+    db.query('DELETE FROM tenant WHERE id=?', id, function (err, tenant) {
         if (err) {
             result(null);
         } else {
@@ -88,28 +96,27 @@ Landlord.remove = function (id, result) {
     });
 };
 
-Landlord.update = function (l, result) {
+Tenant.update = function (tenant, result) {
     db.query(
-        'UPDATE landlord SET landlord_name=?, email=?, number_phone =?, password=?, birthday=?, gender=?, account_type=?, expiration_date=? WHERE id=?',
+        'UPDATE tenant SET tenant_name=?, birthday=?, citizen_identification =?, phone_number=?, email=?, password=?, gender=?,  WHERE id=?',
         [
-            l.landlord_name,
-            l.email,
-            l.number_phone,
-            l.password,
-            l.birthday,
-            l.gender,
-            l.account_type,
-            l.expiration_date,
-            l.id,
+            tenant.tenant_name,
+            tenant.birthday,
+            tenant.citizen_identification,
+            tenant.phone_number,
+            tenant.email,
+            tenant.password,
+            tenant.gender,
+            tenant.id,
         ],
         function (err) {
             if (err) {
                 result(null);
             } else {
-                result(l);
+                result(tenant);
             }
         }
     );
 };
 
-module.exports = Landlord;
+module.exports = Tenant;
