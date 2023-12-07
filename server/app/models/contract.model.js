@@ -3,10 +3,17 @@ const db = require('../common/connect');
 const Contract = function (contract) {
     this.id = contract.id;
     this.bedsit_id = contract.bedsit_id;
-    this.end_day = contract.bedsit_id;
+    this.start_day = contract.start_day;
+    this.end_day = contract.end_day;
     this.tenant_represent_id = contract.tenant_represent_id;
     this.deposits = contract.deposits;
     this.content = contract.content;
+    this.staff_id = contract.staff_id;
+};
+
+const BedsitTenant = function (bedsit_tenant) {
+    this.bedsit_id = bedsit_tenant.bedsit_id;
+    this.tenant_id = bedsit_tenant.tenant_id;
 };
 
 Contract.get_all = function (result) {
@@ -29,15 +36,33 @@ Contract.getById = function (id, result) {
     });
 };
 
-Contract.create = function (data, result) {
-    db.query('INSERT INTO contract SET ?', data, function (err, contract) {
-        if (err) {
-            result({ error: 'Không thể thêm dữ liệu vào database' });
-            console.log(err);
-        } else {
-            result({ id: contract.insertId, ...data });
+Contract.create = function (data, tenantsData, result) {
+    // Kiểm tra nếu có bedsit_id trùng nhau trong khoảng thời gian từ start_day đến end_day
+    db.query(
+        'SELECT COUNT(*) AS count_overlap FROM contract WHERE bedsit_id = ? AND (start_day <= ? AND end_day >= ?)',
+        [data.bedsit_id, data.end_day, data.start_day],
+        function (error, overlapResult) {
+            if (error) {
+                console.log(error);
+                result({ error: 'Lỗi truy vấn cơ sở dữ liệu' });
+            } else {
+                const countOverlap = overlapResult[0].count_overlap;
+                if (countOverlap > 0) {
+                    result({ error: 'Phòng trọ này đã được tạo hợp đồng' });
+                } else {
+                    db.query('INSERT INTO contract SET ?', data, function (err, contract) {
+                        if (err) {
+                            console.log(err);
+                            result({ error: 'Không thể thêm dữ liệu vào cơ sở dữ liệu' });
+                        } else {
+                            result({ id: contract.insertId, ...data });
+                            addTenantsToBedsit(data.bedsit_id, tenantsData, contractId, result);
+                        }
+                    });
+                }
+            }
         }
-    });
+    );
 };
 
 Contract.remove = function (id, result) {
@@ -52,7 +77,7 @@ Contract.remove = function (id, result) {
 
 Contract.update = function (contract, result) {
     db.query(
-        'UPDATE contract SET bedsit_id=?, start_day=?, end_day =?, tenant_represent_id=?, deposits=?, content=? WHERE id=?',
+        'UPDATE contract SET bedsit_id=?, start_day=?, end_day =?, tenant_represent_id=?, deposits=?, content=?, staff_id=? WHERE id=?',
         [
             contract.bedsit_id,
             contract.start_day,
@@ -60,6 +85,7 @@ Contract.update = function (contract, result) {
             contract.tenant_represent_id,
             contract.deposits,
             contract.content,
+            contract.staff_id,
             contract.id,
         ],
         function (err) {
@@ -72,4 +98,15 @@ Contract.update = function (contract, result) {
     );
 };
 
+//Thêm khách trọ vào phòng trọ
+BedsitTenant.create = function (data, result) {
+    db.query('INSERT INTO bedsit_tenant SET?', data, function (err, bedsit_tenant) {
+        if (err) {
+            console.log(err);
+            result({ error: 'Không thể thêm dữ liệu vào cơ sở dữ liệu' });
+        } else {
+            result({ id: bedsit_tenant.insertId, ...data });
+        }
+    });
+};
 module.exports = Contract;

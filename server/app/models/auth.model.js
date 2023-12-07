@@ -1,6 +1,11 @@
 const db = require('../common/connect');
 const bcrypt = require('bcrypt');
 
+const PermissionStaff = function (permission_staff) {
+    this.permission_id = permission_staff.permission_id;
+    this.staff_id = permission_staff.staff_id;
+};
+
 const Admin = function (admin) {
     this.id = admin.id;
     this.user_name = admin.user_name;
@@ -131,7 +136,7 @@ Landlord.loginAccount = function (data, result) {
 };
 
 Staff.loginAccount = function (data, result) {
-    db.query(`SELECT * FROM staff WHERE number_phone = ?`, [data.email], (err, staffs) => {
+    db.query(`SELECT * FROM staff WHERE number_phone = ?`, [data.number_phone], (err, staffs) => {
         if (err) result(0);
 
         if (staffs.length > 0) {
@@ -140,7 +145,26 @@ Staff.loginAccount = function (data, result) {
             bcrypt.compare(data.password, user.password, (bcryptErr, bcryptResult) => {
                 if (bcryptErr) throw bcryptErr;
                 if (bcryptResult) {
-                    result(staffs);
+                    const staff_id = user.id;
+                    db.query(
+                        'SELECT permission_id FROM permission_staff WHERE staff_id = ?',
+                        [staff_id],
+                        (permissionsErr, permissions) => {
+                            if (permissionsErr) {
+                                result(0);
+                            }
+                            const permissionIds = permissions.map(
+                                (permission) => permission.permission_id
+                            );
+                            const userDataWithPermissions = {
+                                ...user,
+                                permissions: permissionIds,
+                            };
+                            result(userDataWithPermissions);
+                            // console.log('hi', userDataWithPermissions);
+                        }
+                    );
+                    // result(staffs);
                 } else {
                     result(0);
                 }
@@ -152,7 +176,7 @@ Staff.loginAccount = function (data, result) {
 };
 
 Tenant.loginAccount = function (data, result) {
-    db.query(`SELECT * FROM tenant WHERE number_phone = ?`, [data.email], (err, tenants) => {
+    db.query(`SELECT * FROM tenant WHERE number_phone = ?`, [data.number_phone], (err, tenants) => {
         if (err) throw err;
 
         if (tenants.length > 0) {

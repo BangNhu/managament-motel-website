@@ -1,3 +1,4 @@
+const { checkAuthorize } = require('../common/_AuthMiddleWare');
 module.exports = function (router) {
     var adminController = require('../controllers/admin.controller');
 

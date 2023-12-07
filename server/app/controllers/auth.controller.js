@@ -62,73 +62,75 @@ exports.signup = function (req, res) {
 };
 
 exports.login = function (req, res) {
-    let { email, password } = req.body;
-    email = email.trim();
-    password = password.trim();
-    if (email == '' || password == '') {
-        res.json({
+    let { email, password, number_phone } = req.body;
+
+    // Input validation
+    if (!password) {
+        return res.json({
             status: 'False',
-            message: 'Vui lòng nhập đầy đủ thông tin',
+            message: 'Vui lòng nhập mật khẩu',
+        });
+    }
+
+    if (email) {
+        // Landlord login using email and password
+        Landlord.loginAccount({ email, password }, function (landlordResult) {
+            if (landlordResult.length > 0) {
+                handleLoginSuccess(res, email, 'landlord');
+            } else {
+                handleLoginFailure(res);
+            }
+        });
+    } else if (number_phone) {
+        // Tenant or Staff login using number_phone and password
+        if (!isValidPhoneNumber(number_phone)) {
+            return res.json({
+                status: 'False',
+                message: 'Số điện thoại không hợp lệ',
+            });
+        }
+
+        Staff.loginAccount({ number_phone, password }, function (staffResult) {
+            if (staffResult) {
+                handleLoginSuccess(res, number_phone, 'staff', staffResult.permissions);
+            } else {
+                Tenant.loginAccount({ number_phone, password }, function (tenantResult) {
+                    if (tenantResult.length > 0) {
+                        handleLoginSuccess(res, number_phone, 'tenant');
+                    } else {
+                        handleLoginFailure(res);
+                    }
+                });
+            }
         });
     } else {
-        Landlord.loginAccount({ email, password }, function (result) {
-            {
-                // res.json(result);
-                // console.log(result.length);
-                if (result.length > 0) {
-                    // Gọi hàm make để tạo JWT token
-                    JWT.make(email, 'landlord')
-                        .then((token) => {
-                            res.json({ token });
-                        })
-                        .catch((error) => {
-                            console.error(error);
-                            res.send('that bai');
-                        });
-                } else {
-                    // res.status(401).json({
-                    //     message: 'Email hoặc mật khẩu không đúng',
-                    // });
-                    Staff.loginAccount({ email, password }, function (result) {
-                        {
-                            if (result.length > 0) {
-                                // Gọi hàm make để tạo JWT token
-                                JWT.make(email, 'staff')
-                                    .then((token) => {
-                                        res.json({ token });
-                                    })
-                                    .catch((error) => {
-                                        console.error(error);
-                                        res.send('that bai');
-                                    });
-                            } else {
-                                Tenant.loginAccount({ email, password }, function (result) {
-                                    {
-                                        if (result.length > 0) {
-                                            // Gọi hàm make để tạo JWT token
-                                            JWT.make(email, 'tenant')
-                                                .then((token) => {
-                                                    res.json({ token });
-                                                })
-                                                .catch((error) => {
-                                                    console.error(error);
-                                                    res.send('that bai');
-                                                });
-                                        } else {
-                                            res.status(401).json({
-                                                message: 'Email hoặc mật khẩu không đúng',
-                                            });
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-            }
+        return res.json({
+            status: 'False',
+            message: 'Vui lòng nhập thông tin đăng nhập',
         });
     }
 };
+
+function handleLoginSuccess(res, identifier, userType, permissions) {
+    JWT.make(identifier, userType, permissions)
+        .then((token) => {
+            res.json({ token });
+        })
+        .catch((error) => {
+            console.error(error);
+            res.send('that bai');
+        });
+}
+
+function handleLoginFailure(res) {
+    res.status(401).json({
+        message: 'Thông tin đăng nhập chưa chính xác',
+    });
+}
+
+function isValidPhoneNumber(number) {
+    return /^\d{10}$/.test(number);
+}
 
 exports.admin_login = function (req, res) {
     let data = req.body;

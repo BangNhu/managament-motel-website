@@ -7,10 +7,10 @@ const Tenant = function (tenant) {
     this.id = tenant.id;
     this.tenant_name = tenant.tenant_name;
     this.birthday = tenant.birthday;
-    this.citizen_identification = citizen_identification;
+    this.citizen_identification = tenant.citizen_identification;
     this.number_phone = tenant.number_phone;
     this.email = tenant.email;
-    this.password = password;
+    this.password = tenant.password;
     this.gender = tenant.gender;
 };
 
@@ -98,7 +98,7 @@ Tenant.remove = function (id, result) {
 
 Tenant.update = function (tenant, result) {
     db.query(
-        'UPDATE tenant SET tenant_name=?, birthday=?, citizen_identification =?, phone_number=?, email=?, password=?, gender=?,  WHERE id=?',
+        'UPDATE tenant SET tenant_name=?, birthday=?, citizen_identification =?, phone_number=?, email=?, password=?, gender=?  WHERE id=?',
         [
             tenant.tenant_name,
             tenant.birthday,

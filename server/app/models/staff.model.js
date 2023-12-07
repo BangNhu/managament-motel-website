@@ -16,6 +16,11 @@ const Staff = function (staff) {
     this.birthday = staff.birthday;
 };
 
+const PermissionStaff = function (permission_staff) {
+    this.permission_id = permission_staff.permission_id;
+    this.staff_id = permission_staff.staff_id;
+};
+
 Staff.get_all = function (result) {
     db.query('SELECT * FROM staff', function (err, staffs) {
         if (err) {
@@ -36,14 +41,21 @@ Staff.getById = function (id, result) {
     });
 };
 
+function insertMultiplePermissionStaff(permissionStaffData, callback) {
+    db.query(
+        'INSERT INTO permission_staff (staff_id, permission_id) VALUES ?',
+        [permissionStaffData.map((item) => [item.staff_id, item.permission_id])],
+        function (error, result, fields) {
+            if (error) {
+                callback(error, null);
+            } else {
+                callback(null, result);
+            }
+        }
+    );
+}
+
 Staff.create = function (data, result) {
-    // db.query('INSERT INTO staff SET ?', data, function (err, staff) {
-    //     if (err) {
-    //         console.log(err);
-    //     } else {
-    //         result({ id: staff.insertId, ...data });
-    //     }
-    // });
     db.query(
         'SELECT * FROM staff WHERE email = ? OR number_phone = ?',
         [data.email, data.number_phone],
@@ -76,7 +88,33 @@ Staff.create = function (data, result) {
                                         result(error, null);
                                         console.log('lỗi insert', error);
                                     } else {
-                                        result({ id: staff.insertId, ...data });
+                                        // result({ id: staff.insertId, ...data });
+
+                                        const permissions = [
+                                            7, 8, 10, 11, 13, 14, 16, 18, 19, 20, 21, 28, 29,
+                                        ];
+                                        const permissionStaffData = permissions.map(
+                                            (permission_id) => ({
+                                                staff_id: staff.insertId,
+                                                permission_id: permission_id,
+                                            })
+                                        );
+
+                                        insertMultiplePermissionStaff(
+                                            permissionStaffData,
+                                            function (error, permissionStaffResult) {
+                                                if (error) {
+                                                    // Handle the error
+                                                    console.log(
+                                                        'lỗi insert PermissionStaff',
+                                                        error
+                                                    );
+                                                } else {
+                                                    // Return the result
+                                                    result({ id: staff.insertId, ...data });
+                                                }
+                                            }
+                                        );
                                     }
                                 }
                             );

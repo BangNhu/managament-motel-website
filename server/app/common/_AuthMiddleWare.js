@@ -21,4 +21,22 @@ let isAuth = async function (req, res, next) {
     }
 };
 
-module.exports = { isAuth: isAuth };
+let checkAuthorize = function authorize(role, permission) {
+    return (req, res, next) => {
+        const userType = req.auth.userType;
+        const userPermissions = req.auth.permissions;
+
+        if (userType === role && userPermissions.includes(permission)) {
+            next();
+        } else {
+            console.log('userType ' + userType + ' permission ' + permission);
+            console.log('Lỗi checkAuthorize');
+            console.log('userType: ', userType);
+            console.log('role: ', role);
+            console.log('userPermissions: ', userPermissions);
+            console.log('permission: ', permission);
+            res.sendStatus(403);
+        }
+    };
+};
+module.exports = { isAuth: isAuth, checkAuthorize: checkAuthorize };
