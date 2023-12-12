@@ -2,6 +2,10 @@ var express = require('express');
 var app = express();
 const _AuthMiddleware = require('./app/common/_AuthMiddleWare');
 
+// Cross-Origin Resource Sharing: chính sách an ninh được áp dụng trong trình duyệt
+const cors = require('cors');
+app.use(cors());
+
 /*Cấu hình body-parse */
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));

@@ -13,6 +13,8 @@ const Landlord = function (landlord) {
     this.gender = landlord.gender;
     this.account_type = landlord.account_type;
     this.expiration_date = landlord.expiration_date;
+    this.is_verified = landlord.is_verified;
+    this.email_token = landlord.email_token;
 };
 
 Landlord.get_all = function (result) {

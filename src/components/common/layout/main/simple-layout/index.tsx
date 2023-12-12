@@ -1,8 +1,8 @@
 import { LayoutProps } from '@/models/common';
 import { Stack } from '@mui/material';
 
-export interface RegisterLoginLayoutProps {}
+export interface SimpleLayoutProps {}
 
-export function RegisterLoginLayout({ children }: LayoutProps) {
+export function SimpleLayout({ children }: LayoutProps) {
     return <Stack>{children}</Stack>;
 }

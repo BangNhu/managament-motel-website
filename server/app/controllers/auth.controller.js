@@ -1,5 +1,6 @@
 var { Landlord, Staff, Tenant, Admin } = require('../models/auth.model');
 var JWT = require('../common/_JWT');
+const crypto = require('crypto');
 
 exports.signup = function (req, res) {
     let { landlord_name, email, number_phone, password, birthday, gender } = req.body;
@@ -51,7 +52,15 @@ exports.signup = function (req, res) {
         });
     } else {
         Landlord.signUp(
-            { landlord_name, email, number_phone, password, birthday, gender },
+            {
+                landlord_name,
+                email,
+                number_phone,
+                password,
+                birthday,
+                gender,
+                email_token: '',
+            },
             function (result) {
                 {
                     res.json(result);
@@ -61,6 +70,26 @@ exports.signup = function (req, res) {
     }
 };
 
+exports.forgot_password = function (req, res) {
+    let { email } = req.body;
+    Landlord.forget({ email, reset_password: '' }, function (result) {
+        if (result) {
+            res.send({ result });
+        } else {
+            res.status(404).json('Gửi quên mật khẩu thất bại');
+        }
+    });
+};
+exports.reset_password = function (req, res) {
+    let data = req.body;
+    Landlord.reset(data, function (result) {
+        if (result) {
+            res.send({ result });
+        } else {
+            res.status(404).json('Đổi mật khẩu thất bại');
+        }
+    });
+};
 exports.login = function (req, res) {
     let { email, password, number_phone } = req.body;
 
@@ -75,8 +104,8 @@ exports.login = function (req, res) {
     if (email) {
         // Landlord login using email and password
         Landlord.loginAccount({ email, password }, function (landlordResult) {
-            if (landlordResult.length > 0) {
-                handleLoginSuccess(res, email, 'landlord');
+            if (landlordResult) {
+                handleLoginSuccess(res, landlordResult.id, 'landlord');
             } else {
                 handleLoginFailure(res);
             }
@@ -92,11 +121,11 @@ exports.login = function (req, res) {
 
         Staff.loginAccount({ number_phone, password }, function (staffResult) {
             if (staffResult) {
-                handleLoginSuccess(res, number_phone, 'staff', staffResult.permissions);
+                handleLoginSuccess(res, staffResult.id, 'staff', staffResult.permissions);
             } else {
                 Tenant.loginAccount({ number_phone, password }, function (tenantResult) {
-                    if (tenantResult.length > 0) {
-                        handleLoginSuccess(res, number_phone, 'tenant');
+                    if (tenantResult) {
+                        handleLoginSuccess(res, tenantResult.id, 'tenant');
                     } else {
                         handleLoginFailure(res);
                     }
@@ -163,4 +192,16 @@ exports.check_token = async function (req, res) {
     } catch (err) {
         res.status(401).send({ error: 'Data không hợp lệ' });
     }
+};
+
+exports.verify_email = async function (req, res) {
+    var data = req.query;
+    Landlord.verify(data, function (result) {
+        if (result) {
+            // handleLoginSuccess(res, result.id);
+            res.send({ result });
+        } else {
+            res.status(404).json('Xác nhận thất bại');
+        }
+    });
 };

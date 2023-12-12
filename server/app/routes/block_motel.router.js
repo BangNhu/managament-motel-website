@@ -6,7 +6,7 @@ module.exports = function (router) {
     router.get('/block_motel/detail/:id', blockMotelController.details);
     router.post(
         '/block_motel/add',
-        checkAuthorize('staff', 11),
+        checkAuthorize('staff', 7),
         blockMotelController.add_block_motel
     );
     router.delete('/block_motel/delete/:id', blockMotelController.remove_block_motel);

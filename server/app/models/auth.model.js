@@ -1,6 +1,18 @@
 const db = require('../common/connect');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
+const sendVerificationMail = require('../utils/sendVerificationMail');
+const sendResetPassword = require('../utils/sendResetPassword');
+
+function generateToken(data) {
+    const expirationTime = Date.now() + 15 * 60 * 1000; // 15 phút
+    const tokenData = `${data}.${expirationTime}`;
+    const token = crypto.createHash('sha256').update(tokenData).digest('hex');
+    return { token };
+}
+
+BCRYPT_SALT_ROUND = process.env.BCRYPT_SALT_ROUND;
 const PermissionStaff = function (permission_staff) {
     this.permission_id = permission_staff.permission_id;
     this.staff_id = permission_staff.staff_id;
@@ -22,6 +34,9 @@ const Landlord = function (landlord) {
     this.gender = landlord.gender;
     this.account_type = landlord.account_type;
     this.expiration_date = landlord.expiration_date;
+    this.is_verified = landlord.is_verified;
+    this.email_token = landlord.email_token;
+    this.reset_token = landlord.reset_token;
 };
 
 const Staff = function (staff) {
@@ -68,9 +83,11 @@ Landlord.signUp = function (data, result) {
                     bcrypt.hash(data.password, 10, function (err, hashedPassword) {
                         if (err) {
                             result(err, null);
-                            console.log('lỗi mã hóa', error);
+                            console.log('lỗi mã hóa', err);
                         } else {
                             data.password = hashedPassword;
+                            token = generateToken(data.reset_token);
+                            data.email_token = token.token;
                             db.query(
                                 'INSERT INTO landlord SET ?',
                                 [data],
@@ -80,6 +97,74 @@ Landlord.signUp = function (data, result) {
                                         console.log('lỗi insert', error);
                                     } else {
                                         result({ id: landlord.insertId, ...data });
+                                    }
+                                }
+                            );
+                            sendVerificationMail(data);
+                        }
+                    });
+                }
+            }
+        }
+    );
+};
+
+Landlord.forget = function (data, result) {
+    db.query('SELECT * FROM landlord WHERE email=?', [data.email], function (err, landlord) {
+        if (err) {
+            result(null);
+            console.log('không có');
+        } else {
+            if (landlord.length > 0) {
+                const user = landlord[0];
+                token = generateToken(data.reset_token);
+                db.query(
+                    'UPDATE landlord SET reset_token=? WHERE id=?',
+                    [(user.reset_token = token.token), user.id],
+                    function (err) {
+                        if (err) {
+                            result(0);
+                            console.log(err);
+                        } else {
+                            result(user);
+                            sendResetPassword(user);
+                        }
+                    }
+                );
+            } else {
+                result(null);
+                console.log('sai');
+            }
+        }
+    });
+};
+
+Landlord.reset = function (data, result) {
+    if (!data.reset_token) console.log('Email token không tồn tại', data.reset_token);
+    db.query(
+        'SELECT * FROM landlord WHERE reset_token=?',
+        [data.reset_token],
+        function (err, landlord) {
+            if (err) {
+                throw err;
+            } else {
+                if (landlord.length > 0) {
+                    bcrypt.hash(data.password, 10, function (err, hashedPassword) {
+                        if (err) {
+                            result(err, null);
+                            console.log('lỗi mã hóa', err);
+                        } else {
+                            data.password = hashedPassword;
+                            db.query(
+                                'UPDATE landlord SET reset_token=?, password=? WHERE id=?',
+                                [(data.reset_token = null), data.password, data.id],
+                                function (err) {
+                                    if (err) {
+                                        result(0);
+                                        console.log(err);
+                                    } else {
+                                        result(landlord);
+                                        console.log(landlord);
                                     }
                                 }
                             );
@@ -124,7 +209,7 @@ Landlord.loginAccount = function (data, result) {
             bcrypt.compare(data.password, user.password, (bcryptErr, bcryptResult) => {
                 if (bcryptErr) throw bcryptErr;
                 if (bcryptResult) {
-                    result(landlords);
+                    result(user);
                 } else {
                     result(0);
                 }
@@ -185,7 +270,7 @@ Tenant.loginAccount = function (data, result) {
             bcrypt.compare(data.password, user.password, (bcryptErr, bcryptResult) => {
                 if (bcryptErr) throw bcryptErr;
                 if (bcryptResult) {
-                    result(tenants);
+                    result(user);
                 } else {
                     result(0);
                 }
@@ -196,6 +281,35 @@ Tenant.loginAccount = function (data, result) {
     });
 };
 
+Landlord.verify = function (data, result) {
+    if (!data.email_token) console.log('Email token không tồn tại', data.email_token);
+    db.query(
+        'SELECT * FROM landlord WHERE email_token=?',
+        [data.email_token],
+        function (err, landlord) {
+            if (err) {
+                throw err;
+            } else {
+                if (landlord.length > 0) {
+                    const user = landlord[0];
+                    db.query(
+                        'UPDATE landlord SET email_token=?, is_verified=? WHERE id=?',
+                        [(user.email_token = null), (user.is_verified = 1), user.id],
+                        function (err) {
+                            if (err) {
+                                result(0);
+                                console.log(err);
+                            } else {
+                                result(user);
+                            }
+                        }
+                    );
+                    console.log('user', user);
+                }
+            }
+        }
+    );
+};
 module.exports = {
     Landlord,
     Staff,

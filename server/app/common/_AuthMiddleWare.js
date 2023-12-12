@@ -21,20 +21,26 @@ let isAuth = async function (req, res, next) {
     }
 };
 
-let checkAuthorize = function authorize(role, permission) {
+let checkAuthorize = function authorize(allowedRoles, allowedPermission) {
     return (req, res, next) => {
         const userType = req.auth.userType;
         const userPermissions = req.auth.permissions;
 
-        if (userType === role && userPermissions.includes(permission)) {
-            next();
+        if (allowedRoles.includes(userType)) {
+            if (
+                !userPermissions ||
+                (allowedRoles.includes(userType) && userPermissions.includes(allowedPermission))
+            ) {
+                console.log('userType: ', userType);
+                console.log('allowedRoles: ', allowedRoles);
+                console.log('userPermissions: ', userPermissions);
+                next();
+            }
         } else {
-            console.log('userType ' + userType + ' permission ' + permission);
             console.log('Lỗi checkAuthorize');
             console.log('userType: ', userType);
-            console.log('role: ', role);
+            console.log('allowedRoles: ', allowedRoles);
             console.log('userPermissions: ', userPermissions);
-            console.log('permission: ', permission);
             res.sendStatus(403);
         }
     };
