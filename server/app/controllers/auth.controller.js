@@ -91,8 +91,9 @@ exports.reset_password = function (req, res) {
     });
 };
 exports.login = function (req, res) {
-    let { email, password, number_phone } = req.body;
-
+    let { account_name, password } = req.body;
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(account_name);
+    const isNumberPhone = /^0[0-9]{9}$/.test(account_name);
     // Input validation
     if (!password) {
         return res.json({
@@ -101,29 +102,21 @@ exports.login = function (req, res) {
         });
     }
 
-    if (email) {
+    if (isEmail) {
         // Landlord login using email and password
-        Landlord.loginAccount({ email, password }, function (landlordResult) {
+        Landlord.loginAccount({ account_name, password }, function (landlordResult) {
             if (landlordResult) {
                 handleLoginSuccess(res, landlordResult.id, 'landlord');
             } else {
                 handleLoginFailure(res);
             }
         });
-    } else if (number_phone) {
-        // Tenant or Staff login using number_phone and password
-        if (!isValidPhoneNumber(number_phone)) {
-            return res.json({
-                status: 'False',
-                message: 'Số điện thoại không hợp lệ',
-            });
-        }
-
-        Staff.loginAccount({ number_phone, password }, function (staffResult) {
+    } else if (isNumberPhone) {
+        Staff.loginAccount({ account_name, password }, function (staffResult) {
             if (staffResult) {
                 handleLoginSuccess(res, staffResult.id, 'staff', staffResult.permissions);
             } else {
-                Tenant.loginAccount({ number_phone, password }, function (tenantResult) {
+                Tenant.loginAccount({ account_name, password }, function (tenantResult) {
                     if (tenantResult) {
                         handleLoginSuccess(res, tenantResult.id, 'tenant');
                     } else {

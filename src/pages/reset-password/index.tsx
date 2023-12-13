@@ -125,7 +125,7 @@ export default function ResetPassword(props: IResetPasswordProps) {
                         textAlign: 'center',
                         mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
                     }}
-                    type="text"
+                    type="password"
                     variant="outlined"
                     color="secondary"
                     label="Mật khẩu"

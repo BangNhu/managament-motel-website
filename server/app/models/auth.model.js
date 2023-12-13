@@ -200,7 +200,7 @@ Admin.loginAccount = function (data, result) {
 
 //Account customer login
 Landlord.loginAccount = function (data, result) {
-    db.query(`SELECT * FROM landlord WHERE email = ?`, [data.email], (err, landlords) => {
+    db.query(`SELECT * FROM landlord WHERE email = ?`, [data.account_name], (err, landlords) => {
         if (err) throw err;
 
         if (landlords.length > 0) {
@@ -221,7 +221,7 @@ Landlord.loginAccount = function (data, result) {
 };
 
 Staff.loginAccount = function (data, result) {
-    db.query(`SELECT * FROM staff WHERE number_phone = ?`, [data.number_phone], (err, staffs) => {
+    db.query(`SELECT * FROM staff WHERE number_phone = ?`, [data.account_name], (err, staffs) => {
         if (err) result(0);
 
         if (staffs.length > 0) {
@@ -261,7 +261,7 @@ Staff.loginAccount = function (data, result) {
 };
 
 Tenant.loginAccount = function (data, result) {
-    db.query(`SELECT * FROM tenant WHERE number_phone = ?`, [data.number_phone], (err, tenants) => {
+    db.query(`SELECT * FROM tenant WHERE number_phone = ?`, [data.account_name], (err, tenants) => {
         if (err) throw err;
 
         if (tenants.length > 0) {
