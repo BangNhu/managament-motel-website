@@ -18,3 +18,18 @@ export const checkToken = async (token: string): Promise<any> => {
         throw new Error('Error checking token: ' + error.message);
     }
 };
+
+export const getTokenData = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            return null;
+        }
+
+        const data = await checkToken(token);
+        return data;
+    } catch (error: any) {
+        console.error('Error:', error.message);
+        return null;
+    }
+};

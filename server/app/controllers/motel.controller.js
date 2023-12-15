@@ -1,8 +1,8 @@
 var Motel = require('../models/motel.model');
 
 exports.get_list = function (req, res) {
-    Motel.get_all(function (data) {
-        res.send({ result: data });
+    Motel.get_all(function (response) {
+        res.send({ result: response });
     });
 };
 

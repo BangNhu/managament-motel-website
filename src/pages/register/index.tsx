@@ -2,6 +2,7 @@ import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
 import { useState, ChangeEvent } from 'react';
 import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Stack } from '@mui/material';
 import { useRouter } from 'next/router';
+import { RegisterForm } from '@/components/register';
 
 export interface IRegisterProps {
     landlord_name: string;
@@ -112,6 +113,7 @@ export default function Register(props: IRegisterProps) {
                     Signup
                 </Button>
             </form>
+            {/* <RegisterForm /> */}
         </Stack>
     );
 }

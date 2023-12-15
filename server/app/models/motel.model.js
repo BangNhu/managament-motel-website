@@ -15,7 +15,7 @@ Motel.get_all = function (result) {
         if (err) {
             result(null);
         } else {
-            result();
+            result(motels);
         }
     });
 };
