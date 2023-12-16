@@ -61,7 +61,40 @@ export const motelApi = createApi({
                 },
             }),
         }),
+
+        updateMotels: build.mutation<Motel, { id: number; body: Motel }>({
+            query: (data) => ({
+                url: '/motel/update',
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+                method: 'PUT',
+                body: data.body,
+            }),
+            //những thứ match tag với invalidatesTags sẽ chạy lại (getMotels)
+            invalidatesTags: (result, erorr, data) => [{ type: 'Motels', id: data.id }],
+        }),
+        deleteMotel: build.mutation<{}, number>({
+            query: (id) => ({
+                url: `/motel/delete/${id}`,
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+                method: 'DELETE',
+            }),
+            invalidatesTags: (result, erorr, id) => [{ type: 'Motels', id }],
+        }),
     }),
 });
 
-export const { useGetMotelsQuery, useAddMotelsMutation, useGetMotelQuery } = motelApi;
+export const {
+    useGetMotelsQuery,
+    useAddMotelsMutation,
+    useGetMotelQuery,
+    useUpdateMotelsMutation,
+    useDeleteMotelMutation,
+} = motelApi;

@@ -3,7 +3,11 @@ import { useRouter } from 'next/router';
 import { Alert, Button, CircularProgress, Grid, Stack, TextField, Typography } from '@mui/material';
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
 import { checkToken } from '@/services/auth/check-token';
-import { useGetMotelsQuery } from '@/services/motel.services';
+import {
+    useAddMotelsMutation,
+    useDeleteMotelMutation,
+    useGetMotelsQuery,
+} from '@/services/motel.services';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useDispatch } from 'react-redux';
 import { startEditMotel } from '@/slices/motel.slice';
@@ -11,11 +15,15 @@ export interface IMotelListProps {}
 
 export function MotelList(props: IMotelListProps) {
     const [tokenData, setTokenData] = useState<any>(null);
+    const [deletePost] = useDeleteMotelMutation();
     const { data } = useGetMotelsQuery();
     console.log(data);
     const dispatch = useDispatch();
     const startEdit = (id: number) => {
         dispatch(startEditMotel(id));
+    };
+    const handleDeleteMotel = (id: number) => {
+        deletePost(id);
     };
 
     useEffect(() => {
@@ -74,7 +82,7 @@ export function MotelList(props: IMotelListProps) {
                         Edit
                     </button>
 
-                    <button>Delete</button>
+                    <button onClick={() => handleDeleteMotel(params.row.id)}>Delete</button>
                 </Stack>
             ),
         },

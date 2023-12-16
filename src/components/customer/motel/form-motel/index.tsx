@@ -1,5 +1,5 @@
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, ChangeEvent, useEffect, Fragment } from 'react';
 import {
     Button,
     TextField,
@@ -10,11 +10,16 @@ import {
     Stack,
     Grid,
     Typography,
+    SelectChangeEvent,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Motel } from '@/types/motel.type';
-import { useAddMotelsMutation, useGetMotelQuery } from '@/services/motel.services';
+import {
+    useAddMotelsMutation,
+    useGetMotelQuery,
+    useUpdateMotelsMutation,
+} from '@/services/motel.services';
 import useTokenData from '@/services/auth/token-data-loader';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -37,13 +42,14 @@ export default function AddMotel(props: IAddMotelProps) {
     const motelId = useSelector((state: RootState) => state.motel.id);
 
     const { data } = useGetMotelQuery(motelId, { skip: !motelId });
-    console.log(data);
+    const [updateMotel, updateMotelResult] = useUpdateMotelsMutation();
 
-    // useEffect(() => {
-    //     if (data) {
-    //         setFormData(data?.result);
-    //     }
-    // }, [data]);
+    console.log('infodata', data?.result);
+    useEffect(() => {
+        if (data) {
+            setFormData(data?.result as any);
+        }
+    }, [data]);
     useEffect(() => {
         if (tokenData) {
             const newFormData = {
@@ -61,14 +67,26 @@ export default function AddMotel(props: IAddMotelProps) {
             [name]: value,
         }));
     };
+    const handleChangeSelect = (e: SelectChangeEvent) => {
+        const { name, value } = e.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    };
 
     const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
 
-        const result = await addMotel(formData).unwrap();
+        if (motelId) {
+            await updateMotel({
+                body: formData as Motel,
+                id: motelId,
+            }).unwrap();
+        } else {
+            await addMotel(formData).unwrap();
+        }
         setFormData(intialState);
-        console.log(result);
-        console.log(formData);
     };
 
     return (
@@ -156,7 +174,7 @@ export default function AddMotel(props: IAddMotelProps) {
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <TextField
+                        {/* <TextField
                             name="staff_id"
                             type="number"
                             variant="outlined"
@@ -167,16 +185,43 @@ export default function AddMotel(props: IAddMotelProps) {
                             fullWidth
                             required
                             sx={{ mb: 4 }}
-                        />
+                        /> */}
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Nhân viên</InputLabel>
+                            <Select
+                                name="staff_id"
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                onChange={handleChangeSelect}
+                                label="Nhân viên"
+                                value={String(formData.staff_id)}
+                                fullWidth
+                            >
+                                <MenuItem value={10}>Ten</MenuItem>
+                                <MenuItem value={20}>Twenty</MenuItem>
+                                <MenuItem value={30}>Thirty</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
                 </Grid>
-                <Button variant="outlined" color="secondary" type="submit">
-                    Thêm mới
-                </Button>
+                {motelId !== undefined && motelId !== 0 && (
+                    <Fragment>
+                        <Stack direction="row">
+                            <Button variant="outlined" color="secondary" type="submit">
+                                Cập nhật
+                            </Button>
+                            <Button variant="outlined" color="secondary" type="submit">
+                                Hủy
+                            </Button>
+                        </Stack>
+                    </Fragment>
+                )}
+                {!Boolean(motelId) && (
+                    <Button variant="outlined" color="secondary" type="submit">
+                        Thêm mới
+                    </Button>
+                )}
             </form>
-            <small>
-                Already have an account? <Link href="/login">Login Here</Link>
-            </small>
         </Stack>
     );
 }
