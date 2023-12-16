@@ -1,4 +1,4 @@
-export interface LandLord {
+export interface Landlord {
     id: number;
     landlord_name: string;
     password: string;
@@ -8,7 +8,7 @@ export interface LandLord {
     gender: number;
     account_type: number;
     expiration_date: string;
-    is_verified: number;
+    is_verified: boolean;
     email_token: string;
     reset_token: string;
 }

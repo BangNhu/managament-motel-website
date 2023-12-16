@@ -3,32 +3,22 @@ import { access } from 'fs';
 
 interface MotelState {
     id: number;
-    landlord_name: string;
-    password: string;
-    number_phone: string;
-    email: string;
-    birthday: string;
-    gender: number;
-    account_type: number;
-    expiration_date: string;
-    is_verified: boolean;
-    email_token: string;
-    reset_token: string;
+    motel_name: string;
+    address: string;
+    record_day: number;
+    pay_day: number;
+    staff_id: number;
+    landlord_id: number;
 }
 
 const initialState: MotelState = {
     id: 0,
-    landlord_name: '',
-    password: '',
-    number_phone: '',
-    email: '',
-    birthday: '',
-    gender: 0,
-    account_type: 0,
-    expiration_date: '',
-    is_verified: false,
-    email_token: '',
-    reset_token: '',
+    motel_name: '',
+    address: '',
+    record_day: 0,
+    pay_day: 0,
+    staff_id: 0,
+    landlord_id: 0,
 };
 
 const motelSlice = createSlice({

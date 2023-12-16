@@ -23,6 +23,7 @@ import {
 import useTokenData from '@/services/auth/token-data-loader';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { useGetStaffsByLandlordQuery } from '@/services/staff.services';
 
 export interface IAddMotelProps {}
 
@@ -33,23 +34,27 @@ const intialState: Omit<Motel, 'id'> = {
     pay_day: 0,
     staff_id: 0,
     landlord_id: 0,
+    staff_name: '',
 };
 export default function AddMotel(props: IAddMotelProps) {
     const tokenData = useTokenData();
-
+    console.log(tokenData);
     const [formData, setFormData] = useState<Omit<Motel, 'id'>>(intialState);
     const [addMotel, addMotelReslut] = useAddMotelsMutation();
     const motelId = useSelector((state: RootState) => state.motel.id);
 
-    const { data } = useGetMotelQuery(motelId, { skip: !motelId });
+    const { data: motelData } = useGetMotelQuery(motelId, { skip: !motelId });
+    const { data: staffData } = useGetStaffsByLandlordQuery(tokenData?.userID);
     const [updateMotel, updateMotelResult] = useUpdateMotelsMutation();
 
-    console.log('infodata', data?.result);
+    console.log('infodata', motelData?.result);
+    console.log('infodata staff ', staffData?.result);
+
     useEffect(() => {
-        if (data) {
-            setFormData(data?.result as any);
+        if (motelData) {
+            setFormData(motelData?.result as any);
         }
-    }, [data]);
+    }, [motelData]);
     useEffect(() => {
         if (tokenData) {
             const newFormData = {
@@ -197,9 +202,14 @@ export default function AddMotel(props: IAddMotelProps) {
                                 value={String(formData.staff_id)}
                                 fullWidth
                             >
-                                <MenuItem value={10}>Ten</MenuItem>
+                                {staffData?.result.map((item) => (
+                                    <MenuItem value={item.id} key={item.id}>
+                                        {item.staff_name}
+                                    </MenuItem>
+                                ))}
+                                {/* <MenuItem value={10}>Ten</MenuItem>
                                 <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                <MenuItem value={30}>Thirty</MenuItem> */}
                             </Select>
                         </FormControl>
                     </Grid>

@@ -40,7 +40,15 @@ Staff.getById = function (id, result) {
         }
     });
 };
-
+Staff.getStaffsByLandlordId = function (id, result) {
+    db.query('SELECT * FROM staff WHERE landlord_id=?', id, function (err, staffs) {
+        if (err) {
+            result(null);
+        } else {
+            result(staffs);
+        }
+    });
+};
 function insertMultiplePermissionStaff(permissionStaffData, callback) {
     db.query(
         'INSERT INTO permission_staff (staff_id, permission_id) VALUES ?',

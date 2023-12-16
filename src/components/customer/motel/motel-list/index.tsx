@@ -11,13 +11,19 @@ import {
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useDispatch } from 'react-redux';
 import { startEditMotel } from '@/slices/motel.slice';
+import { useGetStaffQuery } from '@/services/staff.services';
 export interface IMotelListProps {}
 
 export function MotelList(props: IMotelListProps) {
     const [tokenData, setTokenData] = useState<any>(null);
     const [deletePost] = useDeleteMotelMutation();
-    const { data } = useGetMotelsQuery();
-    console.log(data);
+    const { data: dataMotel } = useGetMotelsQuery();
+    console.log(dataMotel);
+    const { data: dataStaff } = useGetStaffQuery(3);
+    console.log('data staff', dataStaff);
+    //Danh sách nhà trọ
+    const motels = dataMotel?.result || [];
+
     const dispatch = useDispatch();
     const startEdit = (id: number) => {
         dispatch(startEditMotel(id));
@@ -49,7 +55,7 @@ export function MotelList(props: IMotelListProps) {
     if (tokenData?.userType === 'landlord') {
         console.log('hi Như');
     }
-    const motels = data?.result || [];
+
     const columns: GridColDef[] = [
         // { field: 'id', headerName: 'ID', width: 70 },
         { field: 'motel_name', headerName: 'Tên dãy trọ', width: 130 },
@@ -66,7 +72,7 @@ export function MotelList(props: IMotelListProps) {
             type: 'number',
             width: 90,
         },
-        { field: 'staff_id', headerName: 'Nhân viên', width: 130 },
+        { field: 'staff_name', headerName: 'Nhân viên', width: 130 },
         {
             field: 'actions',
             headerName: 'Actions',

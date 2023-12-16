@@ -6,4 +6,5 @@ export interface Motel {
     pay_day: number;
     staff_id: number;
     landlord_id: number;
+    staff_name: string;
 }

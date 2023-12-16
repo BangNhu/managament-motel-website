@@ -11,13 +11,16 @@ const Motel = function (motel) {
 };
 
 Motel.get_all = function (result) {
-    db.query('SELECT * FROM motel', function (err, motels) {
-        if (err) {
-            result(null);
-        } else {
-            result(motels);
+    db.query(
+        'SELECT motel.*, staff.staff_name as staff_name FROM motel JOIN staff ON motel.staff_id = staff.id',
+        function (err, motels) {
+            if (err) {
+                result(null);
+            } else {
+                result(motels);
+            }
         }
-    });
+    );
 };
 
 Motel.getById = function (id, result) {

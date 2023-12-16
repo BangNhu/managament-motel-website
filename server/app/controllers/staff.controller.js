@@ -5,6 +5,11 @@ exports.get_list = function (req, res) {
         res.send({ result: data });
     });
 };
+exports.get_staffs = function (req, res) {
+    Staff.getStaffsByLandlordId(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
 
 exports.details = function (req, res) {
     Staff.getById(req.params.id, function (response) {
