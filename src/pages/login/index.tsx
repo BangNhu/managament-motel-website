@@ -1,8 +1,18 @@
 import { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Alert, Button, CircularProgress, Grid, Stack, TextField, Typography } from '@mui/material';
+import {
+    Alert,
+    Button,
+    CircularProgress,
+    Divider,
+    Grid,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
 import { checkToken } from '@/services/auth/check-token';
+import Link from 'next/link';
 
 export interface ILoginProps {
     account_name: string;
@@ -66,10 +76,9 @@ export default function Login(props: ILoginProps) {
     return (
         <Stack
             sx={{
-                width: { xs: '90%', md: '50%' },
+                width: { xs: '80%', md: '30%' },
                 margin: { xs: '20% auto', md: '5% auto' },
                 borderRadius: '8px',
-                // border: '2px solid #A61713',
                 padding: '2% 5%',
                 boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
             }}
@@ -81,55 +90,87 @@ export default function Login(props: ILoginProps) {
                     fontFamily: 'Verdana',
                     marginBottom: { xs: '10px', md: '20px' },
                     textAlign: 'center',
+                    color: '#A61713',
+                    fontWeight: 600,
                     // textTransform: 'uppercase',
                 }}
             >
-                Đăng ký phần mềm quản lý nhà trọ{' '}
-                <Typography
-                    component="span"
-                    sx={{ color: '#A61713', fontSize: '32px', fontFamily: 'Verdana' }}
-                >
-                    NhuTK
-                </Typography>
+                ĐĂNG NHẬP
             </Typography>
+            <Divider
+                sx={{
+                    margin: '0 0 5% 0',
+                    border: '1px solid #cb5656',
+                    // width: { xs: '100%', sm: '80%' },
+                    // textAlign: 'center',
+                    // mx: 'auto',
+                }}
+            />
             <form onSubmit={handleSubmit} action="/login">
-                <TextField
-                    sx={{
-                        width: { xs: '100%', sm: '60%' },
-                        display: 'block',
-                        textAlign: 'center',
-                        mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
-                    }}
-                    type="text"
-                    variant="outlined"
-                    color="secondary"
-                    label="Tên tài khoản"
-                    name="account_name"
-                    value={formData.account_name}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                />
-                <TextField
-                    sx={{
-                        width: { xs: '100%', sm: '60%' },
-                        display: 'block',
-                        textAlign: 'center',
-                        mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
-                    }}
-                    type="password"
-                    variant="outlined"
-                    color="secondary"
-                    label="Mật khẩu"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                />
-                <Button variant="contained" type="submit">
-                    Gửi
-                </Button>
+                <Stack sx={{ gap: '20px' }}>
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        type="text"
+                        variant="outlined"
+                        color="secondary"
+                        label="Tên tài khoản"
+                        name="account_name"
+                        value={formData.account_name}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        type="password"
+                        variant="outlined"
+                        color="secondary"
+                        label="Mật khẩu"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+                    <Stack
+                        direction="row"
+                        sx={{
+                            justifyContent: 'end',
+                            gap: '20px',
+                            width: { xs: '100%', sm: '90%' },
+                        }}
+                    >
+                        <Link
+                            href={'/forgot-password'}
+                            style={{ textDecoration: 'none', color: '#2565b9' }}
+                        >
+                            Quên mật khẩu
+                        </Link>
+                        <Link
+                            href={'/register'}
+                            style={{ textDecoration: 'none', color: '#2565b9' }}
+                        >
+                            Đăng ký mới
+                        </Link>
+                    </Stack>
+                    <Button
+                        variant="contained"
+                        type="submit"
+                        sx={{ width: { xs: '100%', sm: '80%' }, textAlign: 'center', mx: 'auto' }}
+                    >
+                        Gửi
+                    </Button>
+                </Stack>
             </form>{' '}
         </Stack>
     );

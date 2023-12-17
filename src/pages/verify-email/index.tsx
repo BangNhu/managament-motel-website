@@ -1,6 +1,8 @@
 import { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Alert, CircularProgress } from '@mui/material';
+import { Alert, CircularProgress, Stack } from '@mui/material';
+import Link from 'next/link';
+import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
 
 export interface IVerifyEmailProps {}
 
@@ -40,24 +42,28 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
     }, [router.query]);
 
     return (
-        <div>
+        <Stack sx={{ margin: { xs: '20% auto', md: '5% auto' } }}>
             {isVerified ? (
-                <p>Email đã được xác nhận</p>
+                <Alert severity="success">
+                    Email đã được xác nhận. Thực hiện đăng nhập tại đây{' '}
+                    <Link href={'/login'}>Đăng nhập tại khoản</Link>
+                </Alert>
             ) : (
-                <div>
+                <Stack sx={{ gap: '20px' }}>
                     {' '}
-                    <p>
+                    <Alert severity="info">
                         Chào mừng bạn đến với Hệ thống quản lý nhà trọ NhuTK. Để bắt đầu, hãy xác
                         nhận địa chỉ email của bạn!
-                    </p>
-                    <p>
+                    </Alert>
+                    <Alert severity="info">
                         Chúng tôi đã gửi liên kết xác nhận đến email của bạn. Nó có thời hạn 15
                         phút.
-                    </p>
-                </div>
+                    </Alert>
+                </Stack>
             )}
 
             {/* Các thông tin khác có thể được hiển thị ở đây */}
-        </div>
+        </Stack>
     );
 }
+VerifyEmail.Layout = SimpleLayout;

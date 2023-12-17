@@ -23,6 +23,20 @@ Motel.get_all = function (result) {
     );
 };
 
+Motel.get_all_by_landlord = function (landlord_id, result) {
+    db.query(
+        'SELECT motel.*, staff.staff_name as staff_name FROM motel JOIN staff ON motel.staff_id = staff.id where landlord_id=?',
+        landlord_id,
+        function (err, motels) {
+            if (err) {
+                result(null);
+            } else {
+                result(motels);
+            }
+        }
+    );
+};
+
 Motel.getById = function (id, result) {
     db.query('SELECT * FROM motel WHERE id=?', id, function (err, motels) {
         if (err || motels.length === 0) {

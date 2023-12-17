@@ -5,7 +5,11 @@ exports.get_list = function (req, res) {
         res.send({ result: response });
     });
 };
-
+exports.get_list_by_landlord = function (req, res) {
+    Motel.get_all_by_landlord(req.params.landlord_id, function (response) {
+        res.send({ result: response });
+    });
+};
 exports.details = function (req, res) {
     Motel.getById(req.params.id, function (response) {
         res.send({ result: response });

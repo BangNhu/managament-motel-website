@@ -1,8 +1,19 @@
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
 import { useState, ChangeEvent } from 'react';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Stack } from '@mui/material';
+import {
+    Button,
+    TextField,
+    Select,
+    MenuItem,
+    InputLabel,
+    FormControl,
+    Stack,
+    Divider,
+    Typography,
+} from '@mui/material';
 import { useRouter } from 'next/router';
 import { RegisterForm } from '@/components/register';
+import Link from 'next/link';
 
 export interface IRegisterProps {
     landlord_name: string;
@@ -44,7 +55,7 @@ export default function Register(props: IRegisterProps) {
                 console.log('User signed up successfully!');
                 // Redirect to the login page after successful signup
                 console.log(formData);
-                router.push('/login');
+                router.push('/verify-email');
             } else {
                 console.error('Failed to sign up');
             }
@@ -58,60 +69,149 @@ export default function Register(props: IRegisterProps) {
     };
 
     return (
-        <Stack>
+        <Stack
+            sx={{
+                width: { xs: '80%', md: '30%' },
+                margin: { xs: '20% auto', md: '5% auto' },
+                borderRadius: '8px',
+                padding: '2% 5%',
+                boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
+            }}
+        >
+            <Typography
+                variant="h1"
+                sx={{
+                    fontSize: '32px',
+                    fontFamily: 'Verdana',
+                    marginBottom: { xs: '10px', md: '20px' },
+                    textAlign: 'center',
+                    color: '#A61713',
+                    fontWeight: 600,
+                    // textTransform: 'uppercase',
+                }}
+            >
+                ĐĂNG KÝ
+            </Typography>
+            <Divider
+                sx={{
+                    margin: '0 0 5% 0',
+                    border: '1px solid #cb5656',
+                    // width: { xs: '100%', sm: '80%' },
+                    // textAlign: 'center',
+                    // mx: 'auto',
+                }}
+            />
             <form onSubmit={handleSubmit}>
-                <TextField
-                    label="Landlord Name"
-                    type="text"
-                    name="landlord_name"
-                    value={formData.landlord_name}
-                    onChange={handleChange}
-                />
-                <br />
-                <TextField
-                    label="Email"
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                />
-                <br />
-                <TextField
-                    label="Phone Number"
-                    type="tel"
-                    name="number_phone"
-                    value={formData.number_phone}
-                    onChange={handleChange}
-                />
-                <br />
-                <TextField
-                    label="Password"
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                />
-                <br />
-                <TextField
-                    label="Birthday"
-                    type="date"
-                    name="birthday"
-                    value={formData.birthday}
-                    onChange={handleChange}
-                />
-                <br />
-                <FormControl>
-                    <InputLabel>Gender</InputLabel>
-                    <Select name="gender" value={formData.gender} onChange={handleChange}>
-                        <MenuItem value="1">Male</MenuItem>
-                        <MenuItem value="female">Female</MenuItem>
-                        <MenuItem value="other">Other</MenuItem>
-                    </Select>
-                </FormControl>
-                <br />
-                <Button variant="contained" onClick={handleSubmit}>
-                    Signup
-                </Button>
+                <Stack sx={{ gap: '20px' }}>
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        variant="outlined"
+                        color="secondary"
+                        label="Họ và tên"
+                        type="text"
+                        name="landlord_name"
+                        value={formData.landlord_name}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        variant="outlined"
+                        color="secondary"
+                        label="Email"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        variant="outlined"
+                        color="secondary"
+                        label="Số điện thoại"
+                        type="tel"
+                        name="number_phone"
+                        value={formData.number_phone}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        variant="outlined"
+                        color="secondary"
+                        label="Password"
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        variant="outlined"
+                        color="secondary"
+                        label="Ngày sinh"
+                        type="date"
+                        name="birthday"
+                        value={formData.birthday}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+                    <Stack
+                        direction="row"
+                        sx={{
+                            justifyContent: 'end',
+                            gap: '20px',
+                            width: { xs: '100%', sm: '90%' },
+                        }}
+                    >
+                        <Link href={'/login'} style={{ textDecoration: 'none', color: '#2565b9' }}>
+                            Bạn đã có tài khoản? Đăng nhập tại đây.
+                        </Link>
+                    </Stack>
+                    <Button
+                        variant="contained"
+                        onClick={handleSubmit}
+                        sx={{ width: { xs: '100%', sm: '80%' }, textAlign: 'center', mx: 'auto' }}
+                    >
+                        Đăng ký
+                    </Button>
+                </Stack>
             </form>
             {/* <RegisterForm /> */}
         </Stack>

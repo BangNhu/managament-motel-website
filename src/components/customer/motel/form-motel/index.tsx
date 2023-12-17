@@ -11,6 +11,7 @@ import {
     Grid,
     Typography,
     SelectChangeEvent,
+    Divider,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -25,30 +26,33 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useGetStaffsByLandlordQuery } from '@/services/staff.services';
 
-export interface IAddMotelProps {}
+export interface IAddMotelProps {
+    handleCloseModal: () => void;
+}
 
-const intialState: Omit<Motel, 'id'> = {
+const intialState: Omit<Motel, 'id' | 'staff_name'> = {
     motel_name: '',
     address: '',
     record_day: 0,
     pay_day: 0,
     staff_id: 0,
     landlord_id: 0,
-    staff_name: '',
+    // staff_name: '',
 };
 export default function AddMotel(props: IAddMotelProps) {
     const tokenData = useTokenData();
-    console.log(tokenData);
-    const [formData, setFormData] = useState<Omit<Motel, 'id'>>(intialState);
+    // console.log(tokenData);
+    const [formData, setFormData] = useState<Omit<Motel, 'id' | 'staff_name'>>(intialState);
     const [addMotel, addMotelReslut] = useAddMotelsMutation();
     const motelId = useSelector((state: RootState) => state.motel.id);
+    console.log('motel id', motelId);
 
     const { data: motelData } = useGetMotelQuery(motelId, { skip: !motelId });
     const { data: staffData } = useGetStaffsByLandlordQuery(tokenData?.userID);
     const [updateMotel, updateMotelResult] = useUpdateMotelsMutation();
 
-    console.log('infodata', motelData?.result);
-    console.log('infodata staff ', staffData?.result);
+    // console.log('infodata', motelData?.result);
+    // console.log('infodata staff ', staffData?.result);
 
     useEffect(() => {
         if (motelData) {
@@ -89,40 +93,71 @@ export default function AddMotel(props: IAddMotelProps) {
                 id: motelId,
             }).unwrap();
         } else {
+            console.log('formData', formData);
             await addMotel(formData).unwrap();
+            console.log('thành công');
         }
+
         setFormData(intialState);
+        if (props.handleCloseModal) {
+            props.handleCloseModal();
+        }
     };
 
     return (
         <Stack
             sx={{
-                width: { xs: '90%', md: '50%' },
-                margin: { xs: '20% auto', md: '5% auto' },
+                // width: { xs: '90%', md: '50%' },
+                // // margin: { xs: '20% auto', md: '10% auto 0 auto ' },
+                // mx: 'auto',
                 borderRadius: '8px',
                 // border: '2px solid #A61713',
                 padding: '2% 5%',
-                boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
+                // boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
             }}
         >
-            <Typography
-                variant="h1"
-                sx={{
-                    fontSize: '32px',
-                    fontFamily: 'Verdana',
-                    marginBottom: { xs: '10px', md: '20px' },
-                    textAlign: 'center',
-                    // textTransform: 'uppercase',
-                }}
-            >
-                Đăng ký phần mềm quản lý nhà trọ{' '}
+            {' '}
+            {motelId !== undefined && motelId !== 0 && (
                 <Typography
-                    component="span"
-                    sx={{ color: '#A61713', fontSize: '32px', fontFamily: 'Verdana' }}
+                    variant="h1"
+                    sx={{
+                        fontSize: '22px',
+                        fontFamily: 'Verdana',
+                        marginBottom: { xs: '10px', md: '20px' },
+                        textAlign: 'center',
+                        color: '#A61713',
+                        fontWeight: 600,
+                        // textTransform: 'uppercase',
+                    }}
                 >
-                    NhuTK
+                    Cập nhật nhà trọ
                 </Typography>
-            </Typography>
+            )}
+            {!Boolean(motelId) && (
+                <Typography
+                    variant="h1"
+                    sx={{
+                        fontSize: '22px',
+                        fontFamily: 'Verdana',
+                        marginBottom: { xs: '10px', md: '20px' },
+                        textAlign: 'center',
+                        color: '#A61713',
+                        fontWeight: 600,
+                        // textTransform: 'uppercase',
+                    }}
+                >
+                    Thêm mới nhà trọ
+                </Typography>
+            )}
+            <Divider
+                sx={{
+                    margin: '0 0 5% 0',
+                    border: '1px solid #cb5656',
+                    // width: { xs: '100%', sm: '80%' },
+                    // textAlign: 'center',
+                    // mx: 'auto',
+                }}
+            />
             <form onSubmit={handleSubmit} action="/login">
                 <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={12} md={6}>
@@ -191,7 +226,7 @@ export default function AddMotel(props: IAddMotelProps) {
                             required
                             sx={{ mb: 4 }}
                         /> */}
-                        <FormControl fullWidth>
+                        <FormControl fullWidth variant="outlined" color="secondary">
                             <InputLabel id="demo-simple-select-label">Nhân viên</InputLabel>
                             <Select
                                 name="staff_id"
@@ -215,21 +250,60 @@ export default function AddMotel(props: IAddMotelProps) {
                     </Grid>
                 </Grid>
                 {motelId !== undefined && motelId !== 0 && (
-                    <Fragment>
-                        <Stack direction="row">
-                            <Button variant="outlined" color="secondary" type="submit">
-                                Cập nhật
-                            </Button>
-                            <Button variant="outlined" color="secondary" type="submit">
-                                Hủy
-                            </Button>
-                        </Stack>
-                    </Fragment>
+                    <Stack
+                        direction="row"
+                        justifyContent="center"
+                        spacing={3}
+                        sx={{ margin: { xs: '10px auto 0', sm: '30px auto 0' } }}
+                    >
+                        <Button
+                            variant="contained"
+                            sx={{ textTransform: 'capitalize', width: '100px' }}
+                            type="submit"
+                        >
+                            Cập nhật
+                        </Button>
+                        <Button
+                            variant="contained"
+                            sx={{ textTransform: 'capitalize', width: '100px' }}
+                            type="submit"
+                            onClick={() => {
+                                if (props.handleCloseModal) {
+                                    props.handleCloseModal();
+                                }
+                            }}
+                        >
+                            Hủy
+                        </Button>
+                    </Stack>
                 )}
                 {!Boolean(motelId) && (
-                    <Button variant="outlined" color="secondary" type="submit">
-                        Thêm mới
-                    </Button>
+                    <Stack
+                        direction="row"
+                        justifyContent="center"
+                        spacing={3}
+                        sx={{ margin: { xs: '10px auto 0', sm: '30px auto 0' } }}
+                    >
+                        <Button
+                            variant="contained"
+                            sx={{ textTransform: 'capitalize', width: '100px' }}
+                            type="submit"
+                        >
+                            Thêm mới
+                        </Button>
+                        <Button
+                            variant="contained"
+                            sx={{ textTransform: 'capitalize', width: '100px' }}
+                            type="submit"
+                            onClick={() => {
+                                if (props.handleCloseModal) {
+                                    props.handleCloseModal();
+                                }
+                            }}
+                        >
+                            Hủy
+                        </Button>
+                    </Stack>
                 )}
             </form>
         </Stack>

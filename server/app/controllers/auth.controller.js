@@ -3,20 +3,19 @@ var JWT = require('../common/_JWT');
 const crypto = require('crypto');
 
 exports.signup = function (req, res) {
-    let { landlord_name, email, number_phone, password, birthday, gender } = req.body;
+    let { landlord_name, email, number_phone, password, birthday } = req.body;
     landlord_name = landlord_name.trim();
     email = email.trim();
     number_phone = number_phone.trim();
     password = password.trim();
     birthday = birthday.trim();
-    gender = gender.trim();
+
     if (
         landlord_name == '' ||
         email == '' ||
         number_phone == '' ||
         password == '' ||
-        birthday == '' ||
-        gender == ''
+        birthday == ''
     ) {
         res.json({
             status: 'False',
@@ -58,7 +57,7 @@ exports.signup = function (req, res) {
                 number_phone,
                 password,
                 birthday,
-                gender,
+
                 email_token: '',
             },
             function (result) {
