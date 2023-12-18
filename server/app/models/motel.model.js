@@ -23,13 +23,13 @@ Motel.get_all = function (result) {
     );
 };
 
-Motel.get_all_by_landlord = function (landlord_id, result) {
+Motel.get_all_by_landlord = function (id, result) {
     db.query(
-        'SELECT motel.*, staff.staff_name as staff_name FROM motel JOIN staff ON motel.staff_id = staff.id where landlord_id=?',
-        landlord_id,
+        'SELECT motel.*, staff.staff_name as staff_name FROM motel JOIN staff ON motel.staff_id = staff.id where motel.landlord_id=?',
+        [id],
         function (err, motels) {
             if (err) {
-                result(null);
+                result('lỗi');
             } else {
                 result(motels);
             }

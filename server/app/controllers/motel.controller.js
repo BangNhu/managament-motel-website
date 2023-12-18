@@ -6,7 +6,7 @@ exports.get_list = function (req, res) {
     });
 };
 exports.get_list_by_landlord = function (req, res) {
-    Motel.get_all_by_landlord(req.params.landlord_id, function (response) {
+    Motel.get_all_by_landlord(req.params.id, function (response) {
         res.send({ result: response });
     });
 };

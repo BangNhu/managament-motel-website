@@ -118,9 +118,11 @@ Landlord.forget = function (data, result) {
             if (landlord.length > 0) {
                 const user = landlord[0];
                 token = generateToken(data.reset_token);
+                console.log(token.token);
                 db.query(
                     'UPDATE landlord SET reset_token=? WHERE id=?',
                     [(user.reset_token = token.token), user.id],
+
                     function (err) {
                         if (err) {
                             result(0);
@@ -139,41 +141,39 @@ Landlord.forget = function (data, result) {
     });
 };
 
-Landlord.reset = function (data, result) {
-    if (!data.reset_token) console.log('Email token không tồn tại', data.reset_token);
-    db.query(
-        'SELECT * FROM landlord WHERE reset_token=?',
-        [data.reset_token],
-        function (err, landlord) {
-            if (err) {
-                throw err;
-            } else {
-                if (landlord.length > 0) {
-                    bcrypt.hash(data.password, 10, function (err, hashedPassword) {
-                        if (err) {
-                            result(err, null);
-                            console.log('lỗi mã hóa', err);
-                        } else {
-                            data.password = hashedPassword;
-                            db.query(
-                                'UPDATE landlord SET reset_token=?, password=? WHERE id=?',
-                                [(data.reset_token = null), data.password, data.id],
-                                function (err) {
-                                    if (err) {
-                                        result(0);
-                                        console.log(err);
-                                    } else {
-                                        result(landlord);
-                                        console.log(landlord);
-                                    }
+Landlord.reset = function ({ reset_token, data }, result) {
+    if (!reset_token) console.log('Email token không tồn tại', reset_token);
+    db.query('SELECT * FROM landlord WHERE reset_token=?', [reset_token], function (err, landlord) {
+        if (err) {
+            throw err;
+        } else {
+            console.log('landlord', landlord);
+            if (landlord.length > 0) {
+                const user = landlord[0];
+                bcrypt.hash(data.password, 10, function (err, hashedPassword) {
+                    if (err) {
+                        result(err, null);
+                        console.log('lỗi mã hóa', err);
+                    } else {
+                        data.password = hashedPassword;
+                        db.query(
+                            'UPDATE landlord SET reset_token=?, password=? WHERE id=?',
+                            [(reset_token = null), data.password, user.id],
+                            function (err) {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    result(user);
                                 }
-                            );
-                        }
-                    });
-                }
+                            }
+                        );
+                    }
+                });
+            } else {
+                result(null);
             }
         }
-    );
+    });
 };
 
 //Admin login

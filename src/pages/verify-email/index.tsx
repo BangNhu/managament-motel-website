@@ -46,7 +46,7 @@ export default function VerifyEmail(props: IVerifyEmailProps) {
             {isVerified ? (
                 <Alert severity="success">
                     Email đã được xác nhận. Thực hiện đăng nhập tại đây{' '}
-                    <Link href={'/login'}>Đăng nhập tại khoản</Link>
+                    <Link href={'/login'}>Đăng nhập tài khoản</Link>
                 </Alert>
             ) : (
                 <Stack sx={{ gap: '20px' }}>

@@ -80,8 +80,10 @@ exports.forgot_password = function (req, res) {
     });
 };
 exports.reset_password = function (req, res) {
+    let reset_token = req.query.reset_token;
     let data = req.body;
-    Landlord.reset(data, function (result) {
+    Landlord.reset({ reset_token, data }, function (result) {
+        console.log(result);
         if (result) {
             res.send({ result });
         } else {

@@ -1,6 +1,5 @@
 import { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { CSVLink, CSVDownload } from 'react-csv';
 import {
     Alert,
     Button,
@@ -16,6 +15,7 @@ import { checkToken } from '@/services/auth/check-token';
 import {
     useAddMotelsMutation,
     useDeleteMotelMutation,
+    useGetMotelsByLandLordQuery,
     useGetMotelsQuery,
 } from '@/services/motel.services';
 import {
@@ -28,6 +28,7 @@ import { useDispatch } from 'react-redux';
 import { startEditMotel } from '@/slices/motel.slice';
 import { useGetStaffQuery } from '@/services/staff.services';
 import AddMotel from '../form-motel';
+import useTokenData from '@/services/auth/token-data-loader';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -54,16 +55,15 @@ export function MotelList(props: IMotelListProps) {
         setOpen(false);
         dispatch(startEditMotel(0));
     };
+    const tokenData = useTokenData();
     const [selectedMotelId, setSelectedMotelId] = useState<number | null>(null);
-
-    const [tokenData, setTokenData] = useState<any>(null);
     const [deletePost] = useDeleteMotelMutation();
-    const { data: dataMotel } = useGetMotelsQuery();
-    console.log(dataMotel);
-    const { data: dataStaff } = useGetStaffQuery(3);
-    console.log('data staff', dataStaff);
+    // const { data: dataMotel } = useGetMotelsQuery();
+    // console.log(dataMotel);
+    const { data: dataMotelLandlord } = useGetMotelsByLandLordQuery(tokenData?.userID);
+    console.log('dataMotelLandlord', dataMotelLandlord);
     //Danh sách nhà trọ
-    const motels = dataMotel?.result || [];
+    const motels = dataMotelLandlord?.result || [];
 
     const dispatch = useDispatch();
     // const startEdit = (id: number) => {
@@ -73,25 +73,6 @@ export function MotelList(props: IMotelListProps) {
         deletePost(id);
     };
 
-    useEffect(() => {
-        const checkTokenAndSetData = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    return;
-                }
-
-                const data = await checkToken(token);
-                setTokenData(data);
-            } catch (error: any) {
-                console.error('Error:', error.message);
-            }
-        };
-
-        if (tokenData === null) {
-            checkTokenAndSetData();
-        }
-    }, [tokenData]);
     // const columns: GridColDef[] = [
     //     { field: 'id', headerName: 'ID', width: 70 },
     //     { field: 'firstName', headerName: 'First name', width: 130 },

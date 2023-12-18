@@ -1,13 +1,38 @@
 import { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Alert, Button, CircularProgress, Grid, Stack, TextField, Typography } from '@mui/material';
+import {
+    Button,
+    CircularProgress,
+    Divider,
+    Grid,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
+import React from 'react';
 
 export interface IForgotPasswordProps {
     email: string;
 }
-
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 export default function ForgotPassword(props: IForgotPasswordProps) {
+    //Hiển thị Alert
+    const [open, setOpen] = React.useState(false);
+    const handleClick = () => {
+        setOpen(true);
+    };
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
+
     const [formData, setFormData] = useState<IForgotPasswordProps>({ email: '' });
     const [isSendEmail, setIsSendEmail] = useState(false);
     const router = useRouter();
@@ -47,10 +72,9 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
     return (
         <Stack
             sx={{
-                width: { xs: '90%', md: '50%' },
+                width: { xs: '80%', md: '30%' },
                 margin: { xs: '20% auto', md: '5% auto' },
                 borderRadius: '8px',
-                // border: '2px solid #A61713',
                 padding: '2% 5%',
                 boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
             }}
@@ -58,44 +82,61 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
             <Typography
                 variant="h1"
                 sx={{
-                    fontSize: '32px',
+                    fontSize: '28px',
                     fontFamily: 'Verdana',
                     marginBottom: { xs: '10px', md: '20px' },
                     textAlign: 'center',
+
                     // textTransform: 'uppercase',
                 }}
             >
-                Đăng ký phần mềm quản lý nhà trọ{' '}
-                <Typography
-                    component="span"
-                    sx={{ color: '#A61713', fontSize: '32px', fontFamily: 'Verdana' }}
-                >
-                    NhuTK
-                </Typography>
+                Điền email đã đăng ký
             </Typography>
-            <form onSubmit={handleSubmit} action="/login">
-                <TextField
-                    sx={{
-                        width: { xs: '100%', sm: '60%' },
-                        display: 'block',
-                        textAlign: 'center',
-                        mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
-                    }}
-                    type="text"
-                    variant="outlined"
-                    color="secondary"
-                    label="Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                />
-                <Button variant="contained" type="submit">
-                    Gửi
-                </Button>
+            <Divider
+                sx={{
+                    margin: '0 0 5% 0',
+                    border: '1px solid #cb5656',
+                    // width: { xs: '100%', sm: '80%' },
+                    // textAlign: 'center',
+                    // mx: 'auto',
+                }}
+            />
+            <form onSubmit={handleSubmit}>
+                <Stack sx={{ gap: '20px' }}>
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '60%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        type="text"
+                        variant="outlined"
+                        color="secondary"
+                        label="Email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+                    <Button
+                        variant="contained"
+                        onClick={handleClick}
+                        type="submit"
+                        sx={{ textAlign: 'center', mx: 'auto' }}
+                    >
+                        Gửi
+                    </Button>
+                </Stack>
             </form>
-            {isSendEmail ? <p>Link làm mới mật khẩu đã được gửi tới email của bạn.</p> : null}
+            {isSendEmail ? (
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                        Bạn hãy kiểm tra email và thực hiện đặt lại mật khẩu.
+                    </Alert>
+                </Snackbar>
+            ) : null}
         </Stack>
     );
 }

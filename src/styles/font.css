@@ -1,10 +1,21 @@
 /* Good Timing */
 @font-face {
-    font-family: Verdana;
+    font-family: 'Verdana';
     src: url(../../public/font/verdana.ttf) format('truetype');
-    font-weight: 100 1000;
-    font-stretch: 0% 200%;
+    font-weight: 100; /* Thin */
+    font-style: normal;
 }
-body {
-    color: #1c1c1c;
+
+@font-face {
+    font-family: 'Verdana';
+    src: url(../../public/font/verdana.ttf) format('truetype');
+    font-weight: 400; /* Regular */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Verdana';
+    src: url(../../public/font/verdana-bold.ttf) format('truetype');
+    font-weight: 700; /* Bold */
+    font-style: normal;
 }

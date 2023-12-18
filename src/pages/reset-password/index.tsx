@@ -1,13 +1,37 @@
-import { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Alert, Button, CircularProgress, Grid, Stack, TextField, Typography } from '@mui/material';
+import {
+    Button,
+    CircularProgress,
+    Divider,
+    Grid,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
 
 export interface IResetPasswordProps {
     password: string;
 }
-
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 export default function ResetPassword(props: IResetPasswordProps) {
+    //Hiển thị Alert
+    const [open, setOpen] = React.useState(false);
+    const handleClick = () => {
+        setOpen(true);
+    };
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
+
     //lấy thông tin email, token từ router
     const router = useRouter();
     const [infoEmail, setInfoEmail] = useState<string | null>(null);
@@ -45,6 +69,7 @@ export default function ResetPassword(props: IResetPasswordProps) {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (infoToken) {
+            console.log(infoToken);
             try {
                 const response = await fetch(
                     `${process.env.NEXT_PUBLIC_API_URL}/reset-password?reset_token=${infoToken}`,
@@ -58,8 +83,8 @@ export default function ResetPassword(props: IResetPasswordProps) {
                 );
 
                 if (response.ok) {
-                    // const data = await response.json();
-                    // console.log('Thành công', data);
+                    const data = await response.json();
+                    console.log('Thành công', data);
                     setIsReset(true);
                 } else {
                     console.log('Thất bại');
@@ -73,10 +98,9 @@ export default function ResetPassword(props: IResetPasswordProps) {
     return (
         <Stack
             sx={{
-                width: { xs: '90%', md: '50%' },
+                width: { xs: '80%', md: '30%' },
                 margin: { xs: '20% auto', md: '5% auto' },
                 borderRadius: '8px',
-                // border: '2px solid #A61713',
                 padding: '2% 5%',
                 boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
             }}
@@ -84,62 +108,79 @@ export default function ResetPassword(props: IResetPasswordProps) {
             <Typography
                 variant="h1"
                 sx={{
-                    fontSize: '32px',
+                    fontSize: '28px',
                     fontFamily: 'Verdana',
                     marginBottom: { xs: '10px', md: '20px' },
                     textAlign: 'center',
+
                     // textTransform: 'uppercase',
                 }}
             >
-                Đăng ký phần mềm quản lý nhà trọ{' '}
-                <Typography
-                    component="span"
-                    sx={{ color: '#A61713', fontSize: '32px', fontFamily: 'Verdana' }}
-                >
-                    NhuTK
-                </Typography>
+                Đặt lại mật khẩu
             </Typography>
+            <Divider
+                sx={{
+                    margin: '0 0 5% 0',
+                    border: '1px solid #cb5656',
+                    // width: { xs: '100%', sm: '80%' },
+                    // textAlign: 'center',
+                    // mx: 'auto',
+                }}
+            />
             <form onSubmit={handleSubmit} action="/login">
-                <TextField
-                    sx={{
-                        width: { xs: '100%', sm: '60%' },
-                        display: 'block',
-                        textAlign: 'center',
-                        mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
-                    }}
-                    variant="outlined"
-                    color="secondary"
-                    label="Email"
-                    name="email"
-                    value={infoEmail || ''}
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                    fullWidth
-                    required
-                />
-                <TextField
-                    sx={{
-                        width: { xs: '100%', sm: '60%' },
-                        display: 'block',
-                        textAlign: 'center',
-                        mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
-                    }}
-                    type="password"
-                    variant="outlined"
-                    color="secondary"
-                    label="Mật khẩu"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                />
-                <Button variant="contained" type="submit">
-                    Gửi
-                </Button>
+                <Stack sx={{ gap: '20px' }}>
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '60%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        variant="outlined"
+                        color="secondary"
+                        label="Email"
+                        name="email"
+                        value={infoEmail || ''}
+                        InputProps={{
+                            readOnly: true,
+                        }}
+                        fullWidth
+                        required
+                    />
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '60%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        type="password"
+                        variant="outlined"
+                        color="secondary"
+                        label="Mật khẩu"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+                    <Button
+                        variant="contained"
+                        onClick={handleClick}
+                        type="submit"
+                        sx={{ textAlign: 'center', mx: 'auto' }}
+                    >
+                        Gửi
+                    </Button>
+                </Stack>
             </form>{' '}
-            {isReset ? <p>Bạn đã đặt lại mật khẩu thành công.</p> : null}
+            {isReset ? (
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                        Đặt lại mật khẩu thành công.
+                    </Alert>
+                </Snackbar>
+            ) : null}
         </Stack>
     );
 }
