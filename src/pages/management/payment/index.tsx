@@ -98,6 +98,14 @@ export default function Payment(props: IPaymentProps) {
                         </Typography>
                     </Stack>
                     <Stack direction="row" justifyContent="space-between">
+                        <Typography>Giá tiền</Typography>
+                        <Typography>
+                            {userType === 1 && '150000đ'}
+                            {userType === 2 && '350000đ'}
+                            {userType === 3 && '700000đ'}
+                        </Typography>
+                    </Stack>
+                    <Stack direction="row" justifyContent="space-between">
                         <Typography>Số tháng</Typography>
                         <Typography>{numberMonth}</Typography>
                     </Stack>
@@ -106,7 +114,11 @@ export default function Payment(props: IPaymentProps) {
                         <Typography>{total}</Typography>
                     </Stack>
                     <Stack>
-                        <Paypal amount={String(Math.round((total / 23500) * 100) / 100)} />
+                        <Paypal
+                            amount={String(Math.round((total / 23500) * 100) / 100)}
+                            type={userType}
+                            months={numberMonth}
+                        />
                     </Stack>
                 </Stack>
             </Stack>

@@ -114,4 +114,33 @@ Landlord.update = function (l, result) {
     );
 };
 
+Landlord.update_type_account = function (data, result) {
+    db.query(
+        'UPDATE landlord SET account_type=?, expiration_date=? WHERE id=?',
+        [data.account_type, data.expiration_date, data.id],
+        function (err, updateResult) {
+            if (err) {
+                result('lỗi update');
+                console.log('Lỗi update:', err);
+            } else {
+                console.log('Update thành công:', updateResult);
+
+                db.query(
+                    'INSERT INTO pay_account SET landlord_id=?, pay_day=?, total=?, number_month=?',
+                    [data.id, data.pay_day, data.total, data.number_month],
+                    function (err, pay_account) {
+                        if (err) {
+                            result('lỗi set');
+                            console.log('Lỗi set:', err);
+                        } else {
+                            console.log('Insert thành công:', pay_account);
+                            result(pay_account);
+                        }
+                    }
+                );
+            }
+        }
+    );
+};
+
 module.exports = Landlord;

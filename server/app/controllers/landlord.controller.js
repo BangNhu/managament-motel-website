@@ -94,3 +94,10 @@ exports.signup = function (req, res) {
         );
     }
 };
+
+exports.payment = function (req, res) {
+    var data = req.body;
+    Landlord.update_type_account(data, function (response) {
+        res.send({ result: response });
+    });
+};
