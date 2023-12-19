@@ -11,7 +11,16 @@ exports.details = function (req, res) {
         res.send({ result: response });
     });
 };
-
+exports.list_by_landlord = function (req, res) {
+    BlockMotel.get_bm_by_landlord(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
+exports.list_by_staff = function (req, res) {
+    BlockMotel.get_bm_by_staff(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
 //body-parser
 exports.add_block_motel = function (req, res) {
     var data = req.body;

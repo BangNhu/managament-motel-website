@@ -3,28 +3,28 @@ import { access } from 'fs';
 
 interface StaffState {
     id: number;
-    staff_name: string;
-    citizen_identification: string;
-    address: string;
-    number_phone: string;
-    email: string;
-    landlord_id: number;
-    password: string;
-    gender: number;
-    birthday: string;
+    // staff_name: string;
+    // citizen_identification: string;
+    // address: string;
+    // number_phone: string;
+    // email: string;
+    // landlord_id: number;
+    // password: string;
+    // gender: number;
+    // birthday: string;
 }
 
 const initialState: StaffState = {
     id: 0,
-    staff_name: '',
-    citizen_identification: '',
-    address: '',
-    number_phone: '',
-    email: '',
-    landlord_id: 0,
-    password: '',
-    gender: 0,
-    birthday: '',
+    // staff_name: '',
+    // citizen_identification: '',
+    // address: '',
+    // number_phone: '',
+    // email: '',
+    // landlord_id: 0,
+    // password: '',
+    // gender: 0,
+    // birthday: '',
 };
 
 const staffSlice = createSlice({

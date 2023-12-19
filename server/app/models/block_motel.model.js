@@ -18,6 +18,35 @@ BlockMotel.get_all = function (result) {
     });
 };
 
+BlockMotel.get_bm_by_landlord = function (id, result) {
+    db.query(
+        'SELECT block_motel.*, motel.* FROM block_motel JOIN motel ON block_motel.motel_id = motel.id WHERE motel.landlord_id = ?',
+        [id],
+        function (err, block_motels) {
+            if (err) {
+                result(null);
+                console.log(err);
+            } else {
+                result(block_motels);
+            }
+        }
+    );
+};
+
+BlockMotel.get_bm_by_staff = function (id, result) {
+    db.query(
+        'SELECT block_motel.*, motel.* FROM block_motel JOIN motel ON block_motel.motel_id = motel.id WHERE motel.staff_id = ?',
+        [id],
+        function (err, block_motels) {
+            if (err) {
+                result(null);
+                console.log(err);
+            } else {
+                result(block_motels);
+            }
+        }
+    );
+};
 BlockMotel.getById = function (id, result) {
     db.query('SELECT * FROM block_motel WHERE id=?', id, function (err, block_motels) {
         if (err || block_motels.length === 0) {

@@ -99,7 +99,8 @@ Staff.create = function (data, result) {
                                         // result({ id: staff.insertId, ...data });
 
                                         const permissions = [
-                                            7, 8, 10, 11, 13, 14, 16, 18, 19, 20, 21, 28, 29,
+                                            7, 8, 10, 11, 13, 14, 16, 18, 19, 20, 21, 28, 29, 30,
+                                            31,
                                         ];
                                         const permissionStaffData = permissions.map(
                                             (permission_id) => ({
@@ -164,6 +165,52 @@ Staff.update = function (staff, result) {
                 result(null);
             } else {
                 result(staff);
+            }
+        }
+    );
+};
+
+//Phân quyền
+Staff.get_permission = function (id, result) {
+    db.query(
+        'SELECT permission_id from permission_staff where staff_id=?',
+        id,
+        function (err, staffs) {
+            if (err) {
+                result(null);
+                console.log(err);
+            } else {
+                result(staffs);
+            }
+        }
+    );
+};
+
+Staff.add_staff_permission = function (data, result) {
+    db.query(
+        'INSERT INTO permission_staff set permission_id=?, staff_id=?',
+        [data.permission_id, data.staff_id],
+        function (err) {
+            if (err) {
+                result({ error: 'Không thể thêm dữ liệu vào database' });
+                console.log(err);
+            } else {
+                result([data.permission_id, data.staff_id]);
+            }
+        }
+    );
+};
+
+Staff.remove_staff_permission = function (data, result) {
+    db.query(
+        'DELETE FROM permission_staff WHERE permission_id=? AND staff_id=?',
+        [data.permission_id, data.staff_id],
+        function (err, motel) {
+            if (err) {
+                console.log(err);
+                result(null);
+            } else {
+                result('Xóa dữ liệu có id' + data.staff_id + 'thành công');
             }
         }
     );

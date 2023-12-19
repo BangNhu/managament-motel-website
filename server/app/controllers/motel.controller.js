@@ -10,6 +10,13 @@ exports.get_list_by_landlord = function (req, res) {
         res.send({ result: response });
     });
 };
+
+exports.get_list_by_staff = function (req, res) {
+    Motel.get_all_by_staff(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
+
 exports.details = function (req, res) {
     Motel.getById(req.params.id, function (response) {
         res.send({ result: response });

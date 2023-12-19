@@ -39,3 +39,23 @@ exports.update_staff = function (req, res) {
         res.send({ result: response });
     });
 };
+
+//phân quyền
+exports.permission_list = function (req, res) {
+    Staff.get_permission(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
+
+exports.add_permission = function (req, res) {
+    var data = req.body;
+    Staff.add_staff_permission(data, function (response) {
+        res.send({ result: response });
+    });
+};
+exports.remove_permission = function (req, res) {
+    var data = req.body;
+    Staff.remove_staff_permission(data, function (response) {
+        res.send({ result: response });
+    });
+};

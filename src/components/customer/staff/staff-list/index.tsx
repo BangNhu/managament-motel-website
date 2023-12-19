@@ -25,10 +25,16 @@ import {
     GridValueGetterParams,
 } from '@mui/x-data-grid';
 import { useDispatch } from 'react-redux';
-import { startEditMotel } from '@/slices/motel.slice';
-import { useGetStaffQuery } from '@/services/staff.services';
-import AddMotel from '../form-motel';
+import {
+    useDeleteStaffMutation,
+    useGetStaffQuery,
+    useGetStaffsByLandlordQuery,
+} from '@/services/staff.services';
+import AddMotel from '../form-staff';
 import useTokenData from '@/services/auth/token-data-loader';
+import { parseISO, format } from 'date-fns';
+import { cancelEditStaff, startEditStaff } from '@/slices/staff.slice';
+import FormDecentralize from '../decentral';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -43,57 +49,51 @@ const style = {
     p: 5,
 };
 
-const GreyBackdrop = () => {
-    return <Stack style={{ backgroundColor: 'rgba(169, 169, 169, 0.5)', zIndex: 1300 }} />;
-};
-export interface IMotelListProps {}
+export interface IStaffListProps {}
 
-export function MotelList(props: IMotelListProps) {
+export function StaffList(props: IStaffListProps) {
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false);
-        dispatch(startEditMotel(0));
+        cancelEditStaff();
     };
     const tokenData = useTokenData();
-    const [selectedMotelId, setSelectedMotelId] = useState<number | null>(null);
-    const [deletePost] = useDeleteMotelMutation();
-    // const { data: dataMotel } = useGetMotelsQuery();
+    const [deletePost] = useDeleteStaffMutation();
     // console.log(dataMotel);
-    const { data: dataMotelLandlord } = useGetMotelsByLandLordQuery(tokenData?.userID);
-    console.log('dataMotelLandlord', dataMotelLandlord);
+    const { data: dataStaff } = useGetStaffsByLandlordQuery(tokenData?.userID);
+    console.log('dataStaff', dataStaff);
     //Danh sách nhà trọ
-    const motels = dataMotelLandlord?.result || [];
+    const staffs = dataStaff?.result || [];
 
-    const dispatch = useDispatch();
-    // const startEdit = (id: number) => {
-    //     dispatch(startEditMotel(id));
-    // };
     const handleDeleteMotel = (id: number) => {
         deletePost(id);
     };
 
     const columns: GridColDef[] = [
         { field: 'index', headerName: 'STT', width: 70 },
-        { field: 'motel_name', headerName: 'Tên dãy trọ', width: 130 },
+        { field: 'staff_name', headerName: 'Tên nhân viên', width: 130 },
+        { field: 'citizen_identification', headerName: 'CCCD', width: 130 },
         { field: 'address', headerName: 'Địa chỉ', width: 130 },
+        { field: 'number_phone', headerName: 'Số điện thoại', width: 130 },
+        { field: 'email', headerName: 'Email', width: 130 },
         {
-            field: 'record_day',
-            headerName: 'Ngày chốt',
-            type: 'number',
-            width: 90,
+            field: 'birthday',
+            headerName: 'Ngày sinh',
+            width: 130,
+            type: 'Date',
+            //xài format fns lại bị lỗi getStaticPaths
+            valueFormatter: (params) => {
+                const date = new Date(params.value);
+                const formattedDate = new Intl.DateTimeFormat('en-GB').format(date);
+                return formattedDate;
+            },
         },
-        {
-            field: 'pay_day',
-            headerName: 'Ngày tính',
-            type: 'number',
-            width: 90,
-        },
-        { field: 'staff_name', headerName: 'Nhân viên', width: 130 },
         {
             field: 'actions',
             headerName: '',
-            width: 250,
+            width: 400,
             sortable: false,
             filterable: false,
             renderCell: (params: GridRenderCellParams) => (
@@ -102,7 +102,38 @@ export function MotelList(props: IMotelListProps) {
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
                         onClick={() => {
-                            dispatch(startEditMotel(params.row.id));
+                            dispatch(startEditStaff(params.row.id));
+                            handleOpen();
+                        }}
+                    >
+                        Phân quyền
+                    </Button>
+                    <Modal
+                        open={open}
+                        onClose={() => {
+                            handleClose();
+                        }}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                        sx={{
+                            '& .MuiBackdrop-root': {
+                                backgroundColor: 'rgba(169, 169, 169, 0.5)', // Màu xám nhạt với độ trong suốt
+                            },
+                        }}
+                    >
+                        <Stack sx={style}>
+                            <FormDecentralize
+                                handleCloseModal={() => {
+                                    handleClose();
+                                }}
+                            />
+                        </Stack>
+                    </Modal>
+                    {/* <Button
+                        variant="outlined"
+                        sx={{ textTransform: 'capitalize' }}
+                        onClick={() => {
+                            dispatch(startEditStaff(params.row.id));
                             handleOpen();
                         }}
                     >
@@ -112,7 +143,7 @@ export function MotelList(props: IMotelListProps) {
                         open={open}
                         onClose={() => {
                             handleClose();
-                            dispatch(startEditMotel(0));
+                            dispatch(startEditStaff(0));
                             // setSelectedMotelId(null); // Đặt lại giá trị của selectedMotelId khi đóng Modal
                         }}
                         aria-labelledby="modal-modal-title"
@@ -127,15 +158,14 @@ export function MotelList(props: IMotelListProps) {
                             <AddMotel
                                 handleCloseModal={() => {
                                     handleClose();
-                                    setSelectedMotelId(null);
                                 }}
                             />
                         </Stack>
-                    </Modal>
+                    </Modal> */}
                     <Button
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
-                        onClick={() => handleDeleteMotel(params.row.id)}
+                        // onClick={() => handleDeleteMotel(params.row.id)}
                     >
                         Chi tiết
                     </Button>
@@ -150,14 +180,15 @@ export function MotelList(props: IMotelListProps) {
             ),
         },
     ];
-    const rows = motels.map((motel, index) => ({
-        ...motel,
+    const rows = staffs.map((staff, index) => ({
+        ...staff,
         index: index + 1, // Bắt đầu từ số 1
     }));
     return (
-        <Stack sx={{ width: { xs: '95%', md: '80%' }, mx: 'auto' }}>
+        //Để 98% cho nó có thanh scroll
+        <Stack sx={{ width: { xs: '95%', md: '98%' }, mx: 'auto' }}>
             <DataGrid
-                rows={rows} // Cast motels to the expected type
+                rows={rows} // Cast staffs to the expected type
                 columns={columns}
                 initialState={{
                     pagination: {

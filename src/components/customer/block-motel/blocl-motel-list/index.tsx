@@ -1,34 +1,11 @@
-import { useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import {
-    Alert,
-    Button,
-    CircularProgress,
-    Grid,
-    Modal,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
-import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
-import { checkToken } from '@/services/auth/check-token';
-import {
-    useAddMotelsMutation,
-    useDeleteMotelMutation,
-    useGetMotelsByLandLordQuery,
-    useGetMotelsQuery,
-} from '@/services/motel.services';
-import {
-    DataGrid,
-    GridColDef,
-    GridRenderCellParams,
-    GridValueGetterParams,
-} from '@mui/x-data-grid';
-import { useDispatch } from 'react-redux';
-import { startEditMotel } from '@/slices/motel.slice';
-import { useGetStaffQuery } from '@/services/staff.services';
-import AddMotel from '../form-motel';
 import useTokenData from '@/services/auth/token-data-loader';
+import { useDeleteMotelMutation, useGetMotelsByLandLordQuery } from '@/services/motel.services';
+import { startEditMotel } from '@/slices/motel.slice';
+import { Button, Modal, Stack } from '@mui/material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import AddMotel from '../form-block-motel';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -73,6 +50,37 @@ export function MotelList(props: IMotelListProps) {
         deletePost(id);
     };
 
+    // const columns: GridColDef[] = [
+    //     { field: 'id', headerName: 'ID', width: 70 },
+    //     { field: 'firstName', headerName: 'First name', width: 130 },
+    //     { field: 'lastName', headerName: 'Last name', width: 130 },
+    //     {
+    //         field: 'age',
+    //         headerName: 'Age',
+    //         type: 'number',
+    //         width: 90,
+    //     },
+    //     {
+    //         field: 'fullName',
+    //         headerName: 'Full name',
+    //         description: 'This column has a value getter and is not sortable.',
+    //         sortable: false,
+    //         width: 160,
+    //         valueGetter: (params: GridValueGetterParams) =>
+    //             `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+    //     },
+    // ];
+    // const rows = [
+    //     { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
+    //     { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+    //     { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+    //     { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
+    //     { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
+    //     { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
+    //     { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+    //     { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+    //     { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    // ];
     const columns: GridColDef[] = [
         { field: 'index', headerName: 'STT', width: 70 },
         { field: 'motel_name', headerName: 'Tên dãy trọ', width: 130 },

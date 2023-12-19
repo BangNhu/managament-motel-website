@@ -5,6 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 // import { navmain } from '../topbar/data.nav.mock';
 // import Menu from './menu';
 export interface IMenuMobileProps {}
@@ -22,6 +23,14 @@ export default function NavMobile(props: IMenuMobileProps) {
         { title: 'Hướng dẫn', path: '/' },
         { title: 'Liên Hệ', path: '/' },
     ];
+
+    const router = useRouter();
+    const handleRegisterClick = () => {
+        router.push('/register');
+    };
+    const handleLoginClick = () => {
+        router.push('/login');
+    };
     return (
         <>
             <Stack
@@ -115,6 +124,7 @@ export default function NavMobile(props: IMenuMobileProps) {
                     }}
                 >
                     <Button
+                        onClick={handleRegisterClick}
                         sx={{
                             textTransform: 'uppercase',
                             fontSize: { xs: '14px', md: '15px', lg: '16px' },
@@ -129,6 +139,7 @@ export default function NavMobile(props: IMenuMobileProps) {
                         Đăng ký
                     </Button>
                     <Button
+                        onClick={handleLoginClick}
                         sx={{
                             textTransform: 'uppercase',
                             fontSize: { xs: '14px', md: '15px', lg: '16px' },

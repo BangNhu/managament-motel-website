@@ -6,7 +6,15 @@ export interface IIntroduceProps {}
 
 export function Introduce(props: IIntroduceProps) {
     return (
-        <Stack sx={{ padding: '15%' }}>
+        <Stack
+            sx={{
+                padding: '18%',
+                backgroundImage: 'url("/pictures/background2.png")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+            }}
+        >
             <Stack sx={{ textAlign: 'center', gap: { xs: '10px', sm: '15px' } }}>
                 <Typography
                     sx={{

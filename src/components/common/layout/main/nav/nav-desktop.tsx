@@ -16,6 +16,9 @@ export function NavDesktop(props: INavDesktopProps) {
     const handleRegisterClick = () => {
         router.push('/register');
     };
+    const handleLoginClick = () => {
+        router.push('/login');
+    };
 
     return (
         <>
@@ -134,6 +137,7 @@ export function NavDesktop(props: INavDesktopProps) {
                             Đăng ký
                         </Button>
                         <Button
+                            onClick={handleLoginClick}
                             sx={{
                                 textTransform: 'uppercase',
                                 fontSize: { xs: '12px', md: '15px', lg: '16px' },
