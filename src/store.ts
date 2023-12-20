@@ -4,6 +4,7 @@ import { motelApi } from './services/motel.services';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import staffReducer from './slices/staff.slice';
 import { staffApi } from './services/staff.services';
+import { blockMotelApi } from './services/block-motel.services';
 // ...
 
 export const store = configureStore({
@@ -12,10 +13,15 @@ export const store = configureStore({
         staff: staffReducer,
         [motelApi.reducerPath]: motelApi.reducer, //thêm reducer được tạo từ api slice
         [staffApi.reducerPath]: staffApi.reducer,
+        [blockMotelApi.reducerPath]: blockMotelApi.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(motelApi.middleware, staffApi.middleware),
+        getDefaultMiddleware().concat(
+            motelApi.middleware,
+            staffApi.middleware,
+            blockMotelApi.middleware
+        ),
 });
 
 setupListeners(store.dispatch);

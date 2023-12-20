@@ -3,9 +3,16 @@ import { useDeleteMotelMutation, useGetMotelsByLandLordQuery } from '@/services/
 import { startEditMotel } from '@/slices/motel.slice';
 import { Button, Modal, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddMotel from '../form-block-motel';
+import { startEditBlockMotel } from '@/slices/block-motel.slice';
+import {
+    BlockMotelsResponse,
+    useDeleteBlockMotelMutation,
+    useGetBlockMotelsByLandLordQuery,
+    useGetBlockMotelsByStaffQuery,
+} from '@/services/block-motel.services';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -20,27 +27,37 @@ const style = {
     p: 5,
 };
 
-const GreyBackdrop = () => {
-    return <Stack style={{ backgroundColor: 'rgba(169, 169, 169, 0.5)', zIndex: 1300 }} />;
-};
-export interface IMotelListProps {}
+export interface IBlockMotelListProps {}
 
-export function MotelList(props: IMotelListProps) {
+export function BlockMotelList(props: IBlockMotelListProps) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false);
-        dispatch(startEditMotel(0));
+        dispatch(startEditBlockMotel(0));
     };
     const tokenData = useTokenData();
     const [selectedMotelId, setSelectedMotelId] = useState<number | null>(null);
-    const [deletePost] = useDeleteMotelMutation();
+    const [deletePost] = useDeleteBlockMotelMutation();
     // const { data: dataMotel } = useGetMotelsQuery();
     // console.log(dataMotel);
-    const { data: dataMotelLandlord } = useGetMotelsByLandLordQuery(tokenData?.userID);
-    console.log('dataMotelLandlord', dataMotelLandlord);
+
+    const { data: dataBlockMotelLandlord } = useGetBlockMotelsByLandLordQuery(tokenData?.userID);
+    console.log('dataMotelLandlord', dataBlockMotelLandlord);
+
+    const { data: dataBlockMotelStaff } = useGetBlockMotelsByStaffQuery(tokenData?.userID);
+    const [blockMotel, setBlockMotel] = useState<BlockMotelsResponse | undefined>();
+    useEffect(() => {
+        if (tokenData?.userType === 'landlord') {
+            setBlockMotel(dataBlockMotelLandlord as BlockMotelsResponse);
+        } else if (tokenData?.account_type === 'staff') {
+            setBlockMotel(dataBlockMotelStaff as BlockMotelsResponse);
+        }
+    }, [dataBlockMotelLandlord, dataBlockMotelStaff, tokenData]);
+    console.log('type', tokenData);
+    console.log('first', blockMotel);
     //Danh sách nhà trọ
-    const motels = dataMotelLandlord?.result || [];
+    const blockMotels = blockMotel?.result || [];
 
     const dispatch = useDispatch();
     // const startEdit = (id: number) => {
@@ -50,54 +67,23 @@ export function MotelList(props: IMotelListProps) {
         deletePost(id);
     };
 
-    // const columns: GridColDef[] = [
-    //     { field: 'id', headerName: 'ID', width: 70 },
-    //     { field: 'firstName', headerName: 'First name', width: 130 },
-    //     { field: 'lastName', headerName: 'Last name', width: 130 },
-    //     {
-    //         field: 'age',
-    //         headerName: 'Age',
-    //         type: 'number',
-    //         width: 90,
-    //     },
-    //     {
-    //         field: 'fullName',
-    //         headerName: 'Full name',
-    //         description: 'This column has a value getter and is not sortable.',
-    //         sortable: false,
-    //         width: 160,
-    //         valueGetter: (params: GridValueGetterParams) =>
-    //             `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-    //     },
-    // ];
-    // const rows = [
-    //     { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    //     { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    //     { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    //     { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    //     { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    //     { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    //     { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    //     { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    //     { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    // ];
     const columns: GridColDef[] = [
         { field: 'index', headerName: 'STT', width: 70 },
-        { field: 'motel_name', headerName: 'Tên dãy trọ', width: 130 },
-        { field: 'address', headerName: 'Địa chỉ', width: 130 },
+        { field: 'block_motel_name', headerName: 'Tên dãy trọ', width: 130 },
+        { field: 'motel_id', headerName: 'Tên nhà trọ', width: 130 },
         {
-            field: 'record_day',
+            field: 'max_quantity',
             headerName: 'Ngày chốt',
             type: 'number',
             width: 90,
         },
         {
-            field: 'pay_day',
+            field: 'price',
             headerName: 'Ngày tính',
             type: 'number',
             width: 90,
         },
-        { field: 'staff_name', headerName: 'Nhân viên', width: 130 },
+        // { field: 'staff_name', headerName: 'Nhân viên', width: 130 },
         {
             field: 'actions',
             headerName: '',
@@ -158,14 +144,14 @@ export function MotelList(props: IMotelListProps) {
             ),
         },
     ];
-    const rows = motels.map((motel, index) => ({
+    const rows = blockMotels.map((motel, index) => ({
         ...motel,
         index: index + 1, // Bắt đầu từ số 1
     }));
     return (
         <Stack sx={{ width: { xs: '95%', md: '80%' }, mx: 'auto' }}>
             <DataGrid
-                rows={rows} // Cast motels to the expected type
+                rows={rows} // Cast blockMotels to the expected type
                 columns={columns}
                 initialState={{
                     pagination: {

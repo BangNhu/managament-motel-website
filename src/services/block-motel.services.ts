@@ -120,4 +120,5 @@ export const {
     useGetBlockMotelQuery,
     useUpdateBlockMotelsMutation,
     useDeleteBlockMotelMutation,
+    useGetBlockMotelsByStaffQuery,
 } = blockMotelApi;

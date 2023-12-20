@@ -1,2 +1,2 @@
 export * from './form-block-motel';
-export * from './blocl-motel-list';
+export * from './block-motel-list';

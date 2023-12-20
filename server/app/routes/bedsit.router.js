@@ -4,6 +4,8 @@ module.exports = function (router) {
 
     router.get('/bedsit/list', bedsitController.get_list);
     router.get('/bedsit/detail/:id', bedsitController.details);
+    router.get('/bedsit/list-by-landlord/:id', bedsitController.list_by_landlord);
+    router.get('/bedsit/list-by-staff/:id', bedsitController.list_by_staff);
     router.post(
         '/bedsit/add',
         checkAuthorize(['landlord', 'staff'], 10),
