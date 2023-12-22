@@ -34,3 +34,14 @@ exports.update_tenant = function (req, res) {
         res.send({ result: response });
     });
 };
+////
+exports.list_by_landlord = function (req, res) {
+    Tenant.get_tenant_by_landlord(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
+exports.list_by_staff = function (req, res) {
+    Tenant.get_tenant_by_staff(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};

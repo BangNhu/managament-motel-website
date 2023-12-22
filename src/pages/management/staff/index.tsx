@@ -1,24 +1,11 @@
-import { useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { CSVLink, CSVDownload } from 'react-csv';
-import {
-    Alert,
-    Button,
-    CircularProgress,
-    Grid,
-    Modal,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
-import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
-import { checkToken } from '@/services/auth/check-token';
-import { useGetMotelsQuery } from '@/services/motel.services';
-import { MotelList } from '@/components/customer/motel/motel-list';
-import AddMotel from '@/components/customer/motel/form-motel';
-import useTokenData from '@/services/auth/token-data-loader';
-import { StaffList } from '@/components/customer/staff/staff-list';
+import { ManagementLayout } from '@/components/common/layout/management';
 import FormDecentralize from '@/components/customer/staff/decentral';
+import { StaffList } from '@/components/customer/staff/staff-list';
+import useTokenData from '@/services/auth/token-data-loader';
+import { useGetMotelsQuery } from '@/services/motel.services';
+import { Button, Modal, Stack } from '@mui/material';
+import { useState } from 'react';
+import { CSVLink } from 'react-csv';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -138,3 +125,4 @@ export default function ManageStaff(props: IManageStaffProps) {
         </Stack>
     );
 }
+ManageStaff.Layout = ManagementLayout;

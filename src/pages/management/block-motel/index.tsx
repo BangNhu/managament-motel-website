@@ -18,6 +18,7 @@ import { MotelList } from '@/components/customer/motel/motel-list';
 import AddMotel from '@/components/customer/motel/form-motel';
 import useTokenData from '@/services/auth/token-data-loader';
 import { BlockMotelList } from '@/components/customer/block-motel';
+import { ManagementLayout } from '@/components/common/layout/management';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -137,3 +138,4 @@ export default function ManageBlockMotel(props: IManageBlockMotelProps) {
         </Stack>
     );
 }
+ManageBlockMotel.Layout = ManagementLayout;

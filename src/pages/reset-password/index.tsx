@@ -112,7 +112,7 @@ export default function ResetPassword(props: IResetPasswordProps) {
                     fontFamily: 'Verdana',
                     marginBottom: { xs: '10px', md: '20px' },
                     textAlign: 'center',
-
+                    color: '#A61713',
                     // textTransform: 'uppercase',
                 }}
             >
@@ -131,7 +131,7 @@ export default function ResetPassword(props: IResetPasswordProps) {
                 <Stack sx={{ gap: '20px' }}>
                     <TextField
                         sx={{
-                            width: { xs: '100%', sm: '60%' },
+                            width: { xs: '100%', sm: '80%' },
                             display: 'block',
                             textAlign: 'center',
                             mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
@@ -149,7 +149,7 @@ export default function ResetPassword(props: IResetPasswordProps) {
                     />
                     <TextField
                         sx={{
-                            width: { xs: '100%', sm: '60%' },
+                            width: { xs: '100%', sm: '80%' },
                             display: 'block',
                             textAlign: 'center',
                             mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
@@ -158,6 +158,23 @@ export default function ResetPassword(props: IResetPasswordProps) {
                         variant="outlined"
                         color="secondary"
                         label="Mật khẩu"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        type="password"
+                        variant="outlined"
+                        color="secondary"
+                        label="Nhập lại mật khẩu"
                         name="password"
                         value={formData.password}
                         onChange={handleChange}

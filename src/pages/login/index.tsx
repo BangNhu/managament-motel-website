@@ -3,8 +3,11 @@ import { useRouter } from 'next/router';
 import {
     Alert,
     Button,
+    Checkbox,
     CircularProgress,
     Divider,
+    FormControlLabel,
+    FormGroup,
     Grid,
     Stack,
     TextField,
@@ -107,7 +110,7 @@ export default function Login(props: ILoginProps) {
                 }}
             />
             <form onSubmit={handleSubmit} action="/login">
-                <Stack sx={{ gap: '20px' }}>
+                <Stack sx={{ gap: '10px' }}>
                     <TextField
                         sx={{
                             width: { xs: '100%', sm: '80%' },
@@ -142,6 +145,18 @@ export default function Login(props: ILoginProps) {
                         fullWidth
                         required
                     />
+                    <FormGroup
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                    >
+                        <FormControlLabel
+                            control={<Checkbox color="primary" />}
+                            label="Nhớ đăng nhập"
+                        />
+                    </FormGroup>
                     <Stack
                         direction="row"
                         sx={{
@@ -166,7 +181,12 @@ export default function Login(props: ILoginProps) {
                     <Button
                         variant="contained"
                         type="submit"
-                        sx={{ width: { xs: '100%', sm: '80%' }, textAlign: 'center', mx: 'auto' }}
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            textAlign: 'center',
+
+                            margin: '10px auto',
+                        }}
                     >
                         Gửi
                     </Button>

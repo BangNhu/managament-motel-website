@@ -86,7 +86,7 @@ Bedsit.update = function (bedsit, result) {
 
 Bedsit.get_bedsit_by_landlord = function (id, result) {
     db.query(
-        'SELECT bedsit.*, block_motel.* FROM bedsit JOIN block_motel ON bedsit.block_motel_id = block_motel.id JOIN motel ON block_motel.motel_id = motel.id WHERE motel.landlord_id = ?',
+        'SELECT bedsit.*, block_motel.block_motel_name as block_motel_name, motel.motel_name as motel_name FROM bedsit JOIN block_motel ON bedsit.block_motel_id = block_motel.id JOIN motel ON block_motel.motel_id = motel.id WHERE motel.landlord_id = ?',
         [id],
         function (err, block_motels) {
             if (err) {
@@ -101,7 +101,7 @@ Bedsit.get_bedsit_by_landlord = function (id, result) {
 
 Bedsit.get_bedsit_by_staff = function (id, result) {
     db.query(
-        'SELECT bedsit.*, block_motel.* FROM bedsit JOIN block_motel ON bedsit.block_motel_id = block_motel.id JOIN motel ON block_motel.motel_id = motel.id WHERE motel.staff_id = ?',
+        'SELECT bedsit.*, block_motel.block_motel_name as block_motel_name, motel.motel_name as motel_name FROM bedsit JOIN block_motel ON bedsit.block_motel_id = block_motel.id JOIN motel ON block_motel.motel_id = motel.id WHERE motel.staff_id = ?',
         [id],
         function (err, block_motels) {
             if (err) {

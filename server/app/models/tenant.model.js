@@ -35,48 +35,44 @@ Tenant.getById = function (id, result) {
 };
 
 Tenant.create = function (data, result) {
-    db.query(
-        'SELECT * FROM tenant WHERE email = ? OR number_phone = ?',
-        [data.email, data.number_phone],
-        function (error, results, fields) {
-            if (error) {
-                result(error, null);
-                console.log('lỗi if đầu', error);
-            } else {
-                if (results.length > 0) {
-                    if (results[0].email === data.email) {
-                        result(null, { success: false, message: 'Email đã được đăng ký' });
-                    } else if (results[0].number_phone === data.number_phone) {
-                        result(null, { success: false, message: 'Số điện thoại đã được đăng ký ' });
-                    } else if (results[0].citizen_identification === data.citizen_identification) {
-                        result(null, { success: false, message: 'Số định danh đã được đăng ký ' });
-                    }
-                } else {
-                    // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
-                    bcrypt.hash(data.password, 10, function (err, hashedPassword) {
-                        if (err) {
-                            result(err, null);
-                            console.log('lỗi mã hóa', error);
-                        } else {
-                            data.password = hashedPassword;
-                            db.query(
-                                'INSERT INTO tenant SET ?',
-                                [data],
-                                function (error, tenant, fields) {
-                                    if (error) {
-                                        result(error, null);
-                                        console.log('lỗi insert', error);
-                                    } else {
-                                        result({ id: tenant.insertId, ...data });
-                                    }
-                                }
-                            );
-                        }
-                    });
+    db.query('SELECT * FROM tenant', function (error, results, fields) {
+        if (error) {
+            result(error, null);
+            console.log('lỗi if đầu', error);
+        } else {
+            if (results.length > 0) {
+                if (results[0].email === data.email) {
+                    result(null, { success: false, message: 'Email đã được đăng ký' });
+                } else if (results[0].number_phone === data.number_phone) {
+                    result(null, { success: false, message: 'Số điện thoại đã được đăng ký ' });
+                } else if (results[0].citizen_identification === data.citizen_identification) {
+                    result(null, { success: false, message: 'Số định danh đã được đăng ký ' });
                 }
+            } else {
+                // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+                bcrypt.hash(data.password, 10, function (err, hashedPassword) {
+                    if (err) {
+                        result(err, null);
+                        console.log('lỗi mã hóa', error);
+                    } else {
+                        data.password = hashedPassword;
+                        db.query(
+                            'INSERT INTO tenant SET ?',
+                            [data],
+                            function (error, tenant, fields) {
+                                if (error) {
+                                    result(error, null);
+                                    console.log('lỗi insert', error);
+                                } else {
+                                    result({ id: tenant.insertId, ...data });
+                                }
+                            }
+                        );
+                    }
+                });
             }
         }
-    );
+    });
     // db.query('INSERT INTO tenant SET ?', data, function (err, tenant) {
     //     if (err) {
     //         result(null);
@@ -118,5 +114,33 @@ Tenant.update = function (tenant, result) {
         }
     );
 };
+Tenant.get_tenant_by_landlord = function (id, result) {
+    db.query(
+        'SELECT tenant.*, motel.motel_name as motel_name FROM tenant JOIN motel ON tenant.motel_id = motel.id where motel.landlord_id=?',
+        [id],
+        function (err, tenant) {
+            if (err) {
+                result(null);
+                console.log(err);
+            } else {
+                result(tenant);
+            }
+        }
+    );
+};
 
+Tenant.get_tenant_by_staff = function (id, result) {
+    db.query(
+        'SELECT tenant.*, motel.motel_name as motel_name FROM tenant JOIN motel ON tenant.motel_id = motel.id where motel.staff_id=?',
+        [id],
+        function (err, tenant) {
+            if (err) {
+                result(null);
+                console.log(err);
+            } else {
+                result(tenant);
+            }
+        }
+    );
+};
 module.exports = Tenant;

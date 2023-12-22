@@ -34,3 +34,13 @@ exports.update_contract = function (req, res) {
         res.send({ result: response });
     });
 };
+exports.list_by_landlord = function (req, res) {
+    Contract.get_contract_by_landlord(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
+exports.list_by_staff = function (req, res) {
+    Contract.get_contract_by_staff(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};

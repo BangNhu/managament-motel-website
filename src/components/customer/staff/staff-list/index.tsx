@@ -167,6 +167,13 @@ export function StaffList(props: IStaffListProps) {
                         sx={{ textTransform: 'capitalize' }}
                         // onClick={() => handleDeleteMotel(params.row.id)}
                     >
+                        Sửa
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{ textTransform: 'capitalize' }}
+                        // onClick={() => handleDeleteMotel(params.row.id)}
+                    >
                         Chi tiết
                     </Button>
                     <Button

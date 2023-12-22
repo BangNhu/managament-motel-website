@@ -10,6 +10,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
 import Paypal from '@/components/button/Paypal';
+import { ManagementLayout } from '@/components/common/layout/management';
 
 export interface IPaymentProps {
     // account_type: number;
@@ -47,10 +48,12 @@ export default function Payment(props: IPaymentProps) {
             <Stack
                 justifyContent="space-between"
                 direction="row"
-                sx={{ margin: { xs: '20% 0', md: '5% 0' } }}
+                sx={{ width: { xs: '95%', md: '80%' }, margin: '8% auto' }}
             >
                 <Stack sx={{ width: { md: '40%' }, gap: '20px' }}>
-                    <Typography>Thông tin thanh toán</Typography>
+                    <Typography sx={{ color: '#a61713', fontWeight: 'bold', fontSize: '22px' }}>
+                        Thông tin thanh toán
+                    </Typography>
                     <form>
                         <Stack sx={{ gap: '20px' }}>
                             <FormControl fullWidth variant="outlined" color="secondary">
@@ -88,7 +91,9 @@ export default function Payment(props: IPaymentProps) {
                     </form>
                 </Stack>
                 <Stack sx={{ width: { md: '40%' }, gap: '20px' }}>
-                    <Typography>Thông tin thanh toán</Typography>
+                    <Typography sx={{ color: '#a61713', fontWeight: 'bold', fontSize: '22px' }}>
+                        Thông tin thanh toán
+                    </Typography>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography>Loại tài khoản</Typography>
                         <Typography>
@@ -125,3 +130,4 @@ export default function Payment(props: IPaymentProps) {
         </>
     );
 }
+Payment.Layout = ManagementLayout;

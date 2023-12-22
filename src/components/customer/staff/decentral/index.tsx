@@ -149,9 +149,13 @@ export default function FormDecentralize(props: IFormDecentralizeProps) {
                 }}
             />
             <form onSubmit={handleSubmit} action="/login">
-                <Stack sx={{ border: '1px solid #1c1c1c' }}>
+                <Stack sx={{ border: '2px solid #737373', padding: '5px' }}>
                     <Stack direction="row">
-                        <Typography sx={{ width: { md: '30%' } }}>Xem thống kê</Typography>
+                        <Typography
+                            sx={{ width: { md: '30%', display: 'flex', alignItems: 'center' } }}
+                        >
+                            Xem thống kê
+                        </Typography>
                         <Stack sx={{ width: { md: '70%', flexWrap: 'wrap' } }}>
                             <FormGroup>
                                 <FormControlLabel
@@ -168,8 +172,13 @@ export default function FormDecentralize(props: IFormDecentralizeProps) {
                             </FormGroup>
                         </Stack>
                     </Stack>
+                    <Divider sx={{ border: '1px solid #a8a8a8' }} />
                     <Stack direction="row">
-                        <Typography sx={{ width: { md: '30%' } }}>Quản lý dãy/tầng trọ</Typography>
+                        <Typography
+                            sx={{ width: { md: '30%', display: 'flex', alignItems: 'center' } }}
+                        >
+                            Quản lý dãy/tầng trọ
+                        </Typography>
                         <Stack direction="row" sx={{ width: { md: '70%', flexWrap: 'wrap' } }}>
                             <FormGroup>
                                 <FormControlLabel
@@ -213,7 +222,11 @@ export default function FormDecentralize(props: IFormDecentralizeProps) {
                         </Stack>
                     </Stack>
                     <Stack direction="row">
-                        <Typography sx={{ width: { md: '30%' } }}>Quản lý phòng trọ</Typography>
+                        <Typography
+                            sx={{ width: { md: '30%', display: 'flex', alignItems: 'center' } }}
+                        >
+                            Quản lý phòng trọ
+                        </Typography>
                         <Stack direction="row" sx={{ width: { md: '70%', flexWrap: 'wrap' } }}>
                             <FormGroup>
                                 <FormControlLabel
@@ -255,9 +268,14 @@ export default function FormDecentralize(props: IFormDecentralizeProps) {
                                 />
                             </FormGroup>
                         </Stack>
-                    </Stack>
+                    </Stack>{' '}
+                    <Divider sx={{ border: '1px solid #a8a8a8' }} />
                     <Stack direction="row">
-                        <Typography sx={{ width: { md: '30%' } }}>Cấu hình bảng giá</Typography>
+                        <Typography
+                            sx={{ width: { md: '30%', display: 'flex', alignItems: 'center' } }}
+                        >
+                            Cấu hình bảng giá
+                        </Typography>
                         <Stack direction="row" sx={{ width: { md: '70%', flexWrap: 'wrap' } }}>
                             <FormGroup>
                                 <FormControlLabel
@@ -299,9 +317,14 @@ export default function FormDecentralize(props: IFormDecentralizeProps) {
                                 />
                             </FormGroup>
                         </Stack>
-                    </Stack>
+                    </Stack>{' '}
+                    <Divider sx={{ border: '1px solid #a8a8a8' }} />
                     <Stack direction="row">
-                        <Typography sx={{ width: { md: '30%' } }}>Quản lý người ở trọ</Typography>
+                        <Typography
+                            sx={{ width: { md: '30%', display: 'flex', alignItems: 'center' } }}
+                        >
+                            Quản lý người ở trọ
+                        </Typography>
                         <Stack direction="row" sx={{ width: { md: '70%', flexWrap: 'wrap' } }}>
                             <FormGroup>
                                 <FormControlLabel
@@ -375,9 +398,12 @@ export default function FormDecentralize(props: IFormDecentralizeProps) {
                                 />
                             </FormGroup>
                         </Stack>
-                    </Stack>
+                    </Stack>{' '}
+                    <Divider sx={{ border: '1px solid #a8a8a8' }} />
                     <Stack direction="row">
-                        <Typography sx={{ width: { md: '30%' } }}>
+                        <Typography
+                            sx={{ width: { md: '30%', display: 'flex', alignItems: 'center' } }}
+                        >
                             Quản lý thu chi, thanh toán
                         </Typography>
                         <Stack direction="row" sx={{ width: { md: '70%', flexWrap: 'wrap' } }}>
@@ -434,9 +460,14 @@ export default function FormDecentralize(props: IFormDecentralizeProps) {
                                 />
                             </FormGroup>
                         </Stack>
-                    </Stack>
+                    </Stack>{' '}
+                    <Divider sx={{ border: '1px solid #a8a8a8' }} />
                     <Stack direction="row">
-                        <Typography sx={{ width: { md: '30%' } }}>Báo cáo</Typography>
+                        <Typography
+                            sx={{ width: { md: '30%', display: 'flex', alignItems: 'center' } }}
+                        >
+                            Báo cáo
+                        </Typography>
                         <Stack direction="row" sx={{ width: { md: '70%', flexWrap: 'wrap' } }}>
                             <FormGroup>
                                 <FormControlLabel
@@ -453,7 +484,7 @@ export default function FormDecentralize(props: IFormDecentralizeProps) {
                             </FormGroup>
                         </Stack>
                     </Stack>
-                </Stack>
+                </Stack>{' '}
                 {staffId !== undefined && staffId !== 0 && (
                     <Stack
                         direction="row"

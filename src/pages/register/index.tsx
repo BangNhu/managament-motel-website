@@ -156,25 +156,6 @@ export default function Register(props: IRegisterProps) {
                         fullWidth
                         required
                     />
-
-                    <TextField
-                        sx={{
-                            width: { xs: '100%', sm: '80%' },
-                            display: 'block',
-                            textAlign: 'center',
-                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
-                        }}
-                        variant="outlined"
-                        color="secondary"
-                        label="Password"
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        fullWidth
-                        required
-                    />
-
                     <TextField
                         sx={{
                             width: { xs: '100%', sm: '80%' },
@@ -189,6 +170,40 @@ export default function Register(props: IRegisterProps) {
                         name="birthday"
                         value={formData.birthday}
                         onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        variant="outlined"
+                        color="secondary"
+                        label="Mật khẩu"
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+                    <TextField
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            display: 'block',
+                            textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        variant="outlined"
+                        color="secondary"
+                        label="Nhập lại mật khẩu"
+                        type="password"
+                        name="password"
+                        // value={formData.password}
+                        // onChange={handleChange}
                         fullWidth
                         required
                     />

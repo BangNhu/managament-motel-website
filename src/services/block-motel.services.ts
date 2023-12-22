@@ -1,5 +1,4 @@
 import { BlockMotel } from '@/types/block-motel.type';
-import { Motel } from '@/types/motel.type';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export interface BlockMotelsResponse {
     result: BlockMotel[];
@@ -59,7 +58,7 @@ export const blockMotelApi = createApi({
             }),
         }),
 
-        addBlockMotels: build.mutation<Motel, Omit<Motel, 'id' | 'staff_name'>>({
+        addBlockMotels: build.mutation<BlockMotel, Omit<BlockMotel, 'id'>>({
             query: (body) => ({
                 url: '/block-motel/add',
                 headers: {
@@ -84,7 +83,7 @@ export const blockMotelApi = createApi({
             }),
         }),
 
-        updateBlockMotels: build.mutation<Motel, { id: number; body: Motel }>({
+        updateBlockMotels: build.mutation<BlockMotel, { id: number; body: BlockMotel }>({
             query: (data) => ({
                 url: '/block-motel/update',
                 headers: {

@@ -169,9 +169,17 @@ export function MotelList(props: IMotelListProps) {
                 sx={{
                     '& .MuiDataGrid-root': {
                         backgroundColor: 'lightgray', // Màu nền của DataGrid
-                        border: '1px solid #ccc', // Viền của DataGrid
+
                         borderRadius: '8px', // Độ bo tròn các góc
                         fontSize: '14px',
+                        border: '1px solid #1c1c1c',
+                    },
+                    '& .MuiDataGrid-main': {
+                        // backgroundColor: '#e7e6e6', // Màu nền của DataGrid
+
+                        borderRadius: '8px', // Độ bo tròn các góc
+                        fontSize: '14px',
+                        border: '1px solid #1c1c1c',
                     },
                     '& .MuiDataGrid-cell': {
                         borderBottom: '1px solid #ddd', // Đường viền dưới của cell

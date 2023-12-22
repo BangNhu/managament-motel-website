@@ -109,4 +109,24 @@ BedsitTenant.create = function (data, result) {
         }
     });
 };
+
+Contract.get_contract_by_landlord = function (id, result) {
+    db.query('SELECT * FROM contract WHERE landlord_id=?', id, function (err, contracts) {
+        if (err) {
+            result(null);
+        } else {
+            result(contracts);
+        }
+    });
+};
+
+Contract.get_contract_by_staff = function (id, result) {
+    db.query('SELECT * FROM contract WHERE staff_id=?', id, function (err, contracts) {
+        if (err) {
+            result(null);
+        } else {
+            result(contracts);
+        }
+    });
+};
 module.exports = Contract;

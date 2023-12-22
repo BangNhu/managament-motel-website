@@ -27,7 +27,7 @@ import { RootState } from '@/store';
 import { useGetStaffsByLandlordQuery } from '@/services/staff.services';
 
 export interface IAddMotelProps {
-    handleCloseModal: () => void;
+    // handleCloseModal: () => void;
 }
 
 const intialState: Omit<Motel, 'id' | 'staff_name'> = {
@@ -99,9 +99,9 @@ export default function AddMotel(props: IAddMotelProps) {
         }
 
         setFormData(intialState);
-        if (props.handleCloseModal) {
-            props.handleCloseModal();
-        }
+        // if (props.handleCloseModal) {
+        //     props.handleCloseModal();
+        // }
     };
 
     return (
@@ -267,11 +267,11 @@ export default function AddMotel(props: IAddMotelProps) {
                             variant="contained"
                             sx={{ textTransform: 'capitalize', width: '100px' }}
                             type="submit"
-                            onClick={() => {
-                                if (props.handleCloseModal) {
-                                    props.handleCloseModal();
-                                }
-                            }}
+                            // onClick={() => {
+                            //     if (props.handleCloseModal) {
+                            //         props.handleCloseModal();
+                            //     }
+                            // }}
                         >
                             Hủy
                         </Button>
@@ -295,11 +295,11 @@ export default function AddMotel(props: IAddMotelProps) {
                             variant="contained"
                             sx={{ textTransform: 'capitalize', width: '100px' }}
                             type="submit"
-                            onClick={() => {
-                                if (props.handleCloseModal) {
-                                    props.handleCloseModal();
-                                }
-                            }}
+                            // onClick={() => {
+                            //     if (props.handleCloseModal) {
+                            //         props.handleCloseModal();
+                            //     }
+                            // }}
                         >
                             Hủy
                         </Button>

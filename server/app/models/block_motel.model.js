@@ -20,7 +20,7 @@ BlockMotel.get_all = function (result) {
 
 BlockMotel.get_bm_by_landlord = function (id, result) {
     db.query(
-        'SELECT block_motel.*, motel.* FROM block_motel JOIN motel ON block_motel.motel_id = motel.id WHERE motel.landlord_id = ?',
+        'SELECT block_motel.*, motel.motel_name as motel_name FROM block_motel JOIN motel ON block_motel.motel_id = motel.id WHERE motel.landlord_id = ?',
         [id],
         function (err, block_motels) {
             if (err) {
@@ -35,7 +35,7 @@ BlockMotel.get_bm_by_landlord = function (id, result) {
 
 BlockMotel.get_bm_by_staff = function (id, result) {
     db.query(
-        'SELECT block_motel.*, motel.* FROM block_motel JOIN motel ON block_motel.motel_id = motel.id WHERE motel.staff_id = ?',
+        'SELECT block_motel.*, motel.motel_name as motel_name FROM block_motel JOIN motel ON block_motel.motel_id = motel.id WHERE motel.staff_id = ?',
         [id],
         function (err, block_motels) {
             if (err) {

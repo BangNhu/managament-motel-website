@@ -21,9 +21,7 @@ export default function Home() {
                 <Reason />
                 <Feature />
                 <PriceTable />
-                <Tooltip title="Hãy đặt câu hỏi với Chatbot AI">
-                    <ChatbotAI />
-                </Tooltip>
+                <ChatbotAI />
             </Stack>
         </>
     );

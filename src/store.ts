@@ -5,22 +5,39 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import staffReducer from './slices/staff.slice';
 import { staffApi } from './services/staff.services';
 import { blockMotelApi } from './services/block-motel.services';
+import { bedsitApi } from './services/bedsit.services';
+import { contractApi } from './services/contract.services';
+import blockMotelReducer from './slices/block-motel.slice';
+import bedsitReducer from './slices/bedsit.slice';
+import contractReducer from './slices/contract.slice';
+import tenantReducer from './slices/tenant.slice';
+import { tenantApi } from './services/tenant.services';
 // ...
 
 export const store = configureStore({
     reducer: {
         motel: motelReducer,
         staff: staffReducer,
+        blockMotel: blockMotelReducer,
+        bedsit: bedsitReducer,
+        contract: contractReducer,
+        tenant: tenantReducer,
         [motelApi.reducerPath]: motelApi.reducer, //thêm reducer được tạo từ api slice
         [staffApi.reducerPath]: staffApi.reducer,
         [blockMotelApi.reducerPath]: blockMotelApi.reducer,
+        [bedsitApi.reducerPath]: bedsitApi.reducer,
+        [contractApi.reducerPath]: contractApi.reducer,
+        [tenantApi.reducerPath]: tenantApi.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
             motelApi.middleware,
             staffApi.middleware,
-            blockMotelApi.middleware
+            blockMotelApi.middleware,
+            bedsitApi.middleware,
+            contractApi.middleware,
+            tenantApi.middleware
         ),
 });
 

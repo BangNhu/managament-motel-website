@@ -7,6 +7,9 @@ import { checkToken } from '@/services/auth/check-token';
 import { MotelList } from '@/components/customer/motel/motel-list';
 import AddMotel from '@/components/customer/motel/form-motel';
 import useTokenData from '@/services/auth/token-data-loader';
+import { ManagementLayout } from '@/components/common/layout/management';
+import { Stats } from '@/components/customer/stats';
+import { ChatbotAI } from '@/components/common/chatbot-ai';
 
 export interface IHomeManagementProps {}
 
@@ -21,8 +24,9 @@ export default function HomeManagement(props: IHomeManagementProps) {
     }
     return (
         <div>
-            {/* <AddMotel /> */}
-            <MotelList />
+            <Stats />
+            <ChatbotAI />
         </div>
     );
 }
+HomeManagement.Layout = ManagementLayout;
