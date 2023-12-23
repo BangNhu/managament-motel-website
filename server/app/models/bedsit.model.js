@@ -7,7 +7,14 @@ const Bedsit = function (bedsit) {
     this.status = bedsit.status;
     this.current_quantity = bedsit.current_quantity;
 };
-
+const BedsitService = function (bedsit_server) {
+    this.bedsit_id = bedsit_server.bedsit_id;
+    this.service_id = bedsit_server.service_id;
+};
+const BedsitTenant = function (bedsit_server) {
+    this.bedsit_id = bedsit_server.bedsit_id;
+    this.service_id = bedsit_server.service_id;
+};
 Bedsit.get_all = function (result) {
     db.query('SELECT * FROM bedsit', function (err, bedsits) {
         if (err) {
@@ -113,4 +120,23 @@ Bedsit.get_bedsit_by_staff = function (id, result) {
         }
     );
 };
-module.exports = Bedsit;
+
+BedsitService.add_bedsit_service = function (data, result) {
+    db.query('INSERT INTO bedsit_service SET ? ', [data], function (err, bedsit_service) {
+        if (err) {
+            return result(null);
+        } else result(bedsit_service);
+    });
+};
+BedsitTenant.add_bedsit_tenant = function (data, result) {
+    db.query('INSERT INTO bedsit_tenant SET ? ', [data], function (err, bedsit_tenant) {
+        if (err) {
+            return result(null);
+        } else result(bedsit_tenant);
+    });
+};
+module.exports = {
+    Bedsit,
+    BedsitService,
+    BedsitTenant,
+};

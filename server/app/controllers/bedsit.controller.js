@@ -1,5 +1,4 @@
-var Bedsit = require('../models/bedsit.model');
-
+var { Bedsit, BedsitService, BedsitTenant } = require('../models/bedsit.model');
 exports.get_list = function (req, res) {
     Bedsit.get_all(function (data) {
         res.send({ result: data });
@@ -42,6 +41,19 @@ exports.list_by_landlord = function (req, res) {
 };
 exports.list_by_staff = function (req, res) {
     Bedsit.get_bedsit_by_staff(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
+
+exports.add_bedsit_service = function (req, res) {
+    data = req.body;
+    BedsitService.add_bedsit_service(data, function (response) {
+        res.send({ result: response });
+    });
+};
+exports.add_bedsit_tenant = function (req, res) {
+    data = req.body;
+    BedsitService.add_bedsit_tenant(data, function (response) {
         res.send({ result: response });
     });
 };

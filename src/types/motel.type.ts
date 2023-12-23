@@ -7,4 +7,6 @@ export interface Motel {
     staff_id: number;
     landlord_id: number;
     staff_name: string;
+    price_water: string;
+    price_electricity: string;
 }

@@ -11,6 +11,8 @@ module.exports = function (router) {
         checkAuthorize(['landlord', 'staff'], 10),
         bedsitController.add_bedsit
     );
+    router.post('/bedsit/addBedsitService', bedsitController.add_bedsit_service);
+    router.post('/bedsit/addBedsitTenant', bedsitController.add_bedsit_tenant);
     router.delete('/bedsit/delete/:id', bedsitController.remove_bedsit);
     router.put('/bedsit/update', bedsitController.update_bedsit);
 };

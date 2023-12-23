@@ -60,7 +60,7 @@ export const servicesApi = createApi({
         }),
         getServicesByStaff: build.query<ServicesResponse, number>({
             query: (id) => ({
-                url: `/services/list-by-landlord/${id}`,
+                url: `/services/list-by-staff/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),

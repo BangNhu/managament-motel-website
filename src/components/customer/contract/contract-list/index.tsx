@@ -85,7 +85,8 @@ export function ContractList(props: IContractListProps) {
 
     const columns: GridColDef[] = [
         { field: 'index', headerName: 'STT', width: 70 },
-        { field: 'bedsit_name', headerName: 'Tên phòng trọ', width: 130 },
+        { field: 'motel_name', headerName: 'Nhà trọ', width: 120 },
+        { field: 'bedsit_name', headerName: 'Phòng', width: 80 },
         {
             field: 'start_day',
             headerName: 'Ngày bắt đầu',

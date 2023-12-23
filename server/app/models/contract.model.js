@@ -132,7 +132,7 @@ BedsitTenant.create = function (data, result) {
 
 Contract.get_contract_by_landlord = function (id, result) {
     db.query(
-        'SELECT contract.*, tenant.tenant_name AS tenant_name, bedsit.bedsit_name AS bedsit_name FROM contract JOIN tenant ON contract.tenant_represent_id = tenant.id JOIN bedsit ON contract.bedsit_id = bedsit.id JOIN motel ON tenant.motel_id = motel.id WHERE motel.landlord_id = ?',
+        'SELECT contract.*, tenant.tenant_name AS tenant_name, bedsit.bedsit_name AS bedsit_name, motel.motel_name AS motel_name FROM contract JOIN tenant ON contract.tenant_represent_id = tenant.id JOIN bedsit ON contract.bedsit_id = bedsit.id JOIN motel ON tenant.motel_id = motel.id WHERE motel.landlord_id = ?',
         id,
         function (err, contracts) {
             if (err) {
@@ -146,7 +146,7 @@ Contract.get_contract_by_landlord = function (id, result) {
 
 Contract.get_contract_by_staff = function (id, result) {
     db.query(
-        'SELECT contract.*, tenant.tenant_name AS tenant_name, bedsit.bedsit_name AS bedsit_name FROM contract JOIN tenant ON contract.tenant_represent_id = tenant.id JOIN bedsit ON contract.bedsit_id = bedsit.id JOIN motel ON tenant.motel_id = motel.id WHERE motel.staff_id = ?',
+        'SELECT contract.*, tenant.tenant_name AS tenant_name, bedsit.bedsit_name AS bedsit_name, motel.motel_name AS motel_name FROM contract JOIN tenant ON contract.tenant_represent_id = tenant.id JOIN bedsit ON contract.bedsit_id = bedsit.id JOIN motel ON tenant.motel_id = motel.id WHERE motel.staff_id = ?',
         id,
         function (err, contracts) {
             if (err) {

@@ -6,9 +6,14 @@ import {
     Checkbox,
     CircularProgress,
     Divider,
+    FormControl,
     FormControlLabel,
     FormGroup,
     Grid,
+    IconButton,
+    InputAdornment,
+    InputLabel,
+    OutlinedInput,
     Stack,
     TextField,
     Typography,
@@ -16,6 +21,7 @@ import {
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
 import { checkToken } from '@/services/auth/check-token';
 import Link from 'next/link';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 export interface ILoginProps {
     account_name: string;
@@ -75,7 +81,13 @@ export default function Login(props: ILoginProps) {
             } else console.log('hi');
         }
     }, [tokenData]);
+    const [showPassword, setShowPassword] = useState(false);
 
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
     return (
         <Stack
             sx={{
@@ -128,7 +140,7 @@ export default function Login(props: ILoginProps) {
                         fullWidth
                         required
                     />
-                    <TextField
+                    {/* <TextField
                         sx={{
                             width: { xs: '100%', sm: '80%' },
                             display: 'block',
@@ -144,7 +156,41 @@ export default function Login(props: ILoginProps) {
                         onChange={handleChange}
                         fullWidth
                         required
-                    />
+                    /> */}{' '}
+                    <FormControl
+                        sx={{
+                            width: { xs: '100%', sm: '80%' },
+                            // display: 'block',
+                            // textAlign: 'center',
+                            mx: 'auto', //margin-x:theo 2 trục chiều ngang trong mui
+                        }}
+                        variant="outlined"
+                        color="secondary"
+                        fullWidth
+                        required
+                    >
+                        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                        <OutlinedInput
+                            id="outlined-adornment-password"
+                            type={showPassword ? 'text' : 'password'}
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            label="Password"
+                        />
+                    </FormControl>
                     <FormGroup
                         sx={{
                             width: { xs: '100%', sm: '80%' },

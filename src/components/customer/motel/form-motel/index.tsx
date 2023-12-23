@@ -30,7 +30,7 @@ export interface IAddMotelProps {
     // handleCloseModal: () => void;
 }
 
-const intialState: Omit<Motel, 'id' | 'staff_name'> = {
+const intialState: Omit<Motel, 'id' | 'staff_name' | 'price_water' | 'price_electricity'> = {
     motel_name: '',
     address: '',
     record_day: 0,
@@ -42,7 +42,10 @@ const intialState: Omit<Motel, 'id' | 'staff_name'> = {
 export default function AddMotel(props: IAddMotelProps) {
     const tokenData = useTokenData();
     // console.log(tokenData);
-    const [formData, setFormData] = useState<Omit<Motel, 'id' | 'staff_name'>>(intialState);
+    const [formData, setFormData] =
+        useState<Omit<Motel, 'id' | 'staff_name' | 'price_water' | 'price_electricity'>>(
+            intialState
+        );
     const [addMotel, addMotelReslut] = useAddMotelsMutation();
     const motelId = useSelector((state: RootState) => state.motel.id);
     console.log('motel id', motelId);

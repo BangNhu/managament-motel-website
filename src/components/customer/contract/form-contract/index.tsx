@@ -1,5 +1,6 @@
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
 import { useState, ChangeEvent, useEffect, Fragment } from 'react';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import {
     Button,
     TextField,
@@ -12,6 +13,9 @@ import {
     Typography,
     SelectChangeEvent,
     Divider,
+    FormGroup,
+    FormControlLabel,
+    Checkbox,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -26,6 +30,9 @@ import { RootState } from '@/store';
 import { useGetStaffsByLandlordQuery } from '@/services/staff.services';
 import { Contract } from '@/types/contract.type';
 import { useGetMotelQuery } from '@/services/motel.services';
+import { TenantsResponse, useGetTenantsByLandLordQuery } from '@/services/tenant.services';
+import { useGetServicesByLandLordQuery } from '@/services/services.services';
+import { useGetBedsitsByLandLordQuery } from '@/services/bedsit.services';
 
 export interface IAddContractProps {
     handleCloseModal: () => void;
@@ -41,6 +48,7 @@ const intialState: Omit<Contract, 'id' | 'liquidate_day'> = {
     staff_id: 0,
     landlord_id: 0,
 };
+
 export default function AddContract(props: IAddContractProps) {
     const tokenData = useTokenData();
     // console.log(tokenData);
@@ -48,9 +56,65 @@ export default function AddContract(props: IAddContractProps) {
     const [addContract, addContractReslut] = useAddContractsMutation();
     const contractId = useSelector((state: RootState) => state.contract.id);
     console.log('motel id', contractId);
-
     const { data: contractData } = useGetContractQuery(contractId, { skip: !contractId });
     const { data: staffData } = useGetStaffsByLandlordQuery(tokenData?.userID);
+
+    //Lấy phòng
+    const { data: bedsitData } = useGetBedsitsByLandLordQuery(tokenData?.userID);
+
+    //Lấy danh sách khách trọ
+    const { data: tenantData } = useGetTenantsByLandLordQuery(tokenData?.userID);
+    const [tenants, setTenant] = useState<TenantsResponse | undefined>();
+    useEffect(() => {
+        if (tenantData) setTenant(tenantData);
+    }, [tenantData]);
+    const [getTenants, setGetTenant] = useState<TenantsResponse | undefined>();
+    const [selectedTenant, setSelectedTenant] = useState<string>('');
+    const handleChangeSelectTenant = (e: SelectChangeEvent) => {
+        const selectedTenantId = parseInt(e.target.value); // Lấy giá trị từ MenuItem được chọn
+        setSelectedTenant(selectedTenantId.toString()); // Cập nhật giá trị của selectedTenant
+    };
+    const handleAddTenant = () => {
+        const selectedTenantIndex = tenants?.result.findIndex(
+            (item) => String(item.id) === selectedTenant
+        );
+
+        if (selectedTenantIndex !== undefined && selectedTenantIndex !== -1) {
+            const updatedTenants = tenants?.result.slice() || [];
+            const removedTenant = updatedTenants?.splice(selectedTenantIndex, 1) || [];
+            setGetTenant({
+                result: getTenants?.result
+                    ? [...getTenants.result, ...removedTenant]
+                    : [...removedTenant],
+            });
+            setTenant({
+                result: updatedTenants,
+            });
+            setSelectedTenant('');
+        }
+    };
+    const handleRemoveTenant = (removedTenantId: string) => {
+        const removedTenantIndex = getTenants?.result.findIndex(
+            (item) => String(item.id) === removedTenantId
+        );
+        if (removedTenantIndex !== undefined && removedTenantIndex !== -1) {
+            const updatedGetTenants = getTenants?.result.slice() || [];
+            const removedTenant = updatedGetTenants?.splice(removedTenantIndex, 1) || [];
+            setTenant({
+                result: tenants?.result
+                    ? [...tenants.result, ...removedTenant]
+                    : [...removedTenant],
+            });
+            setGetTenant({
+                result: updatedGetTenants,
+            });
+        }
+    };
+    console.log('infodata tenantData', tenantData?.result);
+
+    //Lấy danh sách dịch vụ nhà trọ sử dụng
+    const { data: servicesData } = useGetServicesByLandLordQuery(tokenData?.userID);
+
     const [updateContract, updateContractResult] = useUpdateContractsMutation();
 
     // console.log('infodata', motelData?.result);
@@ -101,6 +165,9 @@ export default function AddContract(props: IAddContractProps) {
         }
 
         setFormData(intialState);
+
+        //Lưu Danh sách khách trọ và database
+
         if (props.handleCloseModal) {
             props.handleCloseModal();
         }
@@ -148,7 +215,7 @@ export default function AddContract(props: IAddContractProps) {
                         // textTransform: 'uppercase',
                     }}
                 >
-                    Thêm mới nhà trọ
+                    Tạo hợp đồng
                 </Typography>
             )}
             <Divider
@@ -163,73 +230,28 @@ export default function AddContract(props: IAddContractProps) {
             <form onSubmit={handleSubmit} action="/login">
                 <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={12} md={6}>
-                        <TextField
-                            name="motel_name"
-                            id="motel_name"
-                            type="text"
-                            variant="outlined"
-                            color="secondary"
-                            label="Tên khu trọ"
-                            onChange={handleChange}
-                            // value={formData.motel_name}
-                            fullWidth
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                            name="address"
-                            type="text"
-                            variant="outlined"
-                            color="secondary"
-                            label="Địa chỉ"
-                            onChange={handleChange}
-                            // value={formData.address}
-                            fullWidth
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                            name="record_day"
-                            type="number"
-                            variant="outlined"
-                            color="secondary"
-                            label="Ngày ghi"
-                            onChange={handleChange}
-                            // value={formData.record_day}
-                            fullWidth
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                            name="pay_day"
-                            type="number"
-                            variant="outlined"
-                            color="secondary"
-                            label="Ngày tính"
-                            onChange={handleChange}
-                            // value={formData.pay_day}
-                            required
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        {/* <TextField
-                            name="staff_id"
-                            type="number"
-                            variant="outlined"
-                            color="secondary"
-                            label="Nhân viên"
-                            onChange={handleChange}
-                            value={formData.staff_id}
-                            fullWidth
-                            required
-                            sx={{ mb: 4 }}
-                        /> */}
                         <FormControl fullWidth variant="outlined" color="secondary">
-                            <InputLabel id="demo-simple-select-label">Nhân viên</InputLabel>
+                            <InputLabel id="demo-simple-select-label">Phòng</InputLabel>
+                            <Select
+                                name="bedsit_id"
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                onChange={handleChangeSelect}
+                                label="Phòng"
+                                value={String(formData.bedsit_id)}
+                                fullWidth
+                            >
+                                {bedsitData?.result.map((item) => (
+                                    <MenuItem value={item.id} key={item.id}>
+                                        {`Phòng: ${item.bedsit_name}. Dãy/Tầng: ${item.block_motel_name}. Nhà: ${item.motel_name}`}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <FormControl fullWidth variant="outlined" color="secondary">
+                            <InputLabel id="demo-simple-select-label">Khách trọ</InputLabel>
                             <Select
                                 name="staff_id"
                                 labelId="demo-simple-select-label"
@@ -244,13 +266,122 @@ export default function AddContract(props: IAddContractProps) {
                                         {item.staff_name}
                                     </MenuItem>
                                 ))}
-                                {/* <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem> */}
                             </Select>
                         </FormControl>
                     </Grid>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="record_day"
+                            type="date"
+                            variant="outlined"
+                            color="secondary"
+                            label="Ngày ghi"
+                            onChange={handleChange}
+                            // value={formData.record_day}
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="pay_day"
+                            type="date"
+                            variant="outlined"
+                            color="secondary"
+                            label="Ngày tính"
+                            onChange={handleChange}
+                            // value={formData.pay_day}
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="pay_day"
+                            type="number"
+                            variant="outlined"
+                            color="secondary"
+                            label="Tiền đặt cọc"
+                            onChange={handleChange}
+                            // value={formData.pay_day}
+                            required
+                            fullWidth
+                        />
+                    </Grid>
                 </Grid>
+                <Divider
+                    sx={{
+                        margin: '3% auto 3% auto',
+                        width: '50%',
+                        border: '1px solid #d3c8c8',
+                        // width: { xs: '100%', sm: '80%' },
+                        // textAlign: 'center',
+                        // mx: 'auto',
+                    }}
+                />
+                <Typography sx={{ fontWeight: 'bold', color: '#1c1c1c' }}>
+                    Thêm khách trọ
+                </Typography>
+                <Stack direction="row">
+                    <FormControl fullWidth variant="outlined" color="secondary">
+                        <InputLabel id="demo-simple-select-label">Khách phòng trọ</InputLabel>
+                        <Select
+                            name="staff_id"
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            onChange={handleChangeSelectTenant}
+                            label="Khách trọ"
+                            value={selectedTenant}
+                            fullWidth
+                        >
+                            {tenants?.result.map((item) => (
+                                <MenuItem value={item.id} key={item.id}>
+                                    {item.tenant_name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+                    <Button onClick={handleAddTenant}>Thêm</Button>
+                </Stack>
+                <Stack direction="row" sx={{ flexWrap: 'wrap', gap: '15px' }}>
+                    {getTenants?.result.map((item) => (
+                        <Stack direction="row" key={item.id} sx={{ alignItems: 'center' }}>
+                            <Typography sx={{}}> {item.tenant_name}</Typography>
+                            <Button sx={{}} onClick={() => handleRemoveTenant(String(item.id))}>
+                                <RemoveCircleOutlineIcon />
+                            </Button>
+                        </Stack>
+                    ))}
+                </Stack>
+                <Divider
+                    sx={{
+                        margin: '3% auto 3% auto',
+                        width: '50%',
+                        border: '1px solid #d3c8c8',
+                        // width: { xs: '100%', sm: '80%' },
+                        // textAlign: 'center',
+                        // mx: 'auto',
+                    }}
+                />
+                <Typography sx={{ fontWeight: 'bold', color: '#1c1c1c' }}>Chọn dịch vụ</Typography>
+                <Stack direction="row" sx={{ flexWrap: 'wrap' }}>
+                    {servicesData?.result.map((item) => (
+                        <FormGroup>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        color="primary"
+                                        // id="32"
+                                        // checked={checkboxStates?.['32'] || false}
+                                        // onChange={handleCheckboxChange}
+                                    />
+                                }
+                                label={item.service_name}
+                            />
+                        </FormGroup>
+                    ))}
+                </Stack>
                 {contractId !== undefined && contractId !== 0 && (
                     <Stack
                         direction="row"

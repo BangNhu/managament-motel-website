@@ -59,7 +59,10 @@ export const motelApi = createApi({
             },
         }),
 
-        addMotels: build.mutation<Motel, Omit<Motel, 'id' | 'staff_name'>>({
+        addMotels: build.mutation<
+            Motel,
+            Omit<Motel, 'id' | 'staff_name' | 'price_water' | 'price_electricity'>
+        >({
             query: (body) => ({
                 url: '/motel/add',
                 headers: {
