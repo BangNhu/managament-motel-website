@@ -1,34 +1,18 @@
-import { useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import {
-    Alert,
-    Button,
-    CircularProgress,
-    Grid,
-    Modal,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
-import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
-import { checkToken } from '@/services/auth/check-token';
-import {
-    useAddMotelsMutation,
-    useDeleteMotelMutation,
-    useGetMotelsByLandLordQuery,
-    useGetMotelsQuery,
-} from '@/services/motel.services';
-import {
-    DataGrid,
-    GridColDef,
-    GridRenderCellParams,
-    GridValueGetterParams,
-} from '@mui/x-data-grid';
-import { useDispatch } from 'react-redux';
-import { startEditMotel } from '@/slices/motel.slice';
-import { useGetStaffQuery } from '@/services/staff.services';
-import AddMotel from '../form-motel';
 import useTokenData from '@/services/auth/token-data-loader';
+
+import { Button, Modal, Stack } from '@mui/material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
+import { startEditServices } from '@/slices/services.slice';
+import {
+    ServicesResponse,
+    useDeleteServiceMutation,
+    useGetServicesByLandLordQuery,
+    useGetServicesByStaffQuery,
+} from '@/services/services.services';
+import AddServices from '../form-services';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -43,53 +27,86 @@ const style = {
     p: 5,
 };
 
-const GreyBackdrop = () => {
-    return <Stack style={{ backgroundColor: 'rgba(169, 169, 169, 0.5)', zIndex: 1300 }} />;
-};
-export interface IMotelListProps {}
+export interface IServicesListProps {}
 
-export function MotelList(props: IMotelListProps) {
+export function ServicesList(props: IServicesListProps) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false);
-        dispatch(startEditMotel(0));
+        dispatch(startEditServices(0));
     };
     const tokenData = useTokenData();
-    const [selectedMotelId, setSelectedMotelId] = useState<number | null>(null);
-    const [deletePost] = useDeleteMotelMutation();
-    // const { data: dataMotel } = useGetMotelsQuery();
-    // console.log(dataMotel);
-    const { data: dataMotelLandlord } = useGetMotelsByLandLordQuery(tokenData?.userID);
-    console.log('dataMotelLandlord', dataMotelLandlord);
+    const [selectedTenantId, setSelectedServicesId] = useState<number | null>(null);
+    const [deleteServices] = useDeleteServiceMutation();
+    // const { data: dataServices } = useGetServicessQuery();
+    // console.log(dataServices);
+
+    const { data: dataServicesLandlord } = useGetServicesByLandLordQuery(tokenData?.userID);
+    console.log('dataServicesLandlord', dataServicesLandlord);
+
+    const { data: dataServicesStaff } = useGetServicesByStaffQuery(tokenData?.userID);
+    const [dataServices, setServices] = useState<ServicesResponse | undefined>();
+    useEffect(() => {
+        if (tokenData?.userType === 'landlord') {
+            setServices(dataServicesLandlord as ServicesResponse);
+        } else if (tokenData?.account_type === 'staff') {
+            setServices(dataServicesStaff as ServicesResponse);
+        }
+    }, [dataServicesLandlord, dataServicesStaff, tokenData]);
+    console.log('type', tokenData);
+    console.log('first', dataServices);
     //Danh sách nhà trọ
-    const motels = dataMotelLandlord?.result || [];
+    const data = dataServices?.result || [];
 
     const dispatch = useDispatch();
     // const startEdit = (id: number) => {
-    //     dispatch(startEditMotel(id));
+    //     dispatch(startEditServices(id));
     // };
-    const handleDeleteMotel = (id: number) => {
-        deletePost(id);
+    const handleDeleteServices = (id: number) => {
+        deleteServices(id);
     };
-
+    const convertStatus = (status: number) => {
+        if (status === 0) {
+            return 'Đang trống';
+        } else if (status === 1) {
+            return 'Đã thuê';
+        } else if (status === 2) {
+            return 'Đang đặt cọc';
+        } else {
+            return 'Trạng thái không xác định';
+        }
+    };
     const columns: GridColDef[] = [
         { field: 'index', headerName: 'STT', width: 70 },
-        { field: 'motel_name', headerName: 'Tên dãy trọ', width: 130 },
-        { field: 'address', headerName: 'Địa chỉ', width: 130 },
+        { field: 'service_name', headerName: 'Tên dịch vụ', width: 130 },
         {
-            field: 'record_day',
-            headerName: 'Ngày chốt',
+            field: 'price',
+            headerName: 'Giá tiền',
+            width: 130,
             type: 'number',
-            width: 90,
+        },
+
+        {
+            field: 'unit',
+            headerName: 'Đơn vị tính',
+            width: 150,
+            valueFormatter: (params: { value: number }) => {
+                if (params.value === 0) {
+                    return 'Tính theo phòng';
+                } else if (params.value === 1) {
+                    return 'Tính theo số người';
+                }
+            },
         },
         {
-            field: 'pay_day',
-            headerName: 'Ngày tính',
-            type: 'number',
-            width: 90,
+            field: 'motel_name',
+            headerName: 'Nhà trọ',
+
+            width: 130,
         },
-        { field: 'staff_name', headerName: 'Nhân viên', width: 130 },
+
+        // { field: 'staff_name', headerName: 'Nhân viên', width: 130 },
         {
             field: 'actions',
             headerName: '',
@@ -102,18 +119,18 @@ export function MotelList(props: IMotelListProps) {
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
                         onClick={() => {
-                            dispatch(startEditMotel(params.row.id));
+                            dispatch(startEditServices(params.row.id));
                             handleOpen();
                         }}
                     >
                         Sửa
                     </Button>
-                    {/* <Modal
+                    <Modal
                         open={open}
                         onClose={() => {
                             handleClose();
-                            dispatch(startEditMotel(0));
-                            // setSelectedMotelId(null); // Đặt lại giá trị của selectedMotelId khi đóng Modal
+                            dispatch(startEditServices(0));
+                            // setSelectedTenantId(null); // Đặt lại giá trị của selectedTenantId khi đóng Modal
                         }}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
@@ -124,25 +141,25 @@ export function MotelList(props: IMotelListProps) {
                         }}
                     >
                         <Stack sx={style}>
-                            <AddMotel
+                            <AddServices
                                 handleCloseModal={() => {
                                     handleClose();
-                                    setSelectedMotelId(null);
+                                    setSelectedServicesId(null);
                                 }}
                             />
                         </Stack>
-                    </Modal> */}
+                    </Modal>
                     <Button
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
-                        onClick={() => handleDeleteMotel(params.row.id)}
+                        onClick={() => handleDeleteServices(params.row.id)}
                     >
                         Chi tiết
                     </Button>
                     <Button
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
-                        onClick={() => handleDeleteMotel(params.row.id)}
+                        onClick={() => handleDeleteServices(params.row.id)}
                     >
                         Xóa
                     </Button>
@@ -150,14 +167,19 @@ export function MotelList(props: IMotelListProps) {
             ),
         },
     ];
-    const rows = motels.map((motel, index) => ({
-        ...motel,
-        index: index + 1, // Bắt đầu từ số 1
+
+    const rows = data.map((services, index) => ({
+        ...services,
+        id: services.id,
+        // status: convertStatus(bedsit.status),
+        index: index + 1,
     }));
+
     return (
-        <Stack sx={{ width: { xs: '95%', md: '80%' }, mx: 'auto' }}>
+        <Stack sx={{ width: { xs: '95%', md: '90%' }, mx: 'auto' }}>
             <DataGrid
-                rows={rows} // Cast motels to the expected type
+                //    rowId={(row: { id: any; }) => row.id}
+                rows={rows} // Cast Bedsits to the expected type
                 columns={columns}
                 initialState={{
                     pagination: {
@@ -169,17 +191,9 @@ export function MotelList(props: IMotelListProps) {
                 sx={{
                     '& .MuiDataGrid-root': {
                         backgroundColor: 'lightgray', // Màu nền của DataGrid
-
+                        border: '1px solid #ccc', // Viền của DataGrid
                         borderRadius: '8px', // Độ bo tròn các góc
                         fontSize: '14px',
-                        border: '1px solid #1c1c1c',
-                    },
-                    '& .MuiDataGrid-main': {
-                        // backgroundColor: '#e7e6e6', // Màu nền của DataGrid
-
-                        borderRadius: '8px', // Độ bo tròn các góc
-                        fontSize: '14px',
-                        border: '1px solid #1c1c1c',
                     },
                     '& .MuiDataGrid-cell': {
                         borderBottom: '1px solid #ddd', // Đường viền dưới của cell

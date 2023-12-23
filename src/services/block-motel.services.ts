@@ -15,9 +15,31 @@ export const blockMotelApi = createApi({
     reducerPath: 'blockMotelApi',
     baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL }),
     endpoints: (build) => ({
-        getBlockMotels: build.query<BlockMotelsResponse, void>({
-            query: () => ({
-                url: '/block-motel/list',
+        // getBlockMotels: build.query<BlockMotelsResponse, void>({
+        //     query: () => ({
+        //         url: '/block-motel/list',
+        //         headers: {
+        //             // Kiểm tra nếu có token, thì thêm vào header Authorization
+        //             ...(token && { Authorization: `Bearer ${token}` }),
+        //             'Content-Type': 'application/json',
+        //         },
+        //     }),
+        //     providesTags(result) {
+        //         if (result) {
+        //             const final = [
+        //                 ...result?.result.map(({ id }) => ({ type: 'BlockMotels' as const, id })),
+        //                 { type: 'BlockMotels' as const, id: 'LIST' },
+        //             ];
+        //             return final;
+        //         }
+        //         const final = [{ type: 'BlockMotels' as const, id: 'LIST' }];
+        //         return final;
+        //     },
+        // }),
+
+        getBlockMotelsByLandLord: build.query<BlockMotelsResponse, number>({
+            query: (id) => ({
+                url: `/block-motel/list-by-landlord/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -35,17 +57,6 @@ export const blockMotelApi = createApi({
                 const final = [{ type: 'BlockMotels' as const, id: 'LIST' }];
                 return final;
             },
-        }),
-
-        getBlockMotelsByLandLord: build.query<BlockMotelsResponse, number>({
-            query: (id) => ({
-                url: `/block-motel/list-by-landlord/${id}`,
-                headers: {
-                    // Kiểm tra nếu có token, thì thêm vào header Authorization
-                    ...(token && { Authorization: `Bearer ${token}` }),
-                    'Content-Type': 'application/json',
-                },
-            }),
         }),
         getBlockMotelsByStaff: build.query<BlockMotelsResponse, number>({
             query: (id) => ({
@@ -114,7 +125,7 @@ export const blockMotelApi = createApi({
 
 export const {
     useGetBlockMotelsByLandLordQuery,
-    useGetBlockMotelsQuery,
+
     useAddBlockMotelsMutation,
     useGetBlockMotelQuery,
     useUpdateBlockMotelsMutation,

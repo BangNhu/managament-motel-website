@@ -15,9 +15,31 @@ export const bedsitApi = createApi({
     reducerPath: 'bedsitApi',
     baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL }),
     endpoints: (build) => ({
-        getBedsits: build.query<BedsitsResponse, void>({
-            query: () => ({
-                url: '/bedsit/list',
+        // getBedsits: build.query<BedsitsResponse, void>({
+        //     query: () => ({
+        //         url: '/bedsit/list',
+        //         headers: {
+        //             // Kiểm tra nếu có token, thì thêm vào header Authorization
+        //             ...(token && { Authorization: `Bearer ${token}` }),
+        //             'Content-Type': 'application/json',
+        //         },
+        //     }),
+        //     providesTags(result) {
+        //         if (result) {
+        //             const final = [
+        //                 ...result?.result.map(({ id }) => ({ type: 'Bedsits' as const, id })),
+        //                 { type: 'Bedsits' as const, id: 'LIST' },
+        //             ];
+        //             return final;
+        //         }
+        //         const final = [{ type: 'Bedsits' as const, id: 'LIST' }];
+        //         return final;
+        //     },
+        // }),
+
+        getBedsitsByLandLord: build.query<BedsitsResponse, number>({
+            query: (id) => ({
+                url: `/bedsit/list-by-landlord/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -35,17 +57,6 @@ export const bedsitApi = createApi({
                 const final = [{ type: 'Bedsits' as const, id: 'LIST' }];
                 return final;
             },
-        }),
-
-        getBedsitsByLandLord: build.query<BedsitsResponse, number>({
-            query: (id) => ({
-                url: `/bedsit/list-by-landlord/${id}`,
-                headers: {
-                    // Kiểm tra nếu có token, thì thêm vào header Authorization
-                    ...(token && { Authorization: `Bearer ${token}` }),
-                    'Content-Type': 'application/json',
-                },
-            }),
         }),
         getBedsitsByStaff: build.query<BedsitsResponse, number>({
             query: (id) => ({
@@ -114,7 +125,7 @@ export const bedsitApi = createApi({
 
 export const {
     useGetBedsitsByLandLordQuery,
-    useGetBedsitsQuery,
+
     useAddBedsitsMutation,
     useGetBedsitQuery,
     useUpdateBedsitsMutation,

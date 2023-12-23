@@ -15,9 +15,31 @@ export const contractApi = createApi({
     reducerPath: 'contractApi',
     baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL }),
     endpoints: (build) => ({
-        getContracts: build.query<ContractsResponse, void>({
-            query: () => ({
-                url: '/contract/list',
+        // getContracts: build.query<ContractsResponse, void>({
+        //     query: () => ({
+        //         url: '/contract/list',
+        //         headers: {
+        //             // Kiểm tra nếu có token, thì thêm vào header Authorization
+        //             ...(token && { Authorization: `Bearer ${token}` }),
+        //             'Content-Type': 'application/json',
+        //         },
+        //     }),
+        //     providesTags(result) {
+        //         if (result) {
+        //             const final = [
+        //                 ...result?.result.map(({ id }) => ({ type: 'Contracts' as const, id })),
+        //                 { type: 'Contracts' as const, id: 'LIST' },
+        //             ];
+        //             return final;
+        //         }
+        //         const final = [{ type: 'Contracts' as const, id: 'LIST' }];
+        //         return final;
+        //     },
+        // }),
+
+        getContractsByLandLord: build.query<ContractsResponse, number>({
+            query: (id) => ({
+                url: `/contract/list-by-landlord/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -36,17 +58,6 @@ export const contractApi = createApi({
                 return final;
             },
         }),
-
-        getContractsByLandLord: build.query<ContractsResponse, number>({
-            query: (id) => ({
-                url: `/contract/list-by-landlord/${id}`,
-                headers: {
-                    // Kiểm tra nếu có token, thì thêm vào header Authorization
-                    ...(token && { Authorization: `Bearer ${token}` }),
-                    'Content-Type': 'application/json',
-                },
-            }),
-        }),
         getContractsByStaff: build.query<ContractsResponse, number>({
             query: (id) => ({
                 url: `/contract/list-by-landlord/${id}`,
@@ -58,7 +69,7 @@ export const contractApi = createApi({
             }),
         }),
 
-        addContracts: build.mutation<Contract, Omit<Contract, 'id'>>({
+        addContracts: build.mutation<Contract, Omit<Contract, 'id' | 'liquidate_day'>>({
             query: (body) => ({
                 url: '/contract/add',
                 headers: {
@@ -114,7 +125,7 @@ export const contractApi = createApi({
 
 export const {
     useGetContractsByLandLordQuery,
-    useGetContractsQuery,
+
     useAddContractsMutation,
     useGetContractQuery,
     useUpdateContractsMutation,

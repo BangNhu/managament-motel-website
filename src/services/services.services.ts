@@ -1,7 +1,7 @@
-import { Staff } from '@/types/staff.type';
+import { Services } from '@/types/services.type';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-export interface StaffsResponse {
-    result: Staff[];
+export interface ServicesResponse {
+    result: Services[];
 }
 let token: string | null;
 
@@ -10,14 +10,14 @@ if (typeof window !== 'undefined') {
     token = window.localStorage.getItem('token');
 }
 
-export const staffApi = createApi({
-    tagTypes: ['Staffs'], //Nhưng kiểu tag cho phép dùng
-    reducerPath: 'staffApi',
+export const servicesApi = createApi({
+    tagTypes: ['Services'], //Nhưng kiểu tag cho phép dùng
+    reducerPath: 'ServicesApi',
     baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL }),
     endpoints: (build) => ({
-        // getStaffs: build.query<StaffsResponse, void>({
+        // getBedsits: build.query<BedsitsResponse, void>({
         //     query: () => ({
-        //         url: '/staff/list',
+        //         url: '/bedsit/list',
         //         headers: {
         //             // Kiểm tra nếu có token, thì thêm vào header Authorization
         //             ...(token && { Authorization: `Bearer ${token}` }),
@@ -27,19 +27,19 @@ export const staffApi = createApi({
         //     providesTags(result) {
         //         if (result) {
         //             const final = [
-        //                 ...result?.result.map(({ id }) => ({ type: 'Staffs' as const, id })),
-        //                 { type: 'Staffs' as const, id: 'LIST' },
+        //                 ...result?.result.map(({ id }) => ({ type: 'Bedsits' as const, id })),
+        //                 { type: 'Bedsits' as const, id: 'LIST' },
         //             ];
         //             return final;
         //         }
-        //         const final = [{ type: 'Staffs' as const, id: 'LIST' }];
+        //         const final = [{ type: 'Bedsits' as const, id: 'LIST' }];
         //         return final;
         //     },
         // }),
 
-        getStaffsByLandlord: build.query<StaffsResponse, number>({
+        getServicesByLandLord: build.query<ServicesResponse, number>({
             query: (id) => ({
-                url: `/staff/landlord/${id}`,
+                url: `/services/list-by-landlord/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -49,19 +49,29 @@ export const staffApi = createApi({
             providesTags(result) {
                 if (result) {
                     const final = [
-                        ...result?.result.map(({ id }) => ({ type: 'Staffs' as const, id })),
-                        { type: 'Staffs' as const, id: 'LIST' },
+                        ...result?.result.map(({ id }) => ({ type: 'Services' as const, id })),
+                        { type: 'Services' as const, id: 'LIST' },
                     ];
                     return final;
                 }
-                const final = [{ type: 'Staffs' as const, id: 'LIST' }];
+                const final = [{ type: 'Services' as const, id: 'LIST' }];
                 return final;
             },
         }),
+        getServicesByStaff: build.query<ServicesResponse, number>({
+            query: (id) => ({
+                url: `/services/list-by-landlord/${id}`,
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+            }),
+        }),
 
-        addStaffs: build.mutation<Staff, Omit<Staff, 'id'>>({
+        addServices: build.mutation<Services, Omit<Services, 'id'>>({
             query: (body) => ({
-                url: '/staff/add',
+                url: '/services/add',
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -70,12 +80,12 @@ export const staffApi = createApi({
                 method: 'POST',
                 body,
             }),
-            //những thứ match tag với invalidatesTags sẽ chạy lại (getStaffs)
-            invalidatesTags: (result, erorr, body) => [{ type: 'Staffs', id: 'LIST' }],
+            //những thứ match tag với invalidatesTags sẽ chạy lại (getBedsits)
+            invalidatesTags: (result, erorr, body) => [{ type: 'Services', id: 'LIST' }],
         }),
-        getStaff: build.query<StaffsResponse, number>({
+        getService: build.query<ServicesResponse, number>({
             query: (id) => ({
-                url: `/staff/detail/${id}`,
+                url: `/services/detail/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -84,9 +94,9 @@ export const staffApi = createApi({
             }),
         }),
 
-        updateStaffs: build.mutation<Staff, { id: number; body: Staff }>({
+        updateServices: build.mutation<Services, { id: number; body: Services }>({
             query: (data) => ({
-                url: '/staff/update',
+                url: '/services/update',
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -95,12 +105,12 @@ export const staffApi = createApi({
                 method: 'PUT',
                 body: data.body,
             }),
-            //những thứ match tag với invalidatesTags sẽ chạy lại (getStaffs)
-            invalidatesTags: (result, erorr, data) => [{ type: 'Staffs', id: data.id }],
+            //những thứ match tag với invalidatesTags sẽ chạy lại (getBedsits)
+            invalidatesTags: (result, erorr, data) => [{ type: 'Services', id: data.id }],
         }),
-        deleteStaff: build.mutation<{}, number>({
+        deleteService: build.mutation<{}, number>({
             query: (id) => ({
-                url: `/staff/delete/${id}`,
+                url: `/services/delete/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -108,29 +118,17 @@ export const staffApi = createApi({
                 },
                 method: 'DELETE',
             }),
-            invalidatesTags: (result, erorr, id) => [{ type: 'Staffs', id }],
-        }),
-
-        //Phân quyền nhân viên
-        getPermissions: build.query<any, number>({
-            query: (id) => ({
-                url: `/staff/permissions/${id}`,
-                headers: {
-                    // Kiểm tra nếu có token, thì thêm vào header Authorization
-                    ...(token && { Authorization: `Bearer ${token}` }),
-                    'Content-Type': 'application/json',
-                },
-            }),
+            invalidatesTags: (result, erorr, id) => [{ type: 'Services', id }],
         }),
     }),
 });
 
 export const {
-    useAddStaffsMutation,
-    useGetStaffQuery,
-    useUpdateStaffsMutation,
-    useDeleteStaffMutation,
-    useGetStaffsByLandlordQuery,
-    //phân quyền
-    useGetPermissionsQuery,
-} = staffApi;
+    useGetServicesByLandLordQuery,
+
+    useAddServicesMutation,
+    useGetServiceQuery,
+    useUpdateServicesMutation,
+    useDeleteServiceMutation,
+    useGetServicesByStaffQuery,
+} = servicesApi;

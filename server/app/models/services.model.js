@@ -89,5 +89,34 @@ Services.update = function (services, result) {
         }
     );
 };
+Services.get_services_by_landlord = function (id, result) {
+    db.query(
+        'SELECT services.*, motel.motel_name as motel_name FROM services JOIN motel ON services.motel_id = motel.id where motel.landlord_id=?',
+        [id],
+        function (err, services) {
+            if (err) {
+                result(null);
+                console.log(err);
+            } else {
+                result(services);
+            }
+        }
+    );
+};
+
+Services.get_services_by_staff = function (id, result) {
+    db.query(
+        'SELECT services.*, motel.motel_name as motel_name FROM services JOIN motel ON services.motel_id = motel.id where motel.landlord_id=?',
+        [id],
+        function (err, services) {
+            if (err) {
+                result(null);
+                console.log(err);
+            } else {
+                result(services);
+            }
+        }
+    );
+};
 
 module.exports = Services;

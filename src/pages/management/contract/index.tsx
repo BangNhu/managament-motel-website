@@ -1,6 +1,7 @@
 import { ManagementLayout } from '@/components/common/layout/management';
 import { BedsitList } from '@/components/customer/bedsit';
 import { ContractList } from '@/components/customer/contract';
+import AddContract from '@/components/customer/contract/form-contract';
 import AddMotel from '@/components/customer/motel/form-motel';
 import useTokenData from '@/services/auth/token-data-loader';
 import { useGetMotelsQuery } from '@/services/motel.services';
@@ -95,7 +96,7 @@ export default function ManageContract(props: IManageContractProps) {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Stack sx={style}> {<AddMotel handleCloseModal={handleClose} />}</Stack>
+                    <Stack sx={style}> {<AddContract handleCloseModal={handleClose} />}</Stack>
                 </Modal>
                 <Button
                     // variant="contained"

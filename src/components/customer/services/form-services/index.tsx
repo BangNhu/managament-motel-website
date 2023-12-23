@@ -15,52 +15,50 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { Motel } from '@/types/motel.type';
 import {
-    useAddContractsMutation,
-    useGetContractQuery,
-    useUpdateContractsMutation,
-} from '@/services/contract.services';
+    useAddMotelsMutation,
+    useGetMotelQuery,
+    useUpdateMotelsMutation,
+} from '@/services/motel.services';
 import useTokenData from '@/services/auth/token-data-loader';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useGetStaffsByLandlordQuery } from '@/services/staff.services';
-import { Contract } from '@/types/contract.type';
-import { useGetMotelQuery } from '@/services/motel.services';
 
-export interface IAddContractProps {
+export interface IAddServicesProps {
     handleCloseModal: () => void;
 }
 
-const intialState: Omit<Contract, 'id' | 'liquidate_day'> = {
-    bedsit_id: 0,
-    start_day: '',
-    end_day: '',
-    tenant_represent_id: 0,
-    deposits: 0,
-    content: '',
+const intialState: Omit<Motel, 'id' | 'staff_name'> = {
+    motel_name: '',
+    address: '',
+    record_day: 0,
+    pay_day: 0,
     staff_id: 0,
     landlord_id: 0,
+    // staff_name: '',
 };
-export default function AddContract(props: IAddContractProps) {
+export default function AddServices(props: IAddServicesProps) {
     const tokenData = useTokenData();
     // console.log(tokenData);
-    const [formData, setFormData] = useState<Omit<Contract, 'id' | 'liquidate_day'>>(intialState);
-    const [addContract, addContractReslut] = useAddContractsMutation();
-    const contractId = useSelector((state: RootState) => state.contract.id);
-    console.log('motel id', contractId);
+    const [formData, setFormData] = useState<Omit<Motel, 'id' | 'staff_name'>>(intialState);
+    const [addMotel, addMotelReslut] = useAddMotelsMutation();
+    const motelId = useSelector((state: RootState) => state.motel.id);
+    console.log('motel id', motelId);
 
-    const { data: contractData } = useGetContractQuery(contractId, { skip: !contractId });
+    const { data: motelData } = useGetMotelQuery(motelId, { skip: !motelId });
     const { data: staffData } = useGetStaffsByLandlordQuery(tokenData?.userID);
-    const [updateContract, updateContractResult] = useUpdateContractsMutation();
+    const [updateMotel, updateMotelResult] = useUpdateMotelsMutation();
 
     // console.log('infodata', motelData?.result);
     // console.log('infodata staff ', staffData?.result);
 
     useEffect(() => {
-        if (contractData) {
-            setFormData(contractData?.result as any);
+        if (motelData) {
+            setFormData(motelData?.result as any);
         }
-    }, [contractData]);
+    }, [motelData]);
     useEffect(() => {
         if (tokenData) {
             const newFormData = {
@@ -89,14 +87,14 @@ export default function AddContract(props: IAddContractProps) {
     const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
 
-        if (contractId) {
-            await updateContract({
-                body: formData as Contract,
-                id: contractId,
+        if (motelId) {
+            await updateMotel({
+                body: formData as Motel,
+                id: motelId,
             }).unwrap();
         } else {
             console.log('formData', formData);
-            await addContract(formData).unwrap();
+            await addMotel(formData).unwrap();
             console.log('thành công');
         }
 
@@ -119,7 +117,7 @@ export default function AddContract(props: IAddContractProps) {
             }}
         >
             {' '}
-            {contractId !== undefined && contractId !== 0 && (
+            {motelId !== undefined && motelId !== 0 && (
                 <Typography
                     variant="h1"
                     sx={{
@@ -135,7 +133,7 @@ export default function AddContract(props: IAddContractProps) {
                     Cập nhật nhà trọ
                 </Typography>
             )}
-            {!Boolean(contractId) && (
+            {!Boolean(motelId) && (
                 <Typography
                     variant="h1"
                     sx={{
@@ -171,7 +169,7 @@ export default function AddContract(props: IAddContractProps) {
                             color="secondary"
                             label="Tên khu trọ"
                             onChange={handleChange}
-                            // value={formData.motel_name}
+                            value={formData.motel_name}
                             fullWidth
                             required
                         />
@@ -184,7 +182,7 @@ export default function AddContract(props: IAddContractProps) {
                             color="secondary"
                             label="Địa chỉ"
                             onChange={handleChange}
-                            // value={formData.address}
+                            value={formData.address}
                             fullWidth
                             required
                         />
@@ -197,7 +195,7 @@ export default function AddContract(props: IAddContractProps) {
                             color="secondary"
                             label="Ngày ghi"
                             onChange={handleChange}
-                            // value={formData.record_day}
+                            value={formData.record_day}
                             fullWidth
                             required
                         />
@@ -210,7 +208,7 @@ export default function AddContract(props: IAddContractProps) {
                             color="secondary"
                             label="Ngày tính"
                             onChange={handleChange}
-                            // value={formData.pay_day}
+                            value={formData.pay_day}
                             required
                             fullWidth
                         />
@@ -251,7 +249,7 @@ export default function AddContract(props: IAddContractProps) {
                         </FormControl>
                     </Grid>
                 </Grid>
-                {contractId !== undefined && contractId !== 0 && (
+                {motelId !== undefined && motelId !== 0 && (
                     <Stack
                         direction="row"
                         justifyContent="center"
@@ -279,7 +277,7 @@ export default function AddContract(props: IAddContractProps) {
                         </Button>
                     </Stack>
                 )}
-                {!Boolean(contractId) && (
+                {!Boolean(motelId) && (
                     <Stack
                         direction="row"
                         justifyContent="center"

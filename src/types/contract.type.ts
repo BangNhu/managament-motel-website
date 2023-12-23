@@ -9,4 +9,5 @@ export interface Contract {
     content: string;
     staff_id: number;
     landlord_id: number;
+    liquidate_day: string;
 }

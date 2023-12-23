@@ -26,7 +26,23 @@ const style = {
     boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
     p: 5,
 };
+const convertStatus = (endDay: string, liquidateDay: string) => {
+    const currentDate = new Date();
+    const end = new Date(endDay);
+    const liquidate = new Date(liquidateDay);
 
+    if (end >= currentDate) {
+        const differenceInMilliseconds = end.getTime() - currentDate.getTime();
+        const differenceInDays = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+        return `Còn hạn (${differenceInDays} ngày)`;
+    } else if (end < currentDate) {
+        return 'Hết hạn';
+    } else if (liquidate && liquidate <= currentDate) {
+        return 'Đã thanh lý';
+    } else {
+        return 'Trạng thái không xác định';
+    }
+};
 export interface IContractListProps {}
 
 export function ContractList(props: IContractListProps) {
@@ -66,31 +82,38 @@ export function ContractList(props: IContractListProps) {
     const handleDeleteMotel = (id: number) => {
         deletePost(id);
     };
-    const convertStatus = (status: number) => {
-        if (status === 0) {
-            return 'Đang trống';
-        } else if (status === 1) {
-            return 'Đã thuê';
-        } else if (status === 2) {
-            return 'Đang đặt cọc';
-        } else {
-            return 'Trạng thái không xác định';
-        }
-    };
+
     const columns: GridColDef[] = [
         { field: 'index', headerName: 'STT', width: 70 },
         { field: 'bedsit_name', headerName: 'Tên phòng trọ', width: 130 },
-        { field: 'motel_name', headerName: 'Thuộc nhà trọ', width: 130 },
-        { field: 'block_motel_name', headerName: 'Thuộc dãy trọ', width: 130 },
         {
-            field: 'status',
-            headerName: 'Trạng thái',
-            type: 'number',
-            width: 150,
+            field: 'start_day',
+            headerName: 'Ngày bắt đầu',
+            width: 130,
+            type: 'Date',
+            valueFormatter(params) {
+                const date = new Date(params.value);
+                const dateFormatter = new Intl.DateTimeFormat('en-GB').format(date);
+                return dateFormatter;
+            },
         },
         {
-            field: 'current_quantity',
-            headerName: 'Số người ở',
+            field: 'end_day',
+            headerName: 'Ngày kết thúc',
+            width: 130,
+            type: 'Date',
+            valueFormatter(params) {
+                const date = new Date(params.value);
+                const dateFormatter = new Intl.DateTimeFormat('en-GB').format(date);
+                return dateFormatter;
+            },
+        },
+        { field: 'status', headerName: 'Trạng thái', width: 150 },
+        { field: 'tenant_name', headerName: 'Khách trọ đại diện', width: 130 },
+
+        {
+            field: 'deposits',
+            headerName: 'Tiền đặt cọc',
             type: 'number',
             width: 130,
         },
@@ -159,7 +182,7 @@ export function ContractList(props: IContractListProps) {
     const rows = Contracts.map((contract, index) => ({
         ...contract,
         id: contract.id,
-        // status: convertStatus(contract.status),
+        status: convertStatus(contract.end_day, contract.liquidate_day),
         index: index + 1,
     }));
 

@@ -66,12 +66,12 @@ export function BedsitList(props: IBedsitListProps) {
     const handleDeleteMotel = (id: number) => {
         deletePost(id);
     };
-    const convertStatus = (status: number) => {
-        if (status === 0) {
+    const convertStatus = (status: string) => {
+        if (status === '0') {
             return 'Đang trống';
-        } else if (status === 1) {
+        } else if (status === '1') {
             return 'Đã thuê';
-        } else if (status === 2) {
+        } else if (status === '2') {
             return 'Đang đặt cọc';
         } else {
             return 'Trạng thái không xác định';
@@ -85,7 +85,6 @@ export function BedsitList(props: IBedsitListProps) {
         {
             field: 'status',
             headerName: 'Trạng thái',
-            type: 'number',
             width: 150,
         },
         {
@@ -159,7 +158,7 @@ export function BedsitList(props: IBedsitListProps) {
     const rows = Bedsits.map((bedsit, index) => ({
         ...bedsit,
         id: bedsit.id,
-        status: convertStatus(bedsit.status),
+        status: convertStatus(bedsit.status.toString()),
         index: index + 1,
     }));
 

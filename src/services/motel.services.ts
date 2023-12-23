@@ -46,6 +46,17 @@ export const motelApi = createApi({
                     'Content-Type': 'application/json',
                 },
             }),
+            providesTags(result) {
+                if (result) {
+                    const final = [
+                        ...result?.result.map(({ id }) => ({ type: 'Motels' as const, id })),
+                        { type: 'Motels' as const, id: 'LIST' },
+                    ];
+                    return final;
+                }
+                const final = [{ type: 'Motels' as const, id: 'LIST' }];
+                return final;
+            },
         }),
 
         addMotels: build.mutation<Motel, Omit<Motel, 'id' | 'staff_name'>>({

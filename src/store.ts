@@ -12,6 +12,8 @@ import bedsitReducer from './slices/bedsit.slice';
 import contractReducer from './slices/contract.slice';
 import tenantReducer from './slices/tenant.slice';
 import { tenantApi } from './services/tenant.services';
+import servicesReducer from './slices/services.slice';
+import { servicesApi } from './services/services.services';
 // ...
 
 export const store = configureStore({
@@ -22,12 +24,14 @@ export const store = configureStore({
         bedsit: bedsitReducer,
         contract: contractReducer,
         tenant: tenantReducer,
+        services: servicesReducer,
         [motelApi.reducerPath]: motelApi.reducer, //thêm reducer được tạo từ api slice
         [staffApi.reducerPath]: staffApi.reducer,
         [blockMotelApi.reducerPath]: blockMotelApi.reducer,
         [bedsitApi.reducerPath]: bedsitApi.reducer,
         [contractApi.reducerPath]: contractApi.reducer,
         [tenantApi.reducerPath]: tenantApi.reducer,
+        [servicesApi.reducerPath]: servicesApi.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
@@ -37,7 +41,8 @@ export const store = configureStore({
             blockMotelApi.middleware,
             bedsitApi.middleware,
             contractApi.middleware,
-            tenantApi.middleware
+            tenantApi.middleware,
+            servicesApi.middleware
         ),
 });
 

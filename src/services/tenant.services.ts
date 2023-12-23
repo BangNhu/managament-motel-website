@@ -15,9 +15,31 @@ export const tenantApi = createApi({
     reducerPath: 'tenantApi',
     baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL }),
     endpoints: (build) => ({
-        getTenants: build.query<TenantsResponse, void>({
-            query: () => ({
-                url: '/tenant/list',
+        // getTenants: build.query<TenantsResponse, void>({
+        //     query: () => ({
+        //         url: '/tenant/list',
+        //         headers: {
+        //             // Kiểm tra nếu có token, thì thêm vào header Authorization
+        //             ...(token && { Authorization: `Bearer ${token}` }),
+        //             'Content-Type': 'application/json',
+        //         },
+        //     }),
+        //     providesTags(result) {
+        //         if (result) {
+        //             const final = [
+        //                 ...result?.result.map(({ id }) => ({ type: 'Tenants' as const, id })),
+        //                 { type: 'Tenants' as const, id: 'LIST' },
+        //             ];
+        //             return final;
+        //         }
+        //         const final = [{ type: 'Tenants' as const, id: 'LIST' }];
+        //         return final;
+        //     },
+        // }),
+
+        getTenantsByLandLord: build.query<TenantsResponse, number>({
+            query: (id) => ({
+                url: `/tenant/list-by-landlord/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -35,17 +57,6 @@ export const tenantApi = createApi({
                 const final = [{ type: 'Tenants' as const, id: 'LIST' }];
                 return final;
             },
-        }),
-
-        getTenantsByLandLord: build.query<TenantsResponse, number>({
-            query: (id) => ({
-                url: `/tenant/list-by-landlord/${id}`,
-                headers: {
-                    // Kiểm tra nếu có token, thì thêm vào header Authorization
-                    ...(token && { Authorization: `Bearer ${token}` }),
-                    'Content-Type': 'application/json',
-                },
-            }),
         }),
         getTenantsByStaff: build.query<TenantsResponse, number>({
             query: (id) => ({
@@ -114,7 +125,7 @@ export const tenantApi = createApi({
 
 export const {
     useGetTenantsByLandLordQuery,
-    useGetTenantsQuery,
+    // useGetTenantsQuery,
     useAddTenantsMutation,
     useGetTenantQuery,
     useUpdateTenantsMutation,
