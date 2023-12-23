@@ -48,7 +48,10 @@ const intialState: Omit<Contract, 'id' | 'liquidate_day'> = {
     staff_id: 0,
     landlord_id: 0,
 };
-
+// Khai báo kiểu cho đối tượng checkedItems
+interface CheckedItems {
+    [key: number]: boolean;
+}
 export default function AddContract(props: IAddContractProps) {
     const tokenData = useTokenData();
     // console.log(tokenData);
@@ -114,7 +117,28 @@ export default function AddContract(props: IAddContractProps) {
 
     //Lấy danh sách dịch vụ nhà trọ sử dụng
     const { data: servicesData } = useGetServicesByLandLordQuery(tokenData?.userID);
+    const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
+    const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
+    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, checked } = event.target;
+        const itemId = Number(id);
+
+        setCheckedItems((prevCheckedItems) => ({
+            ...prevCheckedItems,
+            [itemId]: checked,
+        }));
+
+        if (checked) {
+            // Nếu checkbox được đánh dấu, thêm itemId vào mảng selectedItems
+            setSelectedItems((prevSelectedItems) => [...prevSelectedItems, itemId]);
+        } else {
+            // Nếu checkbox bị hủy đánh dấu, loại bỏ itemId khỏi mảng selectedItems
+            setSelectedItems((prevSelectedItems) =>
+                prevSelectedItems.filter((item) => item !== itemId)
+            );
+        }
+    };
     const [updateContract, updateContractResult] = useUpdateContractsMutation();
 
     // console.log('infodata', motelData?.result);
@@ -198,7 +222,6 @@ export default function AddContract(props: IAddContractProps) {
                     headers: {
                         'Content-Type': 'application/json',
                         ...(token && { Authorization: `Bearer ${token}` }),
-                        // Include any necessary headers or authentication tokens
                     },
                     body: JSON.stringify({ bedsit_id: bedsitId, tenant_id: tenantId }),
                 });
@@ -209,22 +232,47 @@ export default function AddContract(props: IAddContractProps) {
                     console.error(
                         `Error adding tenant ${tenantId} to bedsit ${bedsitId}. Status: ${response.status}`
                     );
-                    // Handle non-successful response here
-                    // throw new Error('Custom error message'); // Uncomment this line if you want to stop execution on error
                 }
             } catch (error) {
                 console.error(`Error for tenant ${tenantId}:`, error);
-                // Handle the error - log it, display a message, etc.
-                // throw new Error('Custom error message'); // Uncomment this line if you want to stop execution on error
             }
         });
 
-        try {
-            await Promise.all(promises);
-            console.log('All requests completed successfully');
-        } catch (error) {
-            console.error('Error in one or more requests:', error);
-            // Handle the error - log it, display a message, etc.
+        // try {
+        //     await Promise.all(promises);
+        //     console.log('All requests completed successfully');
+        // } catch (error) {
+        //     console.error('Error in one or more requests:', error);
+        // }
+
+        //Lưu dịch vụ vào CSDL
+        //Lưu Danh sách khách trọ và database
+        const promisesService = selectedItems.map(async (service) => {
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/bedsit/add-bedsit-service`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && { Authorization: `Bearer ${token}` }),
+                    },
+                    body: JSON.stringify({ bedsit_id: bedsitId, service_id: service }),
+                });
+
+                if (response.ok) {
+                    console.log(`Successfully added tenant ${service} to bedsit ${bedsitId}`);
+                } else {
+                    console.error(
+                        `Error adding tenant ${service} to bedsit ${bedsitId}. Status: ${response.status}`
+                    );
+                }
+            } catch (error) {
+                console.error(`Error for tenant ${service}:`, error);
+            }
+        });
+        if (props.handleCloseModal) {
+            props.handleCloseModal();
         }
     };
     return (
@@ -426,9 +474,9 @@ export default function AddContract(props: IAddContractProps) {
                                 control={
                                     <Checkbox
                                         color="primary"
-                                        // id="32"
-                                        // checked={checkboxStates?.['32'] || false}
-                                        // onChange={handleCheckboxChange}
+                                        id={String(item.id)}
+                                        checked={checkedItems[item.id] || false}
+                                        onChange={handleCheckboxChange}
                                     />
                                 }
                                 label={item.service_name}
