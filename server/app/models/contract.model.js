@@ -36,7 +36,7 @@ Contract.getById = function (id, result) {
     });
 };
 
-Contract.create = function (data, tenantsData, result) {
+Contract.create = function (data, result) {
     // Kiểm tra nếu có bedsit_id trùng nhau trong khoảng thời gian từ start_day đến end_day
     db.query(
         'SELECT COUNT(*) AS count_overlap FROM contract WHERE bedsit_id = ? AND (start_day <= ? AND end_day >= ?)',
@@ -45,22 +45,22 @@ Contract.create = function (data, tenantsData, result) {
             if (error) {
                 console.log(error);
                 result({ error: 'Lỗi truy vấn cơ sở dữ liệu' });
-            } else {
-                const countOverlap = overlapResult[0].count_overlap;
-                if (countOverlap > 0) {
-                    result({ error: 'Phòng trọ này đã được tạo hợp đồng' });
-                } else {
-                    db.query('INSERT INTO contract SET ?', data, function (err, contract) {
-                        if (err) {
-                            console.log(err);
-                            result({ error: 'Không thể thêm dữ liệu vào cơ sở dữ liệu' });
-                        } else {
-                            result({ id: contract.insertId, ...data });
-                            addTenantsToBedsit(data.bedsit_id, tenantsData, contractId, result);
-                        }
-                    });
-                }
             }
+
+            const countOverlap = overlapResult[0].count_overlap;
+            if (countOverlap > 0) {
+                result({ error: 'Phòng trọ này đã được tạo hợp đồng' });
+            }
+
+            db.query('INSERT INTO contract SET ?', data, function (err, contract) {
+                if (err) {
+                    console.log(err);
+                    result({ error: 'Không thể thêm dữ liệu vào cơ sở dữ liệu' });
+                }
+
+                result({ id: contract.insertId, ...data });
+                // addTenantsToBedsit(data.bedsit_id, tenantsData, contractId, result);
+            });
         }
     );
 };

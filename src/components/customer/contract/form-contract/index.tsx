@@ -148,6 +148,26 @@ export default function AddContract(props: IAddContractProps) {
             ...prevFormData,
             [name]: value,
         }));
+        //Xóa id người đại diện ra khỏi danh sách tenant
+        // setTenant((prevTenants) => {
+        //     if (!prevTenants?.result) {
+        //         // Trường hợp tenants chưa được khởi tạo
+        //         return prevTenants;
+        //     }
+        //     const removedTenantIndex = prevTenants.result.findIndex(
+        //         (item) => String(item.id) === value
+        //     );
+        //     if (removedTenantIndex !== undefined && removedTenantIndex !== -1) {
+        //         const updatedTenants = prevTenants.result.slice();
+        //         updatedTenants.splice(removedTenantIndex, 1);
+
+        //         return {
+        //             ...prevTenants,
+        //             result: updatedTenants,
+        //         };
+        //     }
+        //     return prevTenants;
+        // });
     };
 
     const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -163,11 +183,39 @@ export default function AddContract(props: IAddContractProps) {
             await addContract(formData).unwrap();
             console.log('thành công');
         }
-
         setFormData(intialState);
 
         //Lưu Danh sách khách trọ và database
+        const tenantList = getTenants?.result || [];
+        const bedsitId = formData.bedsit_id;
+        const token = window.localStorage.getItem('token');
+        for (const tenant of tenantList) {
+            try {
+                const tenantId = tenant.id;
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/bedsit/addBedsitTenant`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(token && { Authorization: `Bearer ${token}` }),
+                            // Include any necessary headers or authentication tokens
+                        },
+                        // Include any necessary request body for POST requests
+                        body: JSON.stringify({ bedsitId, tenantId }),
+                    }
+                );
 
+                if (response.ok) {
+                    console.log('Lưu khách trọ và CSDL thành công');
+                } else {
+                    console.log('Lưu khách trọ và CSDL không thành công');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        //Lưu danh sách dịch vụ vào cơ sở dữ liệu
         if (props.handleCloseModal) {
             props.handleCloseModal();
         }
@@ -253,17 +301,17 @@ export default function AddContract(props: IAddContractProps) {
                         <FormControl fullWidth variant="outlined" color="secondary">
                             <InputLabel id="demo-simple-select-label">Khách trọ</InputLabel>
                             <Select
-                                name="staff_id"
+                                name="tenant_represent_id"
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 onChange={handleChangeSelect}
-                                label="Nhân viên"
-                                value={String(formData.staff_id)}
+                                label="Khách trọ"
+                                value={String(formData.tenant_represent_id)}
                                 fullWidth
                             >
-                                {staffData?.result.map((item) => (
+                                {tenantData?.result.map((item) => (
                                     <MenuItem value={item.id} key={item.id}>
-                                        {item.staff_name}
+                                        {item.tenant_name}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -271,39 +319,39 @@ export default function AddContract(props: IAddContractProps) {
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <TextField
-                            name="record_day"
+                            name="start_day"
                             type="date"
                             variant="outlined"
                             color="secondary"
-                            label="Ngày ghi"
+                            label="Ngày bắt đầu"
                             onChange={handleChange}
-                            // value={formData.record_day}
+                            value={formData.start_day}
                             fullWidth
                             required
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <TextField
-                            name="pay_day"
+                            name="end_day"
                             type="date"
                             variant="outlined"
                             color="secondary"
                             label="Ngày tính"
                             onChange={handleChange}
-                            // value={formData.pay_day}
+                            value={formData.end_day}
                             required
                             fullWidth
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <TextField
-                            name="pay_day"
+                            name="deposits"
                             type="number"
                             variant="outlined"
                             color="secondary"
                             label="Tiền đặt cọc"
                             onChange={handleChange}
-                            // value={formData.pay_day}
+                            value={formData.deposits}
                             required
                             fullWidth
                         />
@@ -367,7 +415,7 @@ export default function AddContract(props: IAddContractProps) {
                 <Typography sx={{ fontWeight: 'bold', color: '#1c1c1c' }}>Chọn dịch vụ</Typography>
                 <Stack direction="row" sx={{ flexWrap: 'wrap' }}>
                     {servicesData?.result.map((item) => (
-                        <FormGroup>
+                        <FormGroup key={item.id}>
                             <FormControlLabel
                                 control={
                                     <Checkbox
