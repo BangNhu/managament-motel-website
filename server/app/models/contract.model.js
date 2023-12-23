@@ -58,7 +58,7 @@ Contract.create = function (data, result) {
                     result({ error: 'Không thể thêm dữ liệu vào cơ sở dữ liệu' });
                 }
 
-                result({ id: contract.insertId, ...data });
+                //result({ id: contract.insertId, ...data });
                 // addTenantsToBedsit(data.bedsit_id, tenantsData, contractId, result);
             });
         }

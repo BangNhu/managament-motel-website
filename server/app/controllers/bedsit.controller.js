@@ -53,7 +53,7 @@ exports.add_bedsit_service = function (req, res) {
 };
 exports.add_bedsit_tenant = function (req, res) {
     data = req.body;
-    BedsitService.add_bedsit_tenant(data, function (response) {
+    BedsitTenant.add_bedsit_tenant(data, function (response) {
         res.send({ result: response });
     });
 };

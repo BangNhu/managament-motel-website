@@ -6,13 +6,9 @@ module.exports = function (router) {
     router.get('/bedsit/detail/:id', bedsitController.details);
     router.get('/bedsit/list-by-landlord/:id', bedsitController.list_by_landlord);
     router.get('/bedsit/list-by-staff/:id', bedsitController.list_by_staff);
-    router.post(
-        '/bedsit/add',
-        checkAuthorize(['landlord', 'staff'], 10),
-        bedsitController.add_bedsit
-    );
-    router.post('/bedsit/addBedsitService', bedsitController.add_bedsit_service);
-    router.post('/bedsit/addBedsitTenant', bedsitController.add_bedsit_tenant);
+    router.post('/bedsit/add', bedsitController.add_bedsit);
+    router.post('/bedsit/add-bedsit-service', bedsitController.add_bedsit_service);
+    router.post('/bedsit/add-bedsit-tenant', bedsitController.add_bedsit_tenant);
     router.delete('/bedsit/delete/:id', bedsitController.remove_bedsit);
     router.put('/bedsit/update', bedsitController.update_bedsit);
 };

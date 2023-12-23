@@ -184,43 +184,49 @@ export default function AddContract(props: IAddContractProps) {
             console.log('thành công');
         }
         setFormData(intialState);
-
         //Lưu Danh sách khách trọ và database
         const tenantList = getTenants?.result || [];
         const bedsitId = formData.bedsit_id;
         const token = window.localStorage.getItem('token');
-        for (const tenant of tenantList) {
+        const promises = tenantList.map(async (tenant) => {
+            const tenantId = tenant.id;
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/bedsit/add-bedsit-tenant`;
+
             try {
-                const tenantId = tenant.id;
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/bedsit/addBedsitTenant`,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            ...(token && { Authorization: `Bearer ${token}` }),
-                            // Include any necessary headers or authentication tokens
-                        },
-                        // Include any necessary request body for POST requests
-                        body: JSON.stringify({ bedsitId, tenantId }),
-                    }
-                );
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && { Authorization: `Bearer ${token}` }),
+                        // Include any necessary headers or authentication tokens
+                    },
+                    body: JSON.stringify({ bedsit_id: bedsitId, tenant_id: tenantId }),
+                });
 
                 if (response.ok) {
-                    console.log('Lưu khách trọ và CSDL thành công');
+                    console.log(`Successfully added tenant ${tenantId} to bedsit ${bedsitId}`);
                 } else {
-                    console.log('Lưu khách trọ và CSDL không thành công');
+                    console.error(
+                        `Error adding tenant ${tenantId} to bedsit ${bedsitId}. Status: ${response.status}`
+                    );
+                    // Handle non-successful response here
+                    // throw new Error('Custom error message'); // Uncomment this line if you want to stop execution on error
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.error(`Error for tenant ${tenantId}:`, error);
+                // Handle the error - log it, display a message, etc.
+                // throw new Error('Custom error message'); // Uncomment this line if you want to stop execution on error
             }
-        }
+        });
 
-        //Lưu danh sách dịch vụ vào cơ sở dữ liệu
-        if (props.handleCloseModal) {
-            props.handleCloseModal();
+        try {
+            await Promise.all(promises);
+            console.log('All requests completed successfully');
+        } catch (error) {
+            console.error('Error in one or more requests:', error);
+            // Handle the error - log it, display a message, etc.
         }
     };
-
     return (
         <Stack
             sx={{
