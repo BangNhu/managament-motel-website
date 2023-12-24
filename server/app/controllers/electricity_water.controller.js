@@ -11,7 +11,11 @@ exports.details = function (req, res) {
         res.send({ result: response });
     });
 };
-
+exports.get_by_bedsit = function (req, res) {
+    ElectricityWater.get_by_bedsit(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
 //body-parser
 exports.add_electricity_water = function (req, res) {
     var data = req.body;

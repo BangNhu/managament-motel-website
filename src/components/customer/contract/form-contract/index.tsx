@@ -1,5 +1,5 @@
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
-import { useState, ChangeEvent, useEffect, Fragment } from 'react';
+import React, { useState, ChangeEvent, useEffect, Fragment, useRef } from 'react';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import {
     Button,
@@ -44,6 +44,9 @@ import {
 } from '@/services/bedsit.services';
 import AddTenant from '../../tenant/form-tenant';
 import AddService from '../../services/form-services';
+import FormELectricWater from '../../electric-water/form-electric-water';
+import { useAddElectricWatersMutation } from '@/services/electric-water.services';
+import { ElectricWater } from '@/types/electric-water.type';
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -71,6 +74,12 @@ const intialState: Omit<Contract, 'id' | 'liquidate_day'> = {
     staff_id: 0,
     landlord_id: 0,
 };
+const intialStateElecWater: Omit<ElectricWater, 'id'> = {
+    record_day: '',
+    index_electricity: 0,
+    index_water: 0,
+    bedsit_id: 0,
+};
 // Khai báo kiểu cho đối tượng checkedItems
 interface CheckedItems {
     [key: number]: boolean;
@@ -85,6 +94,11 @@ export default function AddContract(props: IAddContractProps) {
     const handleOpenService = () => setOpenService(true);
     const handleCloseService = () => setOpenService(false);
     const tokenData = useTokenData();
+    //Lưu chỉ số vào bảng điện nước
+    const [addElectricWater, addElectricWaterReslut] = useAddElectricWatersMutation();
+    const [formDataELecWater, setFormDataELecWater] =
+        useState<Omit<ElectricWater, 'id'>>(intialStateElecWater);
+
     // console.log(tokenData);
     const [formData, setFormData] = useState<Omit<Contract, 'id' | 'liquidate_day'>>(intialState);
     const [addContract, addContractReslut] = useAddContractsMutation();
@@ -207,10 +221,30 @@ export default function AddContract(props: IAddContractProps) {
             setFormData(newFormData);
         }
     }, [tokenData]);
-
+    //lấy bedsit_id cho bảng điện nước
+    useEffect(() => {
+        const currentDate = new Date();
+        console.log('current date: ' + currentDate);
+        const formattedDate = currentDate.toISOString().split('T')[0];
+        const newFormData = {
+            ...intialStateElecWater,
+            bedsit_id: formData.bedsit_id,
+            record_day: formattedDate,
+        };
+        setFormDataELecWater(newFormData);
+    }, [formData.bedsit_id]);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    };
+
+    //Thay đổi nội dung bảng điện nước
+    const handleChangeElecWater = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormDataELecWater((prevFormData) => ({
             ...prevFormData,
             [name]: value,
         }));
@@ -320,6 +354,12 @@ export default function AddContract(props: IAddContractProps) {
                 console.error(`Error for tenant ${service}:`, error);
             }
         });
+        //Lưu chỉ số điện nước
+
+        const result = await addElectricWater(formDataELecWater).unwrap();
+        setFormDataELecWater(intialStateElecWater);
+        console.log('recorđay', formDataELecWater);
+        console.log('thành công', result);
         if (props.handleCloseModal) {
             props.handleCloseModal();
         }
@@ -402,13 +442,15 @@ export default function AddContract(props: IAddContractProps) {
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <FormControl fullWidth variant="outlined" color="secondary">
-                            <InputLabel id="demo-simple-select-label">Khách trọ</InputLabel>
+                            <InputLabel id="demo-simple-select-label">
+                                Khách trọ đại diện
+                            </InputLabel>
                             <Select
                                 name="tenant_represent_id"
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 onChange={handleChangeSelect}
-                                label="Khách trọ"
+                                label="Khách trọ đại diện"
                                 value={String(formData.tenant_represent_id)}
                                 fullWidth
                             >
@@ -536,9 +578,6 @@ export default function AddContract(props: IAddContractProps) {
                         margin: '3% auto 3% auto',
                         width: '50%',
                         border: '1px solid #d3c8c8',
-                        // width: { xs: '100%', sm: '80%' },
-                        // textAlign: 'center',
-                        // mx: 'auto',
                     }}
                 />
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{}}>
@@ -579,6 +618,52 @@ export default function AddContract(props: IAddContractProps) {
                             />
                         </FormGroup>
                     ))}
+                </Stack>
+                <Divider
+                    sx={{
+                        margin: '3% auto 3% auto',
+                        width: '50%',
+                        border: '1px solid #d3c8c8',
+                    }}
+                />
+                <Stack>
+                    <Typography sx={{ fontWeight: 'bold', color: '#1c1c1c' }}>
+                        Chỉ số đồng hồ điện, đồng hồ nước
+                    </Typography>
+                    {/* <FormELectricWater
+                        ref={formElectricWaterRef}
+                        handleCloseModal={handleCloseService}
+                        bedsitId={formData.bedsit_id}
+                    /> */}{' '}
+                    <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                        <Grid item xs={12} md={6}>
+                            <TextField
+                                name="index_electricity"
+                                type="number"
+                                variant="outlined"
+                                color="secondary"
+                                label="Chỉ số điện"
+                                onChange={handleChangeElecWater}
+                                value={formDataELecWater.index_electricity}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} md={6}>
+                            <TextField
+                                name="index_water"
+                                type="number"
+                                variant="outlined"
+                                color="secondary"
+                                label="Chỉ số nước"
+                                onChange={handleChangeElecWater}
+                                value={formDataELecWater.index_water}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+                    </Grid>
                 </Stack>
                 {contractId !== undefined && contractId !== 0 && (
                     <Stack

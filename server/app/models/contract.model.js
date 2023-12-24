@@ -60,6 +60,22 @@ Contract.create = function (data, result) {
 
                 //result({ id: contract.insertId, ...data });
                 // addTenantsToBedsit(data.bedsit_id, tenantsData, contractId, result);
+                else {
+                    db.query(
+                        'UPDATE bedsit SET current_quantity=current_quantity+1, status=1 WHERE id=?',
+                        data.bedsit_id,
+                        function (err, result) {
+                            if (err) {
+                                console.error(err);
+                            }
+                            if (result.affectedRows > 0) {
+                                console.log('Cập nhật thành công');
+                            } else {
+                                console.log('Không có dòng nào được cập nhật');
+                            }
+                        }
+                    );
+                }
             });
         }
     );

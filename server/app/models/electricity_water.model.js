@@ -73,4 +73,17 @@ ElectricityWater.update = function (electricity_water, result) {
     );
 };
 
+ElectricityWater.get_by_bedsit = function (id, result) {
+    db.query(
+        'SELECT electricity-water.* bedsit.bedsit_name as bedsit_name FROM electricity_water JOIN bedsit ON electricity-water.bedsit_id = bedsit.id',
+        id,
+        function (err, electricity_waters) {
+            if (err) {
+                result(null);
+            } else {
+                result(electricity_waters);
+            }
+        }
+    );
+};
 module.exports = ElectricityWater;

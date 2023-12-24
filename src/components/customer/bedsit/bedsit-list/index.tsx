@@ -1,18 +1,17 @@
 import useTokenData from '@/services/auth/token-data-loader';
-import { useDeleteMotelMutation, useGetMotelsByLandLordQuery } from '@/services/motel.services';
-import { startEditMotel } from '@/slices/motel.slice';
-import { Button, Modal, Stack } from '@mui/material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import AddMotel from '../form-bedsit';
-import { startEditBedsit } from '@/slices/bedsit.slice';
 import {
     BedsitsResponse,
     useDeleteBedsitMutation,
     useGetBedsitsByLandLordQuery,
     useGetBedsitsByStaffQuery,
 } from '@/services/bedsit.services';
+import { startEditBedsit } from '@/slices/bedsit.slice';
+import { startEditElectricWater } from '@/slices/electric-water.slice';
+import { Button, Modal, Stack } from '@mui/material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import FormELectricWater from '../../electric-water/form-electric-water';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -80,13 +79,13 @@ export function BedsitList(props: IBedsitListProps) {
     };
     const columns: GridColDef[] = [
         { field: 'index', headerName: 'STT', width: 70 },
-        { field: 'bedsit_name', headerName: 'Tên phòng trọ', width: 130 },
-        { field: 'motel_name', headerName: 'Thuộc nhà trọ', width: 130 },
+        { field: 'bedsit_name', headerName: 'Tên phòng', width: 130 },
+        { field: 'motel_name', headerName: 'Thuộc nhà trọ', width: 120 },
         { field: 'block_motel_name', headerName: 'Thuộc dãy trọ', width: 130 },
         {
             field: 'status',
             headerName: 'Trạng thái',
-            width: 150,
+            width: 100,
         },
         {
             field: 'current_quantity',
@@ -98,22 +97,58 @@ export function BedsitList(props: IBedsitListProps) {
         {
             field: 'actions',
             headerName: '',
-            width: 250,
+            width: 400,
             sortable: false,
             filterable: false,
             renderCell: (params: GridRenderCellParams) => (
-                <Stack direction="row" spacing={1}>
-                    <Button
-                        variant="outlined"
-                        sx={{ textTransform: 'capitalize' }}
-                        onClick={() => {
-                            dispatch(startEditMotel(params.row.id));
-                            handleOpen();
-                        }}
-                    >
-                        Sửa
-                    </Button>
-                    <Modal
+                <Stack direction="column" spacing={1}>
+                    <Stack direction="row" sx={{ gap: '10px' }}>
+                        <Button
+                            variant="outlined"
+                            sx={{ textTransform: 'capitalize' }}
+                            onClick={() => {
+                                // console.log('bedsitid dispatch', params.row.bedsit_id);
+                                console.log('bedsitid dispatch', params.row.id);
+                                dispatch(startEditBedsit(params.row.id));
+                                handleOpen();
+                            }}
+                        >
+                            Điện nước
+                        </Button>
+                        <Modal
+                            open={open}
+                            onClose={() => {
+                                handleClose();
+                                dispatch(startEditElectricWater(0));
+                                // setSelectedMotelId(null); // Đặt lại giá trị của selectedMotelId khi đóng Modal
+                            }}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                            sx={{
+                                '& .MuiBackdrop-root': {
+                                    backgroundColor: 'rgba(169, 169, 169, 0.5)', // Màu xám nhạt với độ trong suốt
+                                },
+                            }}
+                        >
+                            <Stack sx={style}>
+                                <FormELectricWater
+                                    handleCloseModal={() => {
+                                        handleClose();
+                                    }}
+                                />
+                            </Stack>
+                        </Modal>
+                        <Button
+                            variant="outlined"
+                            sx={{ textTransform: 'capitalize' }}
+                            // onClick={() => {
+                            //     dispatch(startEditMotel(params.row.id));
+                            //     handleOpen();
+                            // }}
+                        >
+                            Sửa
+                        </Button>
+                        {/* <Modal
                         open={open}
                         onClose={() => {
                             handleClose();
@@ -136,21 +171,45 @@ export function BedsitList(props: IBedsitListProps) {
                                 }}
                             />
                         </Stack>
-                    </Modal>
-                    <Button
-                        variant="outlined"
-                        sx={{ textTransform: 'capitalize' }}
-                        onClick={() => handleDeleteMotel(params.row.id)}
-                    >
-                        Chi tiết
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        sx={{ textTransform: 'capitalize' }}
-                        onClick={() => handleDeleteMotel(params.row.id)}
-                    >
-                        Xóa
-                    </Button>
+                    </Modal> */}
+                        <Button
+                            variant="outlined"
+                            sx={{ textTransform: 'capitalize' }}
+                            // onClick={() => handleDeleteMotel(params.row.id)}
+                        >
+                            Chi tiết
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            sx={{ textTransform: 'capitalize' }}
+                            onClick={() => handleDeleteMotel(params.row.id)}
+                        >
+                            Xóa
+                        </Button>
+                    </Stack>
+                    <Stack direction="row" sx={{ gap: '10px' }}>
+                        <Button
+                            variant="outlined"
+                            sx={{ textTransform: 'capitalize' }}
+                            // onClick={() => handleDeleteMotel(params.row.id)}
+                        >
+                            Thêm khách trọ
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            sx={{ textTransform: 'capitalize' }}
+                            // onClick={() => handleDeleteMotel(params.row.id)}
+                        >
+                            Giữ chỗ
+                        </Button>{' '}
+                        <Button
+                            variant="outlined"
+                            sx={{ textTransform: 'capitalize' }}
+                            // onClick={() => handleDeleteMotel(params.row.id)}
+                        >
+                            Lập hóa đơn
+                        </Button>
+                    </Stack>
                 </Stack>
             ),
         },
@@ -169,6 +228,7 @@ export function BedsitList(props: IBedsitListProps) {
                 //    rowId={(row: { id: any; }) => row.id}
                 rows={rows} // Cast Bedsits to the expected type
                 columns={columns}
+                rowHeight={100}
                 initialState={{
                     pagination: {
                         paginationModel: { page: 0, pageSize: 5 },
