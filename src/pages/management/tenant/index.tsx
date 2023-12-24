@@ -2,6 +2,7 @@ import { ManagementLayout } from '@/components/common/layout/management';
 import { BedsitList } from '@/components/customer/bedsit';
 import AddMotel from '@/components/customer/motel/form-motel';
 import { TenantList } from '@/components/customer/tenant';
+import AddTenant from '@/components/customer/tenant/form-tenant';
 import useTokenData from '@/services/auth/token-data-loader';
 import { useGetMotelsQuery } from '@/services/motel.services';
 import { Button, Modal, Stack } from '@mui/material';
@@ -14,8 +15,9 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: { xs: '90%', sm: '50%' },
+    maxHeight: '90%',
+    overflowY: 'auto',
     bgcolor: 'background.paper',
-    // border: '2px solid #000',
     borderRadius: '8px',
     boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
     p: 5,
@@ -95,7 +97,7 @@ export default function ManageTenant(props: IManageTenantProps) {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Stack sx={style}> {<AddMotel handleCloseModal={handleClose} />}</Stack>
+                    <Stack sx={style}> {<AddTenant handleCloseModal={handleClose} />}</Stack>
                 </Modal>
                 <Button
                     // variant="contained"

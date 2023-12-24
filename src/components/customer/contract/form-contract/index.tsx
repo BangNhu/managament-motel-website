@@ -16,6 +16,7 @@ import {
     FormGroup,
     FormControlLabel,
     Checkbox,
+    Modal,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -30,10 +31,32 @@ import { RootState } from '@/store';
 import { useGetStaffsByLandlordQuery } from '@/services/staff.services';
 import { Contract } from '@/types/contract.type';
 import { useGetMotelQuery } from '@/services/motel.services';
-import { TenantsResponse, useGetTenantsByLandLordQuery } from '@/services/tenant.services';
+import {
+    TenantsResponse,
+    useGetTenantsByLandLordQuery,
+    useGetTenantsByStaffQuery,
+} from '@/services/tenant.services';
 import { useGetServicesByLandLordQuery } from '@/services/services.services';
-import { useGetBedsitsByLandLordQuery } from '@/services/bedsit.services';
-
+import {
+    BedsitsResponse,
+    useGetBedsitsByLandLordQuery,
+    useGetBedsitsByStaffQuery,
+} from '@/services/bedsit.services';
+import AddTenant from '../../tenant/form-tenant';
+import AddService from '../../services/form-services';
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: { xs: '90%', sm: '50%' },
+    maxHeight: '90%',
+    overflowY: 'auto',
+    bgcolor: 'background.paper',
+    borderRadius: '8px',
+    boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
+    p: 5,
+};
 export interface IAddContractProps {
     handleCloseModal: () => void;
 }
@@ -53,6 +76,14 @@ interface CheckedItems {
     [key: number]: boolean;
 }
 export default function AddContract(props: IAddContractProps) {
+    //Đóng thêm khách trọ
+    const [openTenant, setOpenTenant] = useState(false);
+    const handleOpenTenant = () => setOpenTenant(true);
+    const handleCloseTenant = () => setOpenTenant(false);
+    //Đóng thêm dịch vụ
+    const [openService, setOpenService] = useState(false);
+    const handleOpenService = () => setOpenService(true);
+    const handleCloseService = () => setOpenService(false);
     const tokenData = useTokenData();
     // console.log(tokenData);
     const [formData, setFormData] = useState<Omit<Contract, 'id' | 'liquidate_day'>>(intialState);
@@ -62,11 +93,29 @@ export default function AddContract(props: IAddContractProps) {
     const { data: contractData } = useGetContractQuery(contractId, { skip: !contractId });
     const { data: staffData } = useGetStaffsByLandlordQuery(tokenData?.userID);
 
-    //Lấy phòng
-    const { data: bedsitData } = useGetBedsitsByLandLordQuery(tokenData?.userID);
+    //Lấy danh sách phòng
+    const { data: dataBedsitLandlord } = useGetBedsitsByLandLordQuery(tokenData?.userID);
+    const { data: dataBedsitStaff } = useGetBedsitsByStaffQuery(tokenData?.userID);
+    const [bedsitData, setBedsitData] = useState<BedsitsResponse | undefined>();
+    useEffect(() => {
+        if (tokenData?.userType === 'landlord') {
+            setBedsitData(dataBedsitLandlord as BedsitsResponse);
+        } else if (tokenData?.account_type === 'staff') {
+            setBedsitData(dataBedsitStaff as BedsitsResponse);
+        }
+    }, [dataBedsitLandlord, tokenData]);
 
     //Lấy danh sách khách trọ
-    const { data: tenantData } = useGetTenantsByLandLordQuery(tokenData?.userID);
+    const { data: dataTenantLandlord } = useGetTenantsByLandLordQuery(tokenData?.userID);
+    const { data: dataTenantStaff } = useGetTenantsByStaffQuery(tokenData?.userID);
+    const [tenantData, setTenantData] = useState<TenantsResponse | undefined>();
+    useEffect(() => {
+        if (tokenData?.userType === 'landlord') {
+            setTenantData(dataTenantLandlord as TenantsResponse);
+        } else if (tokenData?.account_type === 'staff') {
+            setTenantData(dataTenantStaff as TenantsResponse);
+        }
+    }, [dataTenantLandlord, tokenData]);
     const [tenants, setTenant] = useState<TenantsResponse | undefined>();
     useEffect(() => {
         if (tenantData) setTenant(tenantData);
@@ -301,7 +350,7 @@ export default function AddContract(props: IAddContractProps) {
                         // textTransform: 'uppercase',
                     }}
                 >
-                    Cập nhật nhà trọ
+                    Cập nhật hợp đồng
                 </Typography>
             )}
             {!Boolean(contractId) && (
@@ -390,7 +439,7 @@ export default function AddContract(props: IAddContractProps) {
                             type="date"
                             variant="outlined"
                             color="secondary"
-                            label="Ngày tính"
+                            label="Ngày kết thúc"
                             onChange={handleChange}
                             value={formData.end_day}
                             required
@@ -421,11 +470,35 @@ export default function AddContract(props: IAddContractProps) {
                         // mx: 'auto',
                     }}
                 />
-                <Typography sx={{ fontWeight: 'bold', color: '#1c1c1c' }}>
-                    Thêm khách trọ
-                </Typography>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{}}>
+                    <Typography sx={{ fontWeight: 'bold', color: '#1c1c1c' }}>
+                        Thêm khách trọ
+                    </Typography>{' '}
+                    <Button
+                        onClick={handleOpenTenant}
+                        sx={{ textTransform: 'capitalize', bgcolor: '#efcbcb' }}
+                    >
+                        Thêm mới
+                    </Button>
+                    <Modal
+                        open={openTenant}
+                        // onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Stack sx={style}>
+                            {' '}
+                            {<AddTenant handleCloseModal={handleCloseTenant} />}
+                        </Stack>
+                    </Modal>
+                </Stack>
                 <Stack direction="row">
-                    <FormControl fullWidth variant="outlined" color="secondary">
+                    <FormControl
+                        fullWidth
+                        variant="outlined"
+                        color="secondary"
+                        sx={{ width: { xs: '100%', md: '48%' } }}
+                    >
                         <InputLabel id="demo-simple-select-label">Khách phòng trọ</InputLabel>
                         <Select
                             name="staff_id"
@@ -444,7 +517,9 @@ export default function AddContract(props: IAddContractProps) {
                         </Select>
                     </FormControl>
 
-                    <Button onClick={handleAddTenant}>Thêm</Button>
+                    <Button sx={{ textTransform: 'capitalize' }} onClick={handleAddTenant}>
+                        Chọn
+                    </Button>
                 </Stack>
                 <Stack direction="row" sx={{ flexWrap: 'wrap', gap: '15px' }}>
                     {getTenants?.result.map((item) => (
@@ -466,7 +541,28 @@ export default function AddContract(props: IAddContractProps) {
                         // mx: 'auto',
                     }}
                 />
-                <Typography sx={{ fontWeight: 'bold', color: '#1c1c1c' }}>Chọn dịch vụ</Typography>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{}}>
+                    <Typography sx={{ fontWeight: 'bold', color: '#1c1c1c' }}>
+                        Chọn dịch vụ
+                    </Typography>{' '}
+                    <Button
+                        onClick={handleOpenService}
+                        sx={{ textTransform: 'capitalize', bgcolor: '#efcbcb' }}
+                    >
+                        Thêm mới
+                    </Button>
+                    <Modal
+                        open={openService}
+                        // onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Stack sx={style}>
+                            {' '}
+                            {<AddService handleCloseModal={handleCloseService} />}
+                        </Stack>
+                    </Modal>
+                </Stack>
                 <Stack direction="row" sx={{ flexWrap: 'wrap' }}>
                     {servicesData?.result.map((item) => (
                         <FormGroup key={item.id}>
@@ -523,6 +619,7 @@ export default function AddContract(props: IAddContractProps) {
                             variant="contained"
                             sx={{ textTransform: 'capitalize', width: '100px' }}
                             type="submit"
+                            onClick={handleSubmit}
                         >
                             Thêm mới
                         </Button>

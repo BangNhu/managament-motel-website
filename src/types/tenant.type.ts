@@ -4,11 +4,12 @@ export interface Tenant {
     birthday: string;
     citizen_identification: string;
     address: string;
-    phone_number: string;
+    number_phone: string;
     email: string;
     password: string;
     gender: number;
     is_temporary_residence: boolean;
     motel_id: number;
+    motel_name: string;
     // motel_name: string;
 }

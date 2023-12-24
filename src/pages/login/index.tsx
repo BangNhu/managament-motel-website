@@ -122,7 +122,7 @@ export default function Login(props: ILoginProps) {
                 }}
             />
             <form onSubmit={handleSubmit} action="/login">
-                <Stack sx={{ gap: '10px' }}>
+                <Stack sx={{ gap: '15px' }}>
                     <TextField
                         sx={{
                             width: { xs: '100%', sm: '80%' },
@@ -169,7 +169,7 @@ export default function Login(props: ILoginProps) {
                         fullWidth
                         required
                     >
-                        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                        <InputLabel htmlFor="outlined-adornment-password">Mật khẩu</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-password"
                             type={showPassword ? 'text' : 'password'}
@@ -188,7 +188,7 @@ export default function Login(props: ILoginProps) {
                                     </IconButton>
                                 </InputAdornment>
                             }
-                            label="Password"
+                            label="Mật khẩu"
                         />
                     </FormControl>
                     <FormGroup

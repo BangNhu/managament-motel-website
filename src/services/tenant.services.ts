@@ -69,7 +69,10 @@ export const tenantApi = createApi({
             }),
         }),
 
-        addTenants: build.mutation<Tenant, Omit<Tenant, 'id'>>({
+        addTenants: build.mutation<
+            Tenant,
+            Omit<Tenant, 'id' | 'motel_name' | 'is_temporary_residence'>
+        >({
             query: (body) => ({
                 url: '/tenant/add',
                 headers: {

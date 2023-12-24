@@ -112,8 +112,8 @@ export function TenantList(props: ITenantListProps) {
             field: 'gender',
             headerName: 'Giới tính',
             valueFormatter: (params: { value: number }) => {
-                if (params.value === 1) return 'Nữ';
-                else if (params.value === 0) return 'Nam';
+                if (params.value === 0) return 'Nữ';
+                else if (params.value === 1) return 'Nam';
                 return 'Khác';
             },
             width: 80,
@@ -146,7 +146,7 @@ export function TenantList(props: ITenantListProps) {
         {
             field: 'actions',
             headerName: '',
-            width: 250,
+            width: 350,
             sortable: false,
             filterable: false,
             renderCell: (params: GridRenderCellParams) => (
@@ -191,6 +191,13 @@ export function TenantList(props: ITenantListProps) {
                         onClick={() => handleDeleteTenant(params.row.id)}
                     >
                         Chi tiết
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{ textTransform: 'capitalize' }}
+                        // onClick={() => handleDeleteTenant(params.row.id)}
+                    >
+                        Tạm trú
                     </Button>
                     <Button
                         variant="outlined"

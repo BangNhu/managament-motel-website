@@ -12,62 +12,88 @@ import {
     Typography,
     SelectChangeEvent,
     Divider,
+    FormLabel,
+    FormControlLabel,
+    Radio,
+    RadioGroup,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { Motel } from '@/types/motel.type';
-import {
-    useAddMotelsMutation,
-    useGetMotelQuery,
-    useUpdateMotelsMutation,
-} from '@/services/motel.services';
 import useTokenData from '@/services/auth/token-data-loader';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useGetStaffsByLandlordQuery } from '@/services/staff.services';
+import { Tenant } from '@/types/tenant.type';
+import {
+    useAddTenantsMutation,
+    useGetTenantQuery,
+    useUpdateTenantsMutation,
+} from '@/services/tenant.services';
+import { TextRotationAngleupOutlined } from '@mui/icons-material';
+import {
+    MotelsResponse,
+    useGetMotelQuery,
+    useGetMotelsByLandLordQuery,
+    useGetMotelsByStaffQuery,
+} from '@/services/motel.services';
+import { useGetBlockMotelsByStaffQuery } from '@/services/block-motel.services';
 
 export interface IAddTenantProps {
     handleCloseModal: () => void;
 }
 
-const intialState: Omit<Motel, 'id' | 'staff_name'> = {
-    motel_name: '',
+const intialState: Omit<Tenant, 'id' | 'motel_name' | 'is_temporary_residence'> = {
+    tenant_name: '',
+    birthday: '',
+    citizen_identification: '',
     address: '',
-    record_day: 0,
-    pay_day: 0,
-    staff_id: 0,
-    landlord_id: 0,
-    // staff_name: '',
+    number_phone: '',
+    email: '',
+    password: '',
+    gender: 0,
+    motel_id: 0,
 };
 export default function AddTenant(props: IAddTenantProps) {
     const tokenData = useTokenData();
     // console.log(tokenData);
-    const [formData, setFormData] = useState<Omit<Motel, 'id' | 'staff_name'>>(intialState);
-    const [addMotel, addMotelReslut] = useAddMotelsMutation();
-    const motelId = useSelector((state: RootState) => state.motel.id);
-    console.log('motel id', motelId);
+    const [formData, setFormData] =
+        useState<Omit<Tenant, 'id' | 'motel_name' | 'is_temporary_residence'>>(intialState);
+    const [addTenant, addTenantReslut] = useAddTenantsMutation();
+    //lấy danh sách nhà trọ
+    const { data: dataMotelLandlord } = useGetMotelsByLandLordQuery(tokenData?.userID);
+    const { data: dataMotelStaff } = useGetMotelsByStaffQuery(tokenData?.userID);
+    const [motelData, setMotelData] = useState<MotelsResponse | undefined>();
+    useEffect(() => {
+        if (tokenData?.userType === 'landlord') {
+            setMotelData(dataMotelLandlord as MotelsResponse);
+        } else if (tokenData?.account_type === 'staff') {
+            setMotelData(dataMotelStaff as MotelsResponse);
+        }
+    }, [dataMotelLandlord, tokenData]);
+    const tenantId = useSelector((state: RootState) => state.tenant.id);
+    console.log('tenant id', tenantId);
 
-    const { data: motelData } = useGetMotelQuery(motelId, { skip: !motelId });
+    const { data: tenantData } = useGetTenantQuery(tenantId, { skip: !tenantId });
     const { data: staffData } = useGetStaffsByLandlordQuery(tokenData?.userID);
-    const [updateMotel, updateMotelResult] = useUpdateMotelsMutation();
+    const [updateTenant, updateMotelResult] = useUpdateTenantsMutation();
 
     // console.log('infodata', motelData?.result);
     // console.log('infodata staff ', staffData?.result);
 
     useEffect(() => {
-        if (motelData) {
-            setFormData(motelData?.result as any);
+        if (tenantData) {
+            setFormData(tenantData?.result as any);
         }
-    }, [motelData]);
-    useEffect(() => {
-        if (tokenData) {
-            const newFormData = {
-                ...intialState,
-                landlord_id: tokenData.userID || 0,
-            };
-            setFormData(newFormData);
-        }
-    }, [tokenData]);
+    }, [tenantData]);
+    // useEffect(() => {
+    //     if (tokenData) {
+    //         const newFormData = {
+    //             ...intialState,
+    //             landlord_id: tokenData.userID || 0,
+    //         };
+    //         setFormData(newFormData);
+    //     }
+    // }, [tokenData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -87,20 +113,25 @@ export default function AddTenant(props: IAddTenantProps) {
     const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
 
-        if (motelId) {
-            await updateMotel({
-                body: formData as Motel,
-                id: motelId,
-            }).unwrap();
-        } else {
-            console.log('formData', formData);
-            await addMotel(formData).unwrap();
-            console.log('thành công');
-        }
+        try {
+            if (tenantId) {
+                await updateTenant({
+                    body: formData as Tenant,
+                    id: tenantId,
+                }).unwrap();
+            } else {
+                console.log('formData', formData);
 
-        setFormData(intialState);
-        if (props.handleCloseModal) {
-            props.handleCloseModal();
+                const result = await addTenant(formData).unwrap();
+                console.log('thành công', result);
+            }
+
+            setFormData(intialState);
+            if (props.handleCloseModal) {
+                props.handleCloseModal();
+            }
+        } catch (error) {
+            console.error('Error during mutation:', error);
         }
     };
 
@@ -117,7 +148,7 @@ export default function AddTenant(props: IAddTenantProps) {
             }}
         >
             {' '}
-            {motelId !== undefined && motelId !== 0 && (
+            {tenantId !== undefined && tenantId !== 0 && (
                 <Typography
                     variant="h1"
                     sx={{
@@ -130,10 +161,10 @@ export default function AddTenant(props: IAddTenantProps) {
                         // textTransform: 'uppercase',
                     }}
                 >
-                    Cập nhật nhà trọ
+                    Cập nhật khách trọ
                 </Typography>
             )}
-            {!Boolean(motelId) && (
+            {!Boolean(tenantId) && (
                 <Typography
                     variant="h1"
                     sx={{
@@ -146,7 +177,7 @@ export default function AddTenant(props: IAddTenantProps) {
                         // textTransform: 'uppercase',
                     }}
                 >
-                    Thêm mới nhà trọ
+                    Thêm mới khách trọ
                 </Typography>
             )}
             <Divider
@@ -162,94 +193,124 @@ export default function AddTenant(props: IAddTenantProps) {
                 <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={12} md={6}>
                         <TextField
-                            name="motel_name"
+                            name="tenant_name"
                             id="motel_name"
                             type="text"
                             variant="outlined"
                             color="secondary"
-                            label="Tên khu trọ"
+                            label="Tên khách trọ"
                             onChange={handleChange}
-                            value={formData.motel_name}
+                            value={formData.tenant_name}
                             fullWidth
                             required
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <TextField
-                            name="address"
-                            type="text"
-                            variant="outlined"
-                            color="secondary"
-                            label="Địa chỉ"
-                            onChange={handleChange}
-                            value={formData.address}
-                            fullWidth
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                            name="record_day"
-                            type="number"
-                            variant="outlined"
-                            color="secondary"
-                            label="Ngày ghi"
-                            onChange={handleChange}
-                            value={formData.record_day}
-                            fullWidth
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                            name="pay_day"
-                            type="number"
-                            variant="outlined"
-                            color="secondary"
-                            label="Ngày tính"
-                            onChange={handleChange}
-                            value={formData.pay_day}
-                            required
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        {/* <TextField
-                            name="staff_id"
-                            type="number"
-                            variant="outlined"
-                            color="secondary"
-                            label="Nhân viên"
-                            onChange={handleChange}
-                            value={formData.staff_id}
-                            fullWidth
-                            required
-                            sx={{ mb: 4 }}
-                        /> */}
                         <FormControl fullWidth variant="outlined" color="secondary">
-                            <InputLabel id="demo-simple-select-label">Nhân viên</InputLabel>
+                            <InputLabel id="demo-simple-select-label">Nhà trọ</InputLabel>
                             <Select
-                                name="staff_id"
+                                name="motel_id"
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 onChange={handleChangeSelect}
-                                label="Nhân viên"
-                                value={String(formData.staff_id)}
+                                label="Nhà trọ"
+                                value={String(formData.motel_id)}
                                 fullWidth
                             >
-                                {staffData?.result.map((item) => (
+                                {motelData?.result.map((item) => (
                                     <MenuItem value={item.id} key={item.id}>
-                                        {item.staff_name}
+                                        {item.motel_name}
                                     </MenuItem>
                                 ))}
-                                {/* <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem> */}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="birthday"
+                            type="date"
+                            variant="outlined"
+                            color="secondary"
+                            label="Ngày sinh"
+                            onChange={handleChange}
+                            value={formData.birthday}
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="email"
+                            type="email"
+                            variant="outlined"
+                            color="secondary"
+                            label="Email"
+                            onChange={handleChange}
+                            value={formData.email}
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="password"
+                            type="password"
+                            variant="outlined"
+                            color="secondary"
+                            label="Mật khẩu"
+                            onChange={handleChange}
+                            value={formData.password}
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="citizen_identification"
+                            type="text"
+                            variant="outlined"
+                            color="secondary"
+                            label="Số định danh"
+                            onChange={handleChange}
+                            value={formData.citizen_identification}
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="number_phone"
+                            type="text"
+                            variant="outlined"
+                            color="secondary"
+                            label="Số điện thoại"
+                            onChange={handleChange}
+                            value={formData.number_phone}
+                            fullWidth
+                            required
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <FormControl fullWidth variant="outlined" color="secondary">
+                            <InputLabel id="demo-simple-select-label">Giới tính</InputLabel>
+                            <Select
+                                name="gender"
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                onChange={handleChangeSelect}
+                                label="Giới tính"
+                                value={String(formData.gender)}
+                                fullWidth
+                            >
+                                <MenuItem value={0}>Nữ</MenuItem>
+                                <MenuItem value={1}>Nam</MenuItem>
+                                <MenuItem value={2}>Khác</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
                 </Grid>
-                {motelId !== undefined && motelId !== 0 && (
+                {tenantId !== undefined && tenantId !== 0 && (
                     <Stack
                         direction="row"
                         justifyContent="center"
@@ -277,7 +338,7 @@ export default function AddTenant(props: IAddTenantProps) {
                         </Button>
                     </Stack>
                 )}
-                {!Boolean(motelId) && (
+                {!Boolean(tenantId) && (
                     <Stack
                         direction="row"
                         justifyContent="center"
@@ -288,6 +349,7 @@ export default function AddTenant(props: IAddTenantProps) {
                             variant="contained"
                             sx={{ textTransform: 'capitalize', width: '100px' }}
                             type="submit"
+                            onClick={handleSubmit}
                         >
                             Thêm mới
                         </Button>

@@ -1,5 +1,6 @@
 import { ManagementLayout } from '@/components/common/layout/management';
 import { ServicesList } from '@/components/customer/services';
+import AddServices from '@/components/customer/services/form-services';
 import FormDecentralize from '@/components/customer/staff/decentral';
 import { StaffList } from '@/components/customer/staff/staff-list';
 import useTokenData from '@/services/auth/token-data-loader';
@@ -14,8 +15,9 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: { xs: '90%', sm: '50%' },
+    maxHeight: '90%',
+    overflowY: 'auto',
     bgcolor: 'background.paper',
-    // border: '2px solid #000',
     borderRadius: '8px',
     boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
     p: 5,
@@ -95,7 +97,7 @@ export default function ManageServices(props: IManageServicesProps) {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Stack sx={style}> {<FormDecentralize handleCloseModal={handleClose} />}</Stack>
+                    <Stack sx={style}> {<AddServices handleCloseModal={handleClose} />}</Stack>
                 </Modal>
                 <Button
                     // variant="contained"

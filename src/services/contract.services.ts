@@ -110,7 +110,7 @@ export const contractApi = createApi({
         }),
         deleteContract: build.mutation<{}, number>({
             query: (id) => ({
-                url: `/contact/delete/${id}`,
+                url: `/contract/delete/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),

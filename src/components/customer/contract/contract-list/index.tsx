@@ -1,5 +1,4 @@
 import useTokenData from '@/services/auth/token-data-loader';
-import { startEditMotel } from '@/slices/motel.slice';
 import { Button, Modal, Stack } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
@@ -20,8 +19,9 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: { xs: '90%', sm: '50%' },
+    maxHeight: '80%',
+    overflowY: 'auto',
     bgcolor: 'background.paper',
-    // border: '2px solid #000',
     borderRadius: '8px',
     boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
     p: 5,
@@ -54,7 +54,7 @@ export function ContractList(props: IContractListProps) {
     };
     const tokenData = useTokenData();
     const [selectedMotelId, setSelectedMotelId] = useState<number | null>(null);
-    const [deletePost] = useDeleteContractMutation();
+    const [deleteContract] = useDeleteContractMutation();
     // const { data: dataMotel } = useGetMotelsQuery();
     // console.log(dataMotel);
 
@@ -79,8 +79,8 @@ export function ContractList(props: IContractListProps) {
     // const startEdit = (id: number) => {
     //     dispatch(startEditMotel(id));
     // };
-    const handleDeleteMotel = (id: number) => {
-        deletePost(id);
+    const handleDeletContract = (id: number) => {
+        deleteContract(id);
     };
 
     const columns: GridColDef[] = [
@@ -131,7 +131,7 @@ export function ContractList(props: IContractListProps) {
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
                         onClick={() => {
-                            dispatch(startEditMotel(params.row.id));
+                            dispatch(startEditContract(params.row.id));
                             handleOpen();
                         }}
                     >
@@ -141,7 +141,7 @@ export function ContractList(props: IContractListProps) {
                         open={open}
                         onClose={() => {
                             handleClose();
-                            dispatch(startEditMotel(0));
+                            dispatch(startEditContract(0));
                             // setSelectedMotelId(null); // Đặt lại giá trị của selectedMotelId khi đóng Modal
                         }}
                         aria-labelledby="modal-modal-title"
@@ -164,14 +164,14 @@ export function ContractList(props: IContractListProps) {
                     <Button
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
-                        onClick={() => handleDeleteMotel(params.row.id)}
+                        // onClick={() => handleDeleteMotel(params.row.id)}
                     >
                         Chi tiết
                     </Button>
                     <Button
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
-                        onClick={() => handleDeleteMotel(params.row.id)}
+                        onClick={() => handleDeletContract(params.row.id)}
                     >
                         Xóa
                     </Button>

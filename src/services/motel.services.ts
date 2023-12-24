@@ -58,6 +58,27 @@ export const motelApi = createApi({
                 return final;
             },
         }),
+        getMotelsByStaff: build.query<MotelsResponse, number>({
+            query: (id) => ({
+                url: `/motel/list-by-staff/${id}`,
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+            }),
+            providesTags(result) {
+                if (result) {
+                    const final = [
+                        ...result?.result.map(({ id }) => ({ type: 'Motels' as const, id })),
+                        { type: 'Motels' as const, id: 'LIST' },
+                    ];
+                    return final;
+                }
+                const final = [{ type: 'Motels' as const, id: 'LIST' }];
+                return final;
+            },
+        }),
 
         addMotels: build.mutation<
             Motel,
@@ -118,6 +139,7 @@ export const motelApi = createApi({
 
 export const {
     useGetMotelsByLandLordQuery,
+    useGetMotelsByStaffQuery,
     useGetMotelsQuery,
     useAddMotelsMutation,
     useGetMotelQuery,
