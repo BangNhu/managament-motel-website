@@ -627,7 +627,7 @@ export default function AddContract(props: IAddContractProps) {
                     }}
                 />
                 <Stack>
-                    <Typography sx={{ fontWeight: 'bold', color: '#1c1c1c' }}>
+                    <Typography sx={{ fontWeight: 'bold', color: '#1c1c1c', marginBottom: '20px' }}>
                         Chỉ số đồng hồ điện, đồng hồ nước
                     </Typography>
                     {/* <FormELectricWater

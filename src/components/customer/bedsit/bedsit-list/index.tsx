@@ -12,6 +12,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormELectricWater from '../../electric-water/form-electric-water';
+import { FormBill } from '../../bill/form-bill';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -26,7 +27,19 @@ const style = {
     boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
     p: 5,
 };
-
+const styleBill = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: { xs: '90%', sm: '60%' },
+    maxHeight: '90%',
+    overflowY: 'auto',
+    bgcolor: 'background.paper',
+    borderRadius: '8px',
+    boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
+    p: 5,
+};
 export interface IBedsitListProps {}
 
 export function BedsitList(props: IBedsitListProps) {
@@ -34,6 +47,12 @@ export function BedsitList(props: IBedsitListProps) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false);
+        dispatch(startEditBedsit(0));
+    };
+    const [openBill, setOpenBill] = useState(false);
+    const handleOpenBill = () => setOpenBill(true);
+    const handleCloseBill = () => {
+        setOpenBill(false);
         dispatch(startEditBedsit(0));
     };
     const tokenData = useTokenData();
@@ -102,42 +121,15 @@ export function BedsitList(props: IBedsitListProps) {
             filterable: false,
             renderCell: (params: GridRenderCellParams) => (
                 <Stack direction="column" spacing={1}>
-                    <Stack direction="row" sx={{ gap: '10px' }}>
+                    <Stack direction="row" sx={{ gap: '10px' }} justifyContent="space-between">
                         <Button
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
-                            onClick={() => {
-                                // console.log('bedsitid dispatch', params.row.bedsit_id);
-                                console.log('bedsitid dispatch', params.row.id);
-                                dispatch(startEditBedsit(params.row.id));
-                                handleOpen();
-                            }}
+                            // onClick={() => handleDeleteMotel(params.row.id)}
                         >
-                            Điện nước
+                            Thêm khách trọ
                         </Button>
-                        <Modal
-                            open={open}
-                            onClose={() => {
-                                handleClose();
-                                dispatch(startEditElectricWater(0));
-                                // setSelectedMotelId(null); // Đặt lại giá trị của selectedMotelId khi đóng Modal
-                            }}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                            sx={{
-                                '& .MuiBackdrop-root': {
-                                    backgroundColor: 'rgba(169, 169, 169, 0.5)', // Màu xám nhạt với độ trong suốt
-                                },
-                            }}
-                        >
-                            <Stack sx={style}>
-                                <FormELectricWater
-                                    handleCloseModal={() => {
-                                        handleClose();
-                                    }}
-                                />
-                            </Stack>
-                        </Modal>
+
                         <Button
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
@@ -187,14 +179,42 @@ export function BedsitList(props: IBedsitListProps) {
                             Xóa
                         </Button>
                     </Stack>
-                    <Stack direction="row" sx={{ gap: '10px' }}>
+                    <Stack direction="row" sx={{ gap: '10px' }} justifyContent="space-between">
                         <Button
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
-                            // onClick={() => handleDeleteMotel(params.row.id)}
+                            onClick={() => {
+                                // console.log('bedsitid dispatch', params.row.bedsit_id);
+                                console.log('bedsitid dispatch', params.row.id);
+                                dispatch(startEditBedsit(params.row.id));
+                                handleOpen();
+                            }}
                         >
-                            Thêm khách trọ
+                            Chốt Điện nước
                         </Button>
+                        <Modal
+                            open={open}
+                            onClose={() => {
+                                handleClose();
+                                dispatch(startEditElectricWater(0));
+                                // setSelectedMotelId(null); // Đặt lại giá trị của selectedMotelId khi đóng Modal
+                            }}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                            sx={{
+                                '& .MuiBackdrop-root': {
+                                    backgroundColor: 'rgba(169, 169, 169, 0.5)', // Màu xám nhạt với độ trong suốt
+                                },
+                            }}
+                        >
+                            <Stack sx={style}>
+                                <FormELectricWater
+                                    handleCloseModal={() => {
+                                        handleClose();
+                                    }}
+                                />
+                            </Stack>
+                        </Modal>
                         <Button
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
@@ -205,10 +225,38 @@ export function BedsitList(props: IBedsitListProps) {
                         <Button
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
-                            // onClick={() => handleDeleteMotel(params.row.id)}
+                            onClick={() => {
+                                // console.log('bedsitid dispatch', params.row.bedsit_id);
+                                console.log('bedsitid dispatch', params.row.id);
+                                dispatch(startEditBedsit(params.row.id));
+                                handleOpenBill();
+                            }}
                         >
                             Lập hóa đơn
                         </Button>
+                        <Modal
+                            open={openBill}
+                            onClose={() => {
+                                handleCloseBill();
+                                // dispatch(startEditElectricWater(0));
+                                // setSelectedMotelId(null); // Đặt lại giá trị của selectedMotelId khi đóng Modal
+                            }}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                            sx={{
+                                '& .MuiBackdrop-root': {
+                                    backgroundColor: 'rgba(169, 169, 169, 0.5)', // Màu xám nhạt với độ trong suốt
+                                },
+                            }}
+                        >
+                            <Stack sx={styleBill}>
+                                <FormBill
+                                    handleCloseModal={() => {
+                                        handleCloseBill();
+                                    }}
+                                />
+                            </Stack>
+                        </Modal>
                     </Stack>
                 </Stack>
             ),
@@ -228,7 +276,7 @@ export function BedsitList(props: IBedsitListProps) {
                 //    rowId={(row: { id: any; }) => row.id}
                 rows={rows} // Cast Bedsits to the expected type
                 columns={columns}
-                rowHeight={100}
+                rowHeight={120}
                 initialState={{
                     pagination: {
                         paginationModel: { page: 0, pageSize: 5 },

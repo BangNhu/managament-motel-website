@@ -1,4 +1,4 @@
-import { ElectricWater } from '@/types/electric-water.type';
+import { ElectricWater, ElectricWaterResult } from '@/types/electric-water.type';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export interface ElectricWatersResponse {
     result: ElectricWater[];
@@ -74,10 +74,42 @@ export const electricWaterApi = createApi({
 
         addElectricWaters: build.mutation<
             ElectricWater,
-            Omit<ElectricWater, 'id' | 'motel_name' | 'is_temporary_residence'>
+            Omit<
+                ElectricWater,
+                | 'id'
+                | 'index_electric_old'
+                | 'index_electric_water'
+                | 'amount_electric'
+                | 'amount_water'
+            >
         >({
             query: (body) => ({
                 url: '/electricity-water/add',
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body,
+            }),
+            //những thứ match tag với invalidatesTags sẽ chạy lại (getElectricWaters)
+            invalidatesTags: (result, erorr, body) => [{ type: 'ElectricWaters', id: 'LIST' }],
+        }),
+        addElectricWatersMonth: build.mutation<
+            ElectricWaterResult,
+            Omit<
+                ElectricWater,
+                | 'id'
+                | 'index_electric_old'
+                | 'index_water_old'
+                | 'amount_electric'
+                | 'amount_water'
+                | 'error'
+            >
+        >({
+            query: (body) => ({
+                url: '/electricity-water/add-month',
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -143,6 +175,7 @@ export const {
     useGetElectricWatersByLandLordQuery,
     // useGetElectricWatersQuery,
     useAddElectricWatersMutation,
+    useAddElectricWatersMonthMutation,
     useGetElectricWaterQuery,
     useGetElectricWaterByBedsitQuery,
     useUpdateElectricWatersMutation,

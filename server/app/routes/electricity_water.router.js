@@ -5,6 +5,10 @@ module.exports = function (router) {
     router.get('/electricity-water/detail/:id', electricityWaterController.details);
     router.get('/electricity-water/get-by-bedsit/:id', electricityWaterController.get_by_bedsit);
     router.post('/electricity-water/add', electricityWaterController.add_electricity_water);
+    router.post(
+        '/electricity-water/add-month',
+        electricityWaterController.add_electric_water_month
+    );
     router.delete(
         '/electricity_water/delete/:id',
         electricityWaterController.remove_electricity_water

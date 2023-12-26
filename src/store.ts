@@ -16,6 +16,8 @@ import servicesReducer from './slices/services.slice';
 import { servicesApi } from './services/services.services';
 import electricWaterReducer from './slices/electric-water.slice';
 import { electricWaterApi } from './services/electric-water.services';
+import billReducer from './slices/bill.slice';
+import { billApi } from './services/bill.services';
 // ...
 
 export const store = configureStore({
@@ -28,6 +30,7 @@ export const store = configureStore({
         tenant: tenantReducer,
         services: servicesReducer,
         electricWater: electricWaterReducer,
+        bill: billReducer,
         [motelApi.reducerPath]: motelApi.reducer, //thêm reducer được tạo từ api slice
         [staffApi.reducerPath]: staffApi.reducer,
         [blockMotelApi.reducerPath]: blockMotelApi.reducer,
@@ -36,6 +39,7 @@ export const store = configureStore({
         [tenantApi.reducerPath]: tenantApi.reducer,
         [servicesApi.reducerPath]: servicesApi.reducer,
         [electricWaterApi.reducerPath]: electricWaterApi.reducer,
+        [billApi.reducerPath]: billApi.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
@@ -47,7 +51,8 @@ export const store = configureStore({
             contractApi.middleware,
             tenantApi.middleware,
             servicesApi.middleware,
-            electricWaterApi.middleware
+            electricWaterApi.middleware,
+            billApi.middleware
         ),
 });
 

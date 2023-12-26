@@ -1,7 +1,6 @@
 let isAuth = async function (req, res, next) {
     try {
         var _JWT = require('./_JWT');
-        console.log('token được lấy từ header: ' + req.headers.authorization);
         const _token = req.headers.authorization.split(' ')[1]; // dùng split bỏ đi phần Bearer header Authorization HTTP
 
         if (_token) {

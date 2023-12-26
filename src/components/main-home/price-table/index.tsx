@@ -11,7 +11,7 @@ export function PriceTable(props: IPriceTableProps) {
             name: 'Dùng thử',
             price: 'Miễn phí',
             content: [
-                { detail: 'Quy mô tối đa 50 phòng' },
+                { detail: 'Quy mô tối đa 20 phòng' },
                 { detail: 'Dùng thử trong 30 ngày' },
                 { detail: 'Hỗ trợ 24/7' },
             ],

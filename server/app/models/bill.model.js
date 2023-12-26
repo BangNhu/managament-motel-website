@@ -66,4 +66,5 @@ Bill.update = function (bill, result) {
     );
 };
 
+Bill.create = function (data, result) {};
 module.exports = Bill;

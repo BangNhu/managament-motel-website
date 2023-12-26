@@ -1,2 +1,2 @@
 export * from './form-electric-water';
-export * from './tenant-list';
+export * from './electric-water-list';

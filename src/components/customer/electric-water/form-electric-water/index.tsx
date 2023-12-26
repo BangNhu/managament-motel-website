@@ -1,12 +1,14 @@
 import useTokenData from '@/services/auth/token-data-loader';
 import {
+    useAddElectricWatersMonthMutation,
     useAddElectricWatersMutation,
     useGetElectricWaterQuery,
     useUpdateElectricWatersMutation,
 } from '@/services/electric-water.services';
 import { RootState } from '@/store';
-import { ElectricWater } from '@/types/electric-water.type';
+import { ElectricWater, ElectricWaterResult } from '@/types/electric-water.type';
 import {
+    Alert,
     Button,
     Divider,
     Grid,
@@ -15,14 +17,32 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+interface resultWaterDataAdd extends ElectricWater {
+    index_electric_old: number;
+    index_electric_water: number;
+    amount_electric: number;
+    amount_water: number;
+}
 export interface IFormELectricWaterProps {
     handleCloseModal: () => void;
 }
 
-const intialState: Omit<ElectricWater, 'id'> = {
+const intialState: Omit<
+    ElectricWater,
+    'id' | 'index_electric_old' | 'index_water_old' | 'amount_electric' | 'amount_water' | 'error'
+> = {
     record_day: '',
     index_electricity: 0,
     index_water: 0,
@@ -30,12 +50,28 @@ const intialState: Omit<ElectricWater, 'id'> = {
 };
 export default function FormELectricWater(props: IFormELectricWaterProps) {
     const tokenData = useTokenData();
+    const [resultAddElectricWater, setResultAddElectricWater] =
+        useState<ElectricWaterResult | null>(null);
+
+    const [open, setOpen] = useState(false);
     // console.log(tokenData);
-    const [formData, setFormData] = useState<Omit<ElectricWater, 'id'>>(intialState);
-    const [addElectricWater, addElectricWaterReslut] = useAddElectricWatersMutation();
+    const [formData, setFormData] =
+        useState<
+            Omit<
+                ElectricWater,
+                | 'id'
+                | 'index_electric_old'
+                | 'index_water_old'
+                | 'amount_electric'
+                | 'amount_water'
+                | 'error'
+            >
+        >(intialState);
+    // const [addElectricWater, addElectricWaterReslut] = useAddElectricWatersMutation();
+    const [addElectricWaterMonth, addElectricWaterReslutMonth] =
+        useAddElectricWatersMonthMutation();
     const bedsitId = useSelector((state: RootState) => state.bedsit.id);
     const electricWaterId = useSelector((state: RootState) => state.electricWater.id);
-    console.log('bedsitId id', electricWaterId);
 
     const { data: electricWaterData } = useGetElectricWaterQuery(electricWaterId, {
         skip: !electricWaterId,
@@ -91,16 +127,20 @@ export default function FormELectricWater(props: IFormELectricWaterProps) {
 
         try {
             if (bedsitId) {
-                const result = await addElectricWater(formData).unwrap();
+                const result = await addElectricWaterMonth(formData).unwrap();
+                // setIndex(result);
                 console.log('thành công', result);
+                setResultAddElectricWater(result);
             } else {
                 console.log('formData', formData);
             }
 
-            setFormData(intialState);
-            if (props.handleCloseModal) {
-                props.handleCloseModal();
-            }
+            // setFormData(intialState);
+
+            // if (props.handleCloseModal) {
+            //     props.handleCloseModal();
+            // }
+            setOpen(true);
         } catch (error) {
             console.error('Error during mutation:', error);
         }
@@ -146,31 +186,6 @@ export default function FormELectricWater(props: IFormELectricWaterProps) {
                     />
                 </Stack>
             )}
-            {!Boolean(electricWaterId) && (
-                <Stack>
-                    <Typography
-                        variant="h1"
-                        sx={{
-                            fontSize: '22px',
-                            fontFamily: 'Verdana',
-                            marginBottom: { xs: '10px', md: '20px' },
-                            textAlign: 'center',
-                            color: '#A61713',
-                            fontWeight: 600,
-                            // textTransform: 'uppercase',
-                        }}
-                    >
-                        {/*  Thêm mới khách trọ */}
-                    </Typography>
-                    {/* <Divider
-                        sx={{
-                            margin: '0 0 5% 0',
-                            border: '1px solid #cb5656',
-                          
-                        }}
-                    />*/}
-                </Stack>
-            )}
             <form onSubmit={handleSubmit} action="/login">
                 <Stack
                     sx={{
@@ -188,35 +203,6 @@ export default function FormELectricWater(props: IFormELectricWaterProps) {
                     <Typography>NGÀY CHỐT {formattedDate}</Typography>
                 </Stack>
                 <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    {/* <Grid item xs={12} md={6}>
-                        <TextField
-                            name="bedsit_id"
-                            id="motel_name"
-                            type="text"
-                            variant="outlined"
-                            color="secondary"
-                            label="Tên khách trọ"
-                            onChange={handleChange}
-                            value={formData.bedsit_id}
-                            fullWidth
-                            required
-                        />
-                    </Grid> */}
-
-                    {/* <Grid item xs={12} md={6}>
-                        <TextField
-                            name="record_day"
-                            type="date"
-                            variant="outlined"
-                            color="secondary"
-                            label="Ngày ghi"
-                            onChange={handleChange}
-                            value={formData.record_day}
-                            fullWidth
-                            required
-                        />
-                    </Grid> */}
-
                     <Grid item xs={12} md={6}>
                         <TextField
                             name="index_electricity"
@@ -245,7 +231,7 @@ export default function FormELectricWater(props: IFormELectricWaterProps) {
                         />
                     </Grid>
                 </Grid>
-                {bedsitId !== undefined && bedsitId !== 0 && (
+                {bedsitId !== undefined && bedsitId !== 0 && open !== true && (
                     <Stack
                         direction="row"
                         justifyContent="center"
@@ -273,33 +259,100 @@ export default function FormELectricWater(props: IFormELectricWaterProps) {
                         </Button>
                     </Stack>
                 )}
-                {!Boolean(electricWaterId) && (
-                    <Stack
-                        direction="row"
-                        justifyContent="center"
-                        spacing={3}
-                        sx={{ margin: { xs: '10px auto 0', sm: '30px auto 0' } }}
-                    >
-                        {/* <Button
-                            variant="contained"
-                            sx={{ textTransform: 'capitalize', width: '100px' }}
-                            type="submit"
-                            onClick={handleSubmit}
+                {open && open == true && (
+                    <Stack>
+                        <Stack
+                            direction="row"
+                            justifyContent="center"
+                            spacing={3}
+                            sx={{ margin: { xs: '10px auto 0', sm: '30px auto 0' } }}
                         >
-                            Thêm mới
-                        </Button>
-                        <Button
-                            variant="contained"
-                            sx={{ textTransform: 'capitalize', width: '100px' }}
-                            type="submit"
-                            onClick={() => {
-                                if (props.handleCloseModal) {
-                                    props.handleCloseModal();
-                                }
-                            }}
+                            <Button
+                                variant="outlined"
+                                sx={{ textTransform: 'capitalize', width: '100px' }}
+                                type="submit"
+                            >
+                                Cập nhật
+                            </Button>
+                        </Stack>
+                        {resultAddElectricWater?.result.error && (
+                            <Alert sx={{ mt: '20px' }} severity="error">
+                                {`${resultAddElectricWater?.result.error}. Chỉ số điện cũ: ${resultAddElectricWater?.result.index_electric_old}. Chỉ số nước cũ: ${resultAddElectricWater?.result.index_water_old}.`}
+                            </Alert>
+                        )}
+                        {!resultAddElectricWater?.result.error && (
+                            <TableContainer component={Paper}>
+                                <Typography
+                                    sx={{ fontWeight: 'bold', fontSize: '17px', margin: '10px 0' }}
+                                >
+                                    Thông tin chỉ số điện nước
+                                </Typography>
+                                <Table sx={{ border: '1px solid #1c1c1c' }}>
+                                    <TableHead
+                                        sx={{
+                                            backgroundColor: '#a48e8e',
+                                        }}
+                                    >
+                                        <TableRow>
+                                            <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
+                                                Tên
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
+                                                Chỉ số mới
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
+                                                Chỉ số cũ
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
+                                                Số dùng
+                                            </TableCell>
+                                            {/* Add more header cells as needed */}
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell>Điện</TableCell>
+                                            <TableCell>
+                                                {resultAddElectricWater?.result?.index_electric_old}
+                                            </TableCell>
+                                            <TableCell>{formData.index_electricity}</TableCell>
+                                            <TableCell>
+                                                {resultAddElectricWater?.result.amount_electric}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>Nước</TableCell>
+                                            <TableCell>
+                                                {resultAddElectricWater?.result?.index_water_old}
+                                            </TableCell>
+                                            <TableCell>{formData.index_water}</TableCell>
+                                            <TableCell>
+                                                {resultAddElectricWater?.result.amount_water}
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        )}
+                        <Stack
+                            direction="row"
+                            justifyContent="center"
+                            spacing={3}
+                            sx={{ margin: { xs: '10px auto 0', sm: '30px auto 0' } }}
                         >
-                            Hủy
-                        </Button> */}
+                            <Button
+                                variant="contained"
+                                sx={{ textTransform: 'capitalize', width: '100px' }}
+                                type="submit"
+                                onClick={() => {
+                                    if (props.handleCloseModal) {
+                                        props.handleCloseModal();
+                                    }
+                                }}
+                            >
+                                Đóng
+                            </Button>
+                        </Stack>
                     </Stack>
                 )}
             </form>

@@ -25,6 +25,14 @@ exports.add_electricity_water = function (req, res) {
     });
 };
 
+exports.add_electric_water_month = function (req, res) {
+    var data = req.body;
+
+    ElectricityWater.add_electric_water(data, function (response) {
+        res.send({ result: response });
+    });
+};
+
 exports.remove_electricity_water = function (req, res) {
     var id = req.params.id;
     ElectricityWater.remove(id, function (response) {
