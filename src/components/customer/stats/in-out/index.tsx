@@ -1,7 +1,15 @@
 import { Divider, Stack, Typography } from '@mui/material';
 import * as React from 'react';
-
-export interface IStatsInOutProps {}
+interface DataBill {
+    billTotal: number;
+    recepitIn: number;
+    recepitOut: number;
+    billUnPaidCount: number;
+    billPaidCount: number;
+}
+export interface IStatsInOutProps {
+    data: DataBill;
+}
 
 export function StatsInOut(props: IStatsInOutProps) {
     return (
@@ -37,7 +45,11 @@ export function StatsInOut(props: IStatsInOutProps) {
                     >
                         {' '}
                         <Typography>Số tiền thu vào</Typography>
-                        <Typography sx={{ fontSize: '24px' }}>25589000</Typography>
+                        <Typography sx={{ fontSize: '24px' }}>
+                            {props.data.recepitIn
+                                ? props.data.billTotal + props.data.recepitIn
+                                : props.data.billTotal}
+                        </Typography>
                     </Stack>
                     <Stack
                         sx={{
@@ -49,7 +61,9 @@ export function StatsInOut(props: IStatsInOutProps) {
                         }}
                     >
                         <Typography>Số tiền chi ra</Typography>
-                        <Typography sx={{ fontSize: '24px' }}>5600000</Typography>
+                        <Typography sx={{ fontSize: '24px' }}>
+                            {props.data.recepitOut ? props.data.recepitOut : 0}
+                        </Typography>
                     </Stack>
                 </Stack>
             </Stack>
@@ -83,7 +97,10 @@ export function StatsInOut(props: IStatsInOutProps) {
                     >
                         {' '}
                         <Typography>Hóa đơn đã thanh toán</Typography>
-                        <Typography sx={{ fontSize: '24px' }}>12</Typography>
+                        <Typography sx={{ fontSize: '24px' }}>
+                            {' '}
+                            {props.data.billPaidCount ? props.data.billPaidCount : 0}
+                        </Typography>
                     </Stack>
                     <Stack
                         sx={{
@@ -94,7 +111,10 @@ export function StatsInOut(props: IStatsInOutProps) {
                         }}
                     >
                         <Typography>Hóa đơn chưa thanh toán</Typography>
-                        <Typography sx={{ fontSize: '24px' }}>1</Typography>
+                        <Typography sx={{ fontSize: '24px' }}>
+                            {' '}
+                            {props.data.billUnPaidCount ? props.data.billUnPaidCount : 0}
+                        </Typography>
                     </Stack>
                 </Stack>
             </Stack>

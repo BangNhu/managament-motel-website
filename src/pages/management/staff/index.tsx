@@ -1,6 +1,7 @@
 import { ManagementLayout } from '@/components/common/layout/management';
+import { StaffList } from '@/components/customer';
 import FormDecentralize from '@/components/customer/staff/decentral';
-import { StaffList } from '@/components/customer/staff/staff-list';
+import FormStaff from '@/components/customer/staff/form-staff';
 import useTokenData from '@/services/auth/token-data-loader';
 import { useGetMotelsQuery } from '@/services/motel.services';
 import { Button, Modal, Stack } from '@mui/material';
@@ -95,7 +96,7 @@ export default function ManageStaff(props: IManageStaffProps) {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Stack sx={style}> {<FormDecentralize handleCloseModal={handleClose} />}</Stack>
+                    <Stack sx={style}> {<FormStaff handleCloseModal={handleClose} />}</Stack>
                 </Modal>
                 <Button
                     // variant="contained"

@@ -1,9 +1,20 @@
 import { Divider, Stack, Typography } from '@mui/material';
 import * as React from 'react';
 
-export interface IStatsMotelProps {}
+interface dataMotel {
+    blockMotelCount: number;
+    bedsitCount: number;
+    bedsitEmpty: number;
+    bedsitHired: number;
+    bedsitDeposit: number;
+    tenantCount: number;
+}
+export interface IStatsMotelProps {
+    data: dataMotel;
+}
 
 export function StatsMotel(props: IStatsMotelProps) {
+    console.log(props.data.blockMotelCount);
     return (
         <Stack
             sx={{
@@ -29,7 +40,7 @@ export function StatsMotel(props: IStatsMotelProps) {
                 >
                     {' '}
                     <Typography>Số dãy trọ</Typography>
-                    <Typography sx={{ fontSize: '24px' }}>2</Typography>
+                    <Typography sx={{ fontSize: '24px' }}>{props.data.blockMotelCount}</Typography>
                 </Stack>
                 <Stack
                     sx={{
@@ -41,7 +52,7 @@ export function StatsMotel(props: IStatsMotelProps) {
                     }}
                 >
                     <Typography>Số phòng</Typography>
-                    <Typography sx={{ fontSize: '24px' }}>10</Typography>
+                    <Typography sx={{ fontSize: '24px' }}>{props.data.bedsitCount}</Typography>
                 </Stack>
                 <Stack
                     sx={{
@@ -53,7 +64,7 @@ export function StatsMotel(props: IStatsMotelProps) {
                     }}
                 >
                     <Typography>Phòng trống</Typography>
-                    <Typography sx={{ fontSize: '24px' }}>2</Typography>
+                    <Typography sx={{ fontSize: '24px' }}>{props.data.bedsitEmpty}</Typography>
                 </Stack>
                 <Stack
                     sx={{
@@ -66,7 +77,7 @@ export function StatsMotel(props: IStatsMotelProps) {
                 >
                     {' '}
                     <Typography>Đang đặt cọc</Typography>
-                    <Typography sx={{ fontSize: '24px' }}>1</Typography>
+                    <Typography sx={{ fontSize: '24px' }}>{props.data.bedsitDeposit}</Typography>
                 </Stack>
                 <Stack
                     sx={{
@@ -78,7 +89,7 @@ export function StatsMotel(props: IStatsMotelProps) {
                     }}
                 >
                     <Typography>Đang ở</Typography>
-                    <Typography sx={{ fontSize: '24px' }}>7</Typography>
+                    <Typography sx={{ fontSize: '24px' }}>{props.data.bedsitHired}</Typography>
                 </Stack>
                 <Stack
                     sx={{
@@ -90,7 +101,7 @@ export function StatsMotel(props: IStatsMotelProps) {
                     }}
                 >
                     <Typography>Số khách trọ</Typography>
-                    <Typography sx={{ fontSize: '24px' }}>11</Typography>
+                    <Typography sx={{ fontSize: '24px' }}>{props.data.tenantCount}</Typography>
                 </Stack>
             </Stack>
         </Stack>

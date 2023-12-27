@@ -18,10 +18,18 @@ import electricWaterReducer from './slices/electric-water.slice';
 import { electricWaterApi } from './services/electric-water.services';
 import billReducer from './slices/bill.slice';
 import { billApi } from './services/bill.services';
+import { receiptExpenseApi } from './services/receipt-expense.services';
+import receiptExpenseReducer from './slices/receipt-expense.slice';
+import temporaryResidenceReducer from './slices/temporary_residence.slice';
+import { temporaryResidenceApi } from './services/temporary_residence.services';
+import landlordReducer from './slices/landlord.slice';
+import { landlordApi } from './services/landlord.services';
+
 // ...
 
 export const store = configureStore({
     reducer: {
+        landlord: landlordReducer,
         motel: motelReducer,
         staff: staffReducer,
         blockMotel: blockMotelReducer,
@@ -31,6 +39,9 @@ export const store = configureStore({
         services: servicesReducer,
         electricWater: electricWaterReducer,
         bill: billReducer,
+        temporaryResidence: temporaryResidenceReducer,
+        receiptExpense: receiptExpenseReducer,
+        [landlordApi.reducerPath]: landlordApi.reducer,
         [motelApi.reducerPath]: motelApi.reducer, //thêm reducer được tạo từ api slice
         [staffApi.reducerPath]: staffApi.reducer,
         [blockMotelApi.reducerPath]: blockMotelApi.reducer,
@@ -40,10 +51,13 @@ export const store = configureStore({
         [servicesApi.reducerPath]: servicesApi.reducer,
         [electricWaterApi.reducerPath]: electricWaterApi.reducer,
         [billApi.reducerPath]: billApi.reducer,
+        [receiptExpenseApi.reducerPath]: receiptExpenseApi.reducer,
+        [temporaryResidenceApi.reducerPath]: temporaryResidenceApi.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
+            landlordApi.middleware,
             motelApi.middleware,
             staffApi.middleware,
             blockMotelApi.middleware,
@@ -52,7 +66,9 @@ export const store = configureStore({
             tenantApi.middleware,
             servicesApi.middleware,
             electricWaterApi.middleware,
-            billApi.middleware
+            billApi.middleware,
+            receiptExpenseApi.middleware,
+            temporaryResidenceApi.middleware
         ),
 });
 

@@ -1,10 +1,38 @@
 import { Button, Divider, Grid, Stack, TextField, Typography } from '@mui/material';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+} from '@mui/material';
 import * as React from 'react';
 import { saveAs } from 'file-saver';
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import {
+    useGetBillsOldNewQuery,
+    useGetBillsPriceBedsitQuery,
+    useGetBillsServiceBedsitQuery,
+} from '@/services/bill.services';
 export interface IBillPrintPDFProps {}
-
+const tileHeaderTable = [
+    'Tên chi phí',
+    'Đơn giá',
+    'Số mới',
+    'Số cũ',
+    'Đơn vị tính',
+    'Số dùng',
+    'Thành tiền',
+];
 export default function BillPrintPDF(props: IBillPrintPDFProps) {
+    const bedsitId = useSelector((state: RootState) => state.bedsit.id);
+    const { data: dataElectricWater } = useGetBillsOldNewQuery(bedsitId);
+    const { data: dataServiceBedsit } = useGetBillsServiceBedsitQuery(bedsitId);
+    const { data: dataPriceBedsit } = useGetBillsPriceBedsitQuery(bedsitId);
     //Lấy tháng năm hiện tại bỏ xuống Typography cho người dùng biết thời gian thêm
     const currentDate: Date = new Date();
 
@@ -23,13 +51,8 @@ export default function BillPrintPDF(props: IBillPrintPDFProps) {
     return (
         <Stack
             sx={{
-                // width: { xs: '90%', md: '50%' },
-                // // margin: { xs: '20% auto', md: '10% auto 0 auto ' },
-                // mx: 'auto',
                 borderRadius: '8px',
-                // border: '2px solid #1c1c1c',
                 padding: '2% 5%',
-                // boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
             }}
         >
             <Stack>
@@ -102,50 +125,34 @@ export default function BillPrintPDF(props: IBillPrintPDFProps) {
             <Typography sx={{ fontWeight: 'bold', fontSize: '17px', marginBottom: '10px' }}>
                 Bảng Điện Nước
             </Typography>
-            <Stack sx={{ border: '1px solid #1c1c1c' }}>
-                <Stack
-                    direction="row"
-                    sx={{
-                        bgcolor: '#a48e8e',
-                        color: '#fff',
-                        height: '50px',
-
-                        alignItems: 'center',
-                    }}
-                >
-                    <Typography sx={{ width: '15%' }}>Tên chi phí</Typography>
-                    <Typography sx={{ width: '15%' }}>Đơn giá</Typography>
-                    <Typography sx={{ width: '15%' }}>Số mới</Typography>
-                    <Typography sx={{ width: '15%' }}>Số cũ</Typography>
-                    <Typography sx={{ width: '15%' }}>Đơn vị tính</Typography>
-                    <Typography sx={{ width: '15%' }}>Số dùng</Typography>
-                    <Typography>Thành tiền</Typography>
-                </Stack>
-                <Stack
-                    direction="row"
-                    sx={{ bgcolor: '#ffffff', color: '#1c1c1c', margin: '10px 0' }}
-                >
-                    <Typography sx={{ width: '15%' }}>Điện</Typography>
-                    <Typography sx={{ width: '15%' }}>3500</Typography>
-                    <Typography sx={{ width: '15%' }}>225</Typography>
-                    <Typography sx={{ width: '15%' }}>200</Typography>
-                    <Typography sx={{ width: '15%' }}>đ/kWh</Typography>
-                    <Typography sx={{ width: '15%' }}>25</Typography>
-                    <Typography>87500</Typography>
-                </Stack>{' '}
-                <Stack
-                    direction="row"
-                    sx={{ bgcolor: '#ffffff', color: '#1c1c1c', margin: '10px 0' }}
-                >
-                    <Typography sx={{ width: '15%' }}>Nước</Typography>
-                    <Typography sx={{ width: '15%' }}>10000</Typography>
-                    <Typography sx={{ width: '15%' }}>1278</Typography>
-                    <Typography sx={{ width: '15%' }}>1272</Typography>
-                    <Typography sx={{ width: '15%' }}>đ/khối</Typography>
-                    <Typography sx={{ width: '15%' }}>6</Typography>
-                    <Typography>60000</Typography>
-                </Stack>
-            </Stack>
+            <TableContainer component={Paper}>
+                <Typography sx={{ fontWeight: 'bold', fontSize: '17px', margin: '10px 0' }}>
+                    Thông tin chỉ số điện nước
+                </Typography>
+                <Table sx={{ border: '1px solid #1c1c1c' }}>
+                    <TableHead
+                        sx={{
+                            backgroundColor: '#a48e8e',
+                        }}
+                    >
+                        <TableRow>
+                            {tileHeaderTable.map((item, index) => (
+                                <TableCell key={index} sx={{ fontWeight: 'bold', color: '#fff' }}>
+                                    {item}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell>Điện</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Nước</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
             <Typography sx={{ fontWeight: 'bold', fontSize: '17px', margin: '10px 0' }}>
                 Bảng Dịch Vụ
             </Typography>

@@ -26,7 +26,6 @@ import {
 } from '@mui/x-data-grid';
 import { useDispatch } from 'react-redux';
 import { startEditMotel } from '@/slices/motel.slice';
-import { useGetStaffQuery } from '@/services/staff.services';
 import AddMotel from '../form-motel';
 import useTokenData from '@/services/auth/token-data-loader';
 
@@ -90,11 +89,23 @@ export function MotelList(props: IMotelListProps) {
             type: 'number',
             width: 90,
         },
+        {
+            field: 'price_electricity',
+            headerName: 'Giá nước',
+            type: 'number',
+            width: 90,
+        },
+        {
+            field: 'price_water',
+            headerName: 'Giá điện',
+            type: 'number',
+            width: 90,
+        },
         { field: 'staff_name', headerName: 'Nhân viên', width: 130 },
         {
             field: 'actions',
             headerName: '',
-            width: 250,
+            width: 330,
             sortable: false,
             filterable: false,
             renderCell: (params: GridRenderCellParams) => (
@@ -109,7 +120,7 @@ export function MotelList(props: IMotelListProps) {
                     >
                         Sửa
                     </Button>
-                    {/* <Modal
+                    <Modal
                         open={open}
                         onClose={() => {
                             handleClose();
@@ -132,7 +143,7 @@ export function MotelList(props: IMotelListProps) {
                                 }}
                             />
                         </Stack>
-                    </Modal> */}
+                    </Modal>
                     <Button
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
@@ -156,7 +167,7 @@ export function MotelList(props: IMotelListProps) {
         index: index + 1, // Bắt đầu từ số 1
     }));
     return (
-        <Stack sx={{ width: { xs: '95%', md: '80%' }, mx: 'auto' }}>
+        <Stack sx={{ width: { xs: '95%', md: '90%' }, mx: 'auto' }}>
             <DataGrid
                 rows={rows} // Cast motels to the expected type
                 columns={columns}

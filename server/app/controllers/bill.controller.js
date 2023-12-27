@@ -9,6 +9,11 @@ exports.get_list = function (req, res) {
         res.send({ result: data });
     });
 };
+exports.get_list_tenant = function (req, res) {
+    Bill.get_all_tenant(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
 
 exports.details = function (req, res) {
     Bill.getById(req.params.id, function (response) {
@@ -65,4 +70,25 @@ exports.fetch_invoice_pdf = (req, res) => {
     } else {
         res.status(404).send('File not found');
     }
+};
+exports.get_expense = (req, res) => {
+    var id = req.params.id;
+    Bill.get_expense(id, function (response) {
+        res.send({ result: response });
+    });
+};
+exports.get_old_new = function (req, res) {
+    Bill.get_old_new(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
+exports.get_price_bedsit = function (req, res) {
+    Bill.get_price_bedsit(req.params.id, function (response) {
+        res.send({ result: response });
+    });
+};
+exports.get_services_bedsit = function (req, res) {
+    Bill.get_services_bedsit(req.params.id, function (response) {
+        res.send({ result: response });
+    });
 };

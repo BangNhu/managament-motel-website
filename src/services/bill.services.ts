@@ -1,4 +1,4 @@
-import { Bill } from '@/types/bill.type';
+import { Bill, BillResult, BillResultArray } from '@/types/bill.type';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export interface BillsResponse {
     result: Bill[];
@@ -120,6 +120,46 @@ export const billApi = createApi({
             }),
             invalidatesTags: (result, erorr, id) => [{ type: 'Bills', id }],
         }),
+        getBillsPriceBedsit: build.query<BillResultArray, number>({
+            query: (id) => ({
+                url: `/bill/get-price-bedsit/${id}`,
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+            }),
+        }),
+        getBillsServiceBedsit: build.query<BillResultArray, number>({
+            query: (id) => ({
+                url: `bill/get-service-bedsit/${id}`,
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+            }),
+        }),
+        getBillsOldNew: build.query<BillResult, number>({
+            query: (id) => ({
+                url: `bill/get-old-new/${id}`,
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+            }),
+        }),
+        getBillsTenant: build.query<BillsResponse, number>({
+            query: (id) => ({
+                url: `bill/get-list-tenant/${id}`,
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+            }),
+        }),
     }),
 });
 
@@ -131,4 +171,8 @@ export const {
     useUpdateBillsMutation,
     useDeleteBillMutation,
     useGetBillsByStaffQuery,
+    useGetBillsOldNewQuery,
+    useGetBillsServiceBedsitQuery,
+    useGetBillsPriceBedsitQuery,
+    useGetBillsTenantQuery,
 } = billApi;

@@ -1,4 +1,4 @@
-import { Tenant } from '@/types/tenant.type';
+import { Tenant, TenantsResult } from '@/types/tenant.type';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export interface TenantsResponse {
     result: Tenant[];
@@ -96,6 +96,16 @@ export const tenantApi = createApi({
                 },
             }),
         }),
+        getTenantId: build.query<TenantsResult, number>({
+            query: (id) => ({
+                url: `/tenant/detail/${id}`,
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+            }),
+        }),
 
         updateTenants: build.mutation<Tenant, { id: number; body: Tenant }>({
             query: (data) => ({
@@ -134,4 +144,5 @@ export const {
     useUpdateTenantsMutation,
     useDeleteTenantMutation,
     useGetTenantsByStaffQuery,
+    useGetTenantIdQuery,
 } = tenantApi;

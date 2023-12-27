@@ -2,8 +2,13 @@ import { ManagementLayout } from '@/components/common/layout/management';
 import AddMotel from '@/components/customer/motel/form-motel';
 import { MotelList } from '@/components/customer/motel/motel-list';
 import useTokenData from '@/services/auth/token-data-loader';
+import {
+    MotelsResponse,
+    useGetMotelsByLandLordQuery,
+    useGetMotelsByStaffQuery,
+} from '@/services/motel.services';
 import { Button, Modal, Stack } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CSVLink } from 'react-csv';
 
 const style = {
@@ -30,44 +35,64 @@ export default function ManageMotel(props: IManageMotelProps) {
     // console.log('data redux tookit', data);
 
     const tokenData = useTokenData();
-    // const { data: dataMotel } = useGetMotelsQuery();
-    // const motels = dataMotel?.result || [];
-    // console.log(tokenData);
-    // if (tokenData?.userType === 'landlord') {
-    //     console.log('hi Như');
-    // }
+    const { data: dataMotelLandlord } = useGetMotelsByLandLordQuery(tokenData?.userID);
+    const { data: dataMotelStaff } = useGetMotelsByStaffQuery(tokenData?.userID);
+    const [motelData, setMotelData] = useState<MotelsResponse | undefined>();
+    useEffect(() => {
+        if (tokenData?.userType === 'landlord') {
+            setMotelData(dataMotelLandlord as MotelsResponse);
+        } else if (tokenData?.account_type === 'staff') {
+            setMotelData(dataMotelStaff as MotelsResponse);
+        }
+    }, [dataMotelLandlord, tokenData]);
+    const motels = motelData?.result || [];
+    console.log(tokenData);
+    if (tokenData?.userType === 'landlord') {
+        // console.log('hi Như');
+    }
     const csvData = [
         ['firstname', 'lastname', 'email'],
         ['Ahmed', 'Tomi', 'ah@smthing.co.com'],
         ['Raed', 'Labes', 'rl@smthing.co.com'],
         ['Yezzi', 'Min l3b', 'ymin@cocococo.com'],
     ];
-    // const listMotel = motels.map((motel, index) => ({
-    //     ...motel,
-    //     index: index + 1, // Bắt đầu từ số 1
-    // }));
-    // const getMotelsExport = (event: any, done: () => void): void => {
-    //     let result: any[] = [];
+    const listMotel = motels.map((motel, index) => ({
+        ...motel,
+        index: index + 1, // Bắt đầu từ số 1
+    }));
+    const getMotelsExport = (event: any, done: () => void): void => {
+        let result: any[] = [];
 
-    //     if (listMotel && listMotel.length > 0) {
-    //         result.push(['STT', 'Tên nhà trọ', 'Địa chỉ', 'Ngày chốt', 'Ngày tính', 'Nhân viên']);
+        if (listMotel && listMotel.length > 0) {
+            result.push([
+                'STT',
+                'Tên nhà trọ',
+                'Địa chỉ',
+                'Ngày chốt',
+                'Ngày tính',
+                'Giá tiền điện',
+                'Giá tiền nước',
+                'Nhân viên',
+            ]);
 
-    //         listMotel.map((motel, index) => {
-    //             let arr: any[] = [];
-    //             arr[0] = index + 1;
-    //             arr[1] = motel.motel_name;
-    //             // Assuming `motel.address` is the address property of the Motel interface
-    //             arr[2] = motel.address;
-    //             arr[3] = motel.record_day;
-    //             arr[4] = motel.pay_day;
-    //             arr[5] = motel.staff_name;
-    //             result.push(arr);
-    //         });
+            listMotel.map((motel, index) => {
+                let arr: any[] = [];
+                arr[0] = index + 1;
+                arr[1] = motel.motel_name;
+                // Assuming `motel.address` is the address property of the Motel interface
+                arr[2] = motel.address;
+                arr[3] = motel.record_day;
+                arr[4] = motel.pay_day;
+                arr[5] = motel.price_electricity;
+                arr[6] = motel.price_water;
+                arr[8] = motel.staff_name;
+                result.push(arr);
+            });
 
-    //         setDataExport(result);
-    //         done();
-    //     }
-    // };
+            setDataExport(result);
+            done();
+        }
+    };
     return (
         <Stack
             sx={{
@@ -88,14 +113,14 @@ export default function ManageMotel(props: IManageMotelProps) {
                 >
                     Thêm mới
                 </Button>
-                {/* <Modal
+                <Modal
                     open={open}
                     // onClose={handleClose}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
                     <Stack sx={style}> {<AddMotel handleCloseModal={handleClose} />}</Stack>
-                </Modal> */}
+                </Modal>
                 <Button
                     // variant="contained"
                     sx={{
@@ -107,7 +132,7 @@ export default function ManageMotel(props: IManageMotelProps) {
                         },
                     }}
                 >
-                    {/* <CSVLink
+                    <CSVLink
                         data={dataExport}
                         filename={'danh-sach-nha-tro.csv'}
                         className="btn btn-primary"
@@ -117,10 +142,10 @@ export default function ManageMotel(props: IManageMotelProps) {
                         style={{ color: '#fff', textDecoration: 'none' }}
                     >
                         Xuất Excel
-                    </CSVLink> */}
+                    </CSVLink>
                 </Button>
             </Stack>
-            <AddMotel />
+            {/* <AddMotel /> */}
             <MotelList />
         </Stack>
     );

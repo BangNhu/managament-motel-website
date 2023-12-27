@@ -16,6 +16,7 @@ exports.get_by_bedsit = function (req, res) {
         res.send({ result: response });
     });
 };
+
 //body-parser
 exports.add_electricity_water = function (req, res) {
     var data = req.body;

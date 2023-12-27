@@ -10,9 +10,9 @@ if (typeof window !== 'undefined') {
     token = window.localStorage.getItem('token');
 }
 
-export const LandlordApi = createApi({
+export const landlordApi = createApi({
     tagTypes: ['Landlords'], //Nhưng kiểu tag cho phép dùng
-    reducerPath: 'LandlordApi',
+    reducerPath: 'landlordApi',
     baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL }),
     endpoints: (build) => ({
         getLandlords: build.query<LandLordsResponse, void>({
@@ -97,4 +97,4 @@ export const {
     useGetLandlordQuery,
     useUpdateLandlordsMutation,
     useDeleteLandlordMutation,
-} = LandlordApi;
+} = landlordApi;

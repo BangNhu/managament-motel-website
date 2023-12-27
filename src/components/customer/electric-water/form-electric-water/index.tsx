@@ -312,20 +312,20 @@ export default function FormELectricWater(props: IFormELectricWaterProps) {
                                     <TableBody>
                                         <TableRow>
                                             <TableCell>Điện</TableCell>
+                                            <TableCell>{formData.index_electricity}</TableCell>
                                             <TableCell>
                                                 {resultAddElectricWater?.result?.index_electric_old}
                                             </TableCell>
-                                            <TableCell>{formData.index_electricity}</TableCell>
                                             <TableCell>
                                                 {resultAddElectricWater?.result.amount_electric}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>Nước</TableCell>
+                                            <TableCell>{formData.index_water}</TableCell>
                                             <TableCell>
                                                 {resultAddElectricWater?.result?.index_water_old}
                                             </TableCell>
-                                            <TableCell>{formData.index_water}</TableCell>
                                             <TableCell>
                                                 {resultAddElectricWater?.result.amount_water}
                                             </TableCell>

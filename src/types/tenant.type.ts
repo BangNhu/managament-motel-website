@@ -13,3 +13,6 @@ export interface Tenant {
     motel_name: string;
     // motel_name: string;
 }
+export interface TenantsResult {
+    result: Tenant;
+}

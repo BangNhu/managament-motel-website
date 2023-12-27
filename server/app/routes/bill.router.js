@@ -3,6 +3,10 @@ module.exports = function (router) {
 
     router.get('/bill/list', billController.get_list);
     router.get('/bill/detail/:id', billController.details);
+    router.get('/bill/get-list-tenant/:id', billController.get_list_tenant);
+    router.get('/bill/get-old-new/:id', billController.get_old_new);
+    router.get('/bill/get-price-bedsit/:id', billController.get_price_bedsit);
+    router.get('/bill/get-service-bedsit/:id', billController.get_services_bedsit);
     router.post('/bill/add', billController.add_bill);
     router.delete('/bill/delete/:id', billController.remove_bill);
     router.put('/bill/update', billController.update_bill);

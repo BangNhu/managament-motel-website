@@ -69,5 +69,33 @@ ReceiptExpense.update = function (receipt_expense, result) {
         }
     );
 };
+ReceiptExpense.get_receipt_by_landlord = function (id, result) {
+    db.query(
+        'SELECT receipt_expense.*, motel.motel_name as motel_name FROM receipt_expense JOIN motel ON receipt_expense.motel_id = motel.id where motel.landlord_id=?',
+        [id],
+        function (err, receipt_expense) {
+            if (err) {
+                result(null);
+                console.log(err);
+            } else {
+                result(receipt_expense);
+            }
+        }
+    );
+};
 
+ReceiptExpense.get_receipt_by_staff = function (id, result) {
+    db.query(
+        'SELECT receipt_expense.*, motel.motel_name as motel_name FROM receipt_expense JOIN motel ON receipt_expense.motel_id = motel.id where motel.staff_id=?',
+        [id],
+        function (err, receipt_expense) {
+            if (err) {
+                result(null);
+                console.log(err);
+            } else {
+                result(receipt_expense);
+            }
+        }
+    );
+};
 module.exports = ReceiptExpense;

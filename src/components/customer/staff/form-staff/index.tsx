@@ -1,64 +1,57 @@
-import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
-import { useState, ChangeEvent, useEffect, Fragment } from 'react';
+import useTokenData from '@/services/auth/token-data-loader';
+import {
+    useAddStaffsMutation,
+    useGetStaffQuery,
+    useUpdateStaffsMutation,
+} from '@/services/staff.services';
+import { RootState } from '@/store';
+import { Staff } from '@/types/staff.type';
 import {
     Button,
-    TextField,
-    Select,
-    MenuItem,
-    InputLabel,
-    FormControl,
-    Stack,
-    Grid,
-    Typography,
-    SelectChangeEvent,
     Divider,
+    Grid,
+    SelectChangeEvent,
+    Stack,
+    TextField,
+    Typography,
 } from '@mui/material';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { Motel } from '@/types/motel.type';
-import {
-    useAddMotelsMutation,
-    useGetMotelQuery,
-    useUpdateMotelsMutation,
-} from '@/services/motel.services';
-import useTokenData from '@/services/auth/token-data-loader';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
-import { useGetStaffsByLandlordQuery } from '@/services/staff.services';
 
 export interface IFormStaffProps {
     handleCloseModal: () => void;
 }
 
-const intialState: Omit<Motel, 'id' | 'staff_name'> = {
-    motel_name: '',
+const intialState: Omit<Staff, 'id'> = {
+    staff_name: '',
+    citizen_identification: '',
     address: '',
-    record_day: 0,
-    pay_day: 0,
-    staff_id: 0,
+    number_phone: '',
+    email: '',
     landlord_id: 0,
-    // staff_name: '',
+    password: '',
+    gender: 0,
+    birthday: '',
 };
 export default function FormStaff(props: IFormStaffProps) {
     const tokenData = useTokenData();
     // console.log(tokenData);
-    const [formData, setFormData] = useState<Omit<Motel, 'id' | 'staff_name'>>(intialState);
-    const [addMotel, addMotelReslut] = useAddMotelsMutation();
-    const motelId = useSelector((state: RootState) => state.motel.id);
-    console.log('motel id', motelId);
+    const [formData, setFormData] = useState<Omit<Staff, 'id'>>(intialState);
+    const [addStaff, addStaffReslut] = useAddStaffsMutation();
+    const staffId = useSelector((state: RootState) => state.staff.id);
+    console.log('staff id', staffId);
 
-    const { data: motelData } = useGetMotelQuery(motelId, { skip: !motelId });
-    const { data: staffData } = useGetStaffsByLandlordQuery(tokenData?.userID);
-    const [updateMotel, updateMotelResult] = useUpdateMotelsMutation();
+    const { data: staffData } = useGetStaffQuery(staffId, { skip: !staffId });
+    const [updateStaff, updateStaffResult] = useUpdateStaffsMutation();
 
     // console.log('infodata', motelData?.result);
     // console.log('infodata staff ', staffData?.result);
 
     useEffect(() => {
-        if (motelData) {
-            setFormData(motelData?.result as any);
+        if (staffData) {
+            setFormData(staffData?.result as any);
         }
-    }, [motelData]);
+    }, [staffData]);
     useEffect(() => {
         if (tokenData) {
             const newFormData = {
@@ -87,14 +80,14 @@ export default function FormStaff(props: IFormStaffProps) {
     const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
 
-        if (motelId) {
-            await updateMotel({
-                body: formData as Motel,
-                id: motelId,
+        if (staffId) {
+            await updateStaff({
+                body: formData as Staff,
+                id: staffId,
             }).unwrap();
         } else {
             console.log('formData', formData);
-            await addMotel(formData).unwrap();
+            await addStaff(formData).unwrap();
             console.log('thành công');
         }
 
@@ -117,7 +110,7 @@ export default function FormStaff(props: IFormStaffProps) {
             }}
         >
             {' '}
-            {motelId !== undefined && motelId !== 0 && (
+            {staffId !== undefined && staffId !== 0 && (
                 <Typography
                     variant="h1"
                     sx={{
@@ -130,10 +123,10 @@ export default function FormStaff(props: IFormStaffProps) {
                         // textTransform: 'uppercase',
                     }}
                 >
-                    Cập nhật nhà trọ
+                    Cập nhật nhân viên
                 </Typography>
             )}
-            {!Boolean(motelId) && (
+            {!Boolean(staffId) && (
                 <Typography
                     variant="h1"
                     sx={{
@@ -146,7 +139,7 @@ export default function FormStaff(props: IFormStaffProps) {
                         // textTransform: 'uppercase',
                     }}
                 >
-                    Thêm mới nhà trọ
+                    Thêm mới nhân viên
                 </Typography>
             )}
             <Divider
@@ -162,14 +155,13 @@ export default function FormStaff(props: IFormStaffProps) {
                 <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={12} md={6}>
                         <TextField
-                            name="motel_name"
-                            id="motel_name"
+                            id="staff_name"
                             type="text"
                             variant="outlined"
                             color="secondary"
                             label="Tên khu trọ"
                             onChange={handleChange}
-                            value={formData.motel_name}
+                            value={formData.staff_name}
                             fullWidth
                             required
                         />
@@ -189,67 +181,72 @@ export default function FormStaff(props: IFormStaffProps) {
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <TextField
-                            name="record_day"
-                            type="number"
+                            name="birthday"
+                            type="date"
                             variant="outlined"
                             color="secondary"
-                            label="Ngày ghi"
+                            label="Ngày sinh"
                             onChange={handleChange}
-                            value={formData.record_day}
+                            value={formData.birthday}
                             fullWidth
                             required
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <TextField
-                            name="pay_day"
-                            type="number"
+                            name="email"
+                            type="email"
                             variant="outlined"
                             color="secondary"
-                            label="Ngày tính"
+                            label="Email"
                             onChange={handleChange}
-                            value={formData.pay_day}
+                            value={formData.email}
                             required
                             fullWidth
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        {/* <TextField
-                            name="staff_id"
-                            type="number"
+                        <TextField
+                            name="password"
+                            type="password"
                             variant="outlined"
                             color="secondary"
-                            label="Nhân viên"
+                            label="Mật khẩu"
                             onChange={handleChange}
-                            value={formData.staff_id}
+                            value={formData.password}
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="citizen_identification"
+                            type="text"
+                            variant="outlined"
+                            color="secondary"
+                            label="Số định danh"
+                            onChange={handleChange}
+                            value={formData.citizen_identification}
                             fullWidth
                             required
-                            sx={{ mb: 4 }}
-                        /> */}
-                        <FormControl fullWidth variant="outlined" color="secondary">
-                            <InputLabel id="demo-simple-select-label">Nhân viên</InputLabel>
-                            <Select
-                                name="staff_id"
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                onChange={handleChangeSelect}
-                                label="Nhân viên"
-                                value={String(formData.staff_id)}
-                                fullWidth
-                            >
-                                {staffData?.result.map((item) => (
-                                    <MenuItem value={item.id} key={item.id}>
-                                        {item.staff_name}
-                                    </MenuItem>
-                                ))}
-                                {/* <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem> */}
-                            </Select>
-                        </FormControl>
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="number_phone"
+                            type="text"
+                            variant="outlined"
+                            color="secondary"
+                            label="Số điện thoại"
+                            onChange={handleChange}
+                            value={formData.number_phone}
+                            fullWidth
+                            required
+                        />
                     </Grid>
                 </Grid>
-                {motelId !== undefined && motelId !== 0 && (
+                {staffId !== undefined && staffId !== 0 && (
                     <Stack
                         direction="row"
                         justifyContent="center"
@@ -266,7 +263,6 @@ export default function FormStaff(props: IFormStaffProps) {
                         <Button
                             variant="contained"
                             sx={{ textTransform: 'capitalize', width: '100px' }}
-                            type="submit"
                             onClick={() => {
                                 if (props.handleCloseModal) {
                                     props.handleCloseModal();
@@ -277,7 +273,7 @@ export default function FormStaff(props: IFormStaffProps) {
                         </Button>
                     </Stack>
                 )}
-                {!Boolean(motelId) && (
+                {!Boolean(staffId) && (
                     <Stack
                         direction="row"
                         justifyContent="center"
@@ -294,7 +290,6 @@ export default function FormStaff(props: IFormStaffProps) {
                         <Button
                             variant="contained"
                             sx={{ textTransform: 'capitalize', width: '100px' }}
-                            type="submit"
                             onClick={() => {
                                 if (props.handleCloseModal) {
                                     props.handleCloseModal();

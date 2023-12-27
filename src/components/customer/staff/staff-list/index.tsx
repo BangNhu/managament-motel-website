@@ -35,6 +35,7 @@ import useTokenData from '@/services/auth/token-data-loader';
 import { parseISO, format } from 'date-fns';
 import { cancelEditStaff, startEditStaff } from '@/slices/staff.slice';
 import FormDecentralize from '../decentral';
+import FormStaff from '../form-staff';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -58,7 +59,11 @@ export function StaffList(props: IStaffListProps) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false);
-        cancelEditStaff();
+    };
+    const [openEdit, setOpenEdit] = useState(false);
+    const handleOpenEdit = () => setOpenEdit(true);
+    const handleCloseEdit = () => {
+        setOpenEdit(false);
     };
     const tokenData = useTokenData();
     const [deletePost] = useDeleteStaffMutation();
@@ -130,20 +135,20 @@ export function StaffList(props: IStaffListProps) {
                             />
                         </Stack>
                     </Modal>
-                    {/* <Button
+                    <Button
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
                         onClick={() => {
                             dispatch(startEditStaff(params.row.id));
-                            handleOpen();
+                            handleOpenEdit();
                         }}
                     >
                         Sửa
                     </Button>
                     <Modal
-                        open={open}
+                        open={openEdit}
                         onClose={() => {
-                            handleClose();
+                            handleCloseEdit();
                             dispatch(startEditStaff(0));
                             // setSelectedMotelId(null); // Đặt lại giá trị của selectedMotelId khi đóng Modal
                         }}
@@ -156,27 +161,21 @@ export function StaffList(props: IStaffListProps) {
                         }}
                     >
                         <Stack sx={style}>
-                            <AddMotel
+                            <FormStaff
                                 handleCloseModal={() => {
-                                    handleClose();
+                                    handleCloseEdit();
                                 }}
                             />
                         </Stack>
-                    </Modal> */}
-                    <Button
+                    </Modal>
+                    {/* <Button
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
                         // onClick={() => handleDeleteMotel(params.row.id)}
                     >
                         Sửa
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        sx={{ textTransform: 'capitalize' }}
-                        // onClick={() => handleDeleteMotel(params.row.id)}
-                    >
-                        Chi tiết
-                    </Button>
+                    </Button> */}
+
                     <Button
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}

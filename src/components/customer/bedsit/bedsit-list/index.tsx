@@ -226,8 +226,6 @@ export function BedsitList(props: IBedsitListProps) {
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
                             onClick={() => {
-                                // console.log('bedsitid dispatch', params.row.bedsit_id);
-                                console.log('bedsitid dispatch', params.row.id);
                                 dispatch(startEditBedsit(params.row.id));
                                 handleOpenBill();
                             }}
@@ -238,8 +236,6 @@ export function BedsitList(props: IBedsitListProps) {
                             open={openBill}
                             onClose={() => {
                                 handleCloseBill();
-                                // dispatch(startEditElectricWater(0));
-                                // setSelectedMotelId(null); // Đặt lại giá trị của selectedMotelId khi đóng Modal
                             }}
                             aria-labelledby="modal-modal-title"
                             aria-describedby="modal-modal-description"

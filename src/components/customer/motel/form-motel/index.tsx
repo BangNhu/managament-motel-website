@@ -27,25 +27,24 @@ import { RootState } from '@/store';
 import { useGetStaffsByLandlordQuery } from '@/services/staff.services';
 
 export interface IAddMotelProps {
-    // handleCloseModal: () => void;
+    handleCloseModal: () => void;
 }
 
-const intialState: Omit<Motel, 'id' | 'staff_name' | 'price_water' | 'price_electricity'> = {
+const intialState: Omit<Motel, 'id'> = {
     motel_name: '',
     address: '',
     record_day: 0,
     pay_day: 0,
     staff_id: 0,
     landlord_id: 0,
+    price_water: 0,
+    price_electricity: 0,
     // staff_name: '',
 };
 export default function AddMotel(props: IAddMotelProps) {
     const tokenData = useTokenData();
     // console.log(tokenData);
-    const [formData, setFormData] =
-        useState<Omit<Motel, 'id' | 'staff_name' | 'price_water' | 'price_electricity'>>(
-            intialState
-        );
+    const [formData, setFormData] = useState<Omit<Motel, 'id'>>(intialState);
     const [addMotel, addMotelReslut] = useAddMotelsMutation();
     const motelId = useSelector((state: RootState) => state.motel.id);
     console.log('motel id', motelId);
@@ -102,9 +101,9 @@ export default function AddMotel(props: IAddMotelProps) {
         }
 
         setFormData(intialState);
-        // if (props.handleCloseModal) {
-        //     props.handleCloseModal();
-        // }
+        if (props.handleCloseModal) {
+            props.handleCloseModal();
+        }
     };
 
     return (
@@ -217,6 +216,32 @@ export default function AddMotel(props: IAddMotelProps) {
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
+                        <TextField
+                            name="price_electricity"
+                            type="number"
+                            variant="outlined"
+                            color="secondary"
+                            label="Giá tiền điện"
+                            onChange={handleChange}
+                            value={formData.price_electricity}
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            name="price_water"
+                            type="number"
+                            variant="outlined"
+                            color="secondary"
+                            label="Giá tiền nước"
+                            onChange={handleChange}
+                            value={formData.price_water}
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
                         {/* <TextField
                             name="staff_id"
                             type="number"
@@ -270,11 +295,11 @@ export default function AddMotel(props: IAddMotelProps) {
                             variant="contained"
                             sx={{ textTransform: 'capitalize', width: '100px' }}
                             type="submit"
-                            // onClick={() => {
-                            //     if (props.handleCloseModal) {
-                            //         props.handleCloseModal();
-                            //     }
-                            // }}
+                            onClick={() => {
+                                if (props.handleCloseModal) {
+                                    props.handleCloseModal();
+                                }
+                            }}
                         >
                             Hủy
                         </Button>
@@ -298,11 +323,11 @@ export default function AddMotel(props: IAddMotelProps) {
                             variant="contained"
                             sx={{ textTransform: 'capitalize', width: '100px' }}
                             type="submit"
-                            // onClick={() => {
-                            //     if (props.handleCloseModal) {
-                            //         props.handleCloseModal();
-                            //     }
-                            // }}
+                            onClick={() => {
+                                if (props.handleCloseModal) {
+                                    props.handleCloseModal();
+                                }
+                            }}
                         >
                             Hủy
                         </Button>

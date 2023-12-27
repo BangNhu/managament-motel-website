@@ -9,6 +9,6 @@ export interface Landlord {
     account_type: number;
     expiration_date: string;
     is_verified: boolean;
-    email_token: string;
-    reset_token: string;
+    email_token?: string;
+    reset_token?: string;
 }

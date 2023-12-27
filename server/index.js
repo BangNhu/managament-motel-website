@@ -37,7 +37,7 @@ require('./app/routes/receipt_expense.router')(app);
 require('./app/routes/landlord.router')(app);
 require('./app/routes/staff.router')(app);
 require('./app/routes/tenant.router')(app);
-
+require('./app/routes/statistical.router')(app);
 app.listen(5000, function () {
     console.log('Example app listening on port 5000!');
 });

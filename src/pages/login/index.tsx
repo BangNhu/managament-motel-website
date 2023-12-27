@@ -76,11 +76,16 @@ export default function Login(props: ILoginProps) {
     };
     useEffect(() => {
         if (tokenData) {
-            if (tokenData.userType === 'landlord') {
+            if (tokenData.userType == 'landlord' || tokenData.userType == 'staff') {
+                console.log(tokenData.userType);
                 router.push('/management');
-            } else console.log('hi');
+            } else if (tokenData.userType == 'tenant') {
+                console.log(' type', tokenData.userType);
+                router.push('/tenant');
+            }
         }
     }, [tokenData]);
+    console.log('userType', tokenData?.userType);
     const [showPassword, setShowPassword] = useState(false);
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -234,7 +239,7 @@ export default function Login(props: ILoginProps) {
                             margin: '10px auto',
                         }}
                     >
-                        Gửi
+                        Đăng nhập
                     </Button>
                 </Stack>
             </form>{' '}
