@@ -15,27 +15,27 @@ export const billApi = createApi({
     reducerPath: 'billApi',
     baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL }),
     endpoints: (build) => ({
-        // getBills: build.query<BillsResponse, void>({
-        //     query: () => ({
-        //         url: '/bill/list',
-        //         headers: {
-        //             // Kiểm tra nếu có token, thì thêm vào header Authorization
-        //             ...(token && { Authorization: `Bearer ${token}` }),
-        //             'Content-Type': 'application/json',
-        //         },
-        //     }),
-        //     providesTags(result) {
-        //         if (result) {
-        //             const final = [
-        //                 ...result?.result.map(({ id }) => ({ type: 'Bills' as const, id })),
-        //                 { type: 'Bills' as const, id: 'LIST' },
-        //             ];
-        //             return final;
-        //         }
-        //         const final = [{ type: 'Bills' as const, id: 'LIST' }];
-        //         return final;
-        //     },
-        // }),
+        getBills: build.query<BillsResponse, void>({
+            query: () => ({
+                url: '/bill/list',
+                headers: {
+                    // Kiểm tra nếu có token, thì thêm vào header Authorization
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                    'Content-Type': 'application/json',
+                },
+            }),
+            providesTags(result) {
+                if (result) {
+                    const final = [
+                        ...result?.result.map(({ id }) => ({ type: 'Bills' as const, id })),
+                        { type: 'Bills' as const, id: 'LIST' },
+                    ];
+                    return final;
+                }
+                const final = [{ type: 'Bills' as const, id: 'LIST' }];
+                return final;
+            },
+        }),
 
         getBillsByLandLord: build.query<BillsResponse, number>({
             query: (id) => ({
@@ -60,7 +60,7 @@ export const billApi = createApi({
         }),
         getBillsByStaff: build.query<BillsResponse, number>({
             query: (id) => ({
-                url: `/bill/list-by-landlord/${id}`,
+                url: `/bill/list-by-staff/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),
@@ -165,7 +165,7 @@ export const billApi = createApi({
 
 export const {
     useGetBillsByLandLordQuery,
-    // useGetBillsQuery,
+    useGetBillsQuery,
     useAddBillsMutation,
     useGetBillQuery,
     useUpdateBillsMutation,

@@ -63,7 +63,7 @@ export const receiptExpenseApi = createApi({
         }),
         getReceiptExpensesByStaff: build.query<ReceiptExpensesResponse, number>({
             query: (id) => ({
-                url: `/receipt-expense/list-by-landlord/${id}`,
+                url: `/receipt-expense/list-by-staff/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),

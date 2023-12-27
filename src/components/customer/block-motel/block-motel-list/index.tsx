@@ -51,10 +51,11 @@ export function BlockMotelList(props: IBlockMotelListProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             setBlockMotel(dataBlockMotelLandlord as BlockMotelsResponse);
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
+            console.log('đúng rồi');
             setBlockMotel(dataBlockMotelStaff as BlockMotelsResponse);
         }
-    }, [dataBlockMotelLandlord, dataBlockMotelStaff, tokenData]);
+    }, [tokenData]);
     console.log('type', tokenData);
     console.log('first', blockMotel);
     //Danh sách nhà trọ

@@ -60,7 +60,7 @@ export const bedsitApi = createApi({
         }),
         getBedsitsByStaff: build.query<BedsitsResponse, number>({
             query: (id) => ({
-                url: `/bedsit/list-by-landlord/${id}`,
+                url: `/bedsit/list-by-staff/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),

@@ -69,7 +69,7 @@ export function BedsitList(props: IBedsitListProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             setBedsit(dataBedsitLandlord as BedsitsResponse);
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
             setBedsit(dataBedsitStaff as BedsitsResponse);
         }
     }, [dataBedsitLandlord, dataBedsitStaff, tokenData]);

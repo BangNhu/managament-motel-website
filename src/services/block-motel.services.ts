@@ -60,7 +60,7 @@ export const blockMotelApi = createApi({
         }),
         getBlockMotelsByStaff: build.query<BlockMotelsResponse, number>({
             query: (id) => ({
-                url: `/block-motel/list-by-landlord/${id}`,
+                url: `/block-motel/list-by-staff/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),

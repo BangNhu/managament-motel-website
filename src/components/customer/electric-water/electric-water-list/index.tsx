@@ -48,7 +48,7 @@ export function TenantList(props: ITenantListProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             setTenant(dataTenantLandlord as TenantsResponse);
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
             setTenant(dataTenantStaff as TenantsResponse);
         }
     }, [dataTenantLandlord, dataTenantStaff, tokenData]);

@@ -60,7 +60,7 @@ export const contractApi = createApi({
         }),
         getContractsByStaff: build.query<ContractsResponse, number>({
             query: (id) => ({
-                url: `/contract/list-by-landlord/${id}`,
+                url: `/contract/list-by-staff/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),

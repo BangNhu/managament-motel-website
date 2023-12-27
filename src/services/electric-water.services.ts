@@ -63,7 +63,7 @@ export const electricWaterApi = createApi({
         }),
         getElectricWatersByStaff: build.query<ElectricWatersResponse, number>({
             query: (id) => ({
-                url: `/electricity-water/list-by-landlord/${id}`,
+                url: `/electricity-water/list-by-staff/${id}`,
                 headers: {
                     // Kiểm tra nếu có token, thì thêm vào header Authorization
                     ...(token && { Authorization: `Bearer ${token}` }),

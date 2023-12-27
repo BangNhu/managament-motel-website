@@ -51,7 +51,7 @@ export function ReceiptExpenseList(props: IReceiptExpenseListProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             setReceiptExpense(dataReceiptExpenseLandlord as ReceiptExpensesResponse);
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
             setReceiptExpense(dataReceiptExpenseStaff as ReceiptExpensesResponse);
         }
     }, [dataReceiptExpenseLandlord, dataReceiptExpenseStaff, tokenData]);

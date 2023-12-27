@@ -114,7 +114,7 @@ export default function AddContract(props: IAddContractProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             setBedsitData(dataBedsitLandlord as BedsitsResponse);
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
             setBedsitData(dataBedsitStaff as BedsitsResponse);
         }
     }, [dataBedsitLandlord, tokenData]);
@@ -126,7 +126,7 @@ export default function AddContract(props: IAddContractProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             setTenantData(dataTenantLandlord as TenantsResponse);
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
             setTenantData(dataTenantStaff as TenantsResponse);
         }
     }, [dataTenantLandlord, tokenData]);

@@ -50,6 +50,8 @@ export default function ManageBlockMotel(props: IManageBlockMotelProps) {
     // if (tokenData?.userType === 'landlord') {
     //     console.log('hi Như');
     // }
+    const listPermissions = tokenData?.permissions;
+    console.log('listPermissions', listPermissions);
     const csvData = [
         ['firstname', 'lastname', 'email'],
         ['Ahmed', 'Tomi', 'ah@smthing.co.com'],

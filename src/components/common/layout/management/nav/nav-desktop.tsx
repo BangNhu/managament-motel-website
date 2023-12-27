@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 export interface INavDesktopProps {}
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import useTokenData from '@/services/auth/token-data-loader';
 const NavItem = [
     { title: 'Thống kê', path: '/' },
     { title: 'Nhà trọ >', path: '/' },
@@ -13,7 +14,8 @@ const NavItem = [
 ];
 export function NavDesktop(props: INavDesktopProps) {
     const MENU_HEIGHT = '80px';
-
+    const tokenData = useTokenData();
+    const userType = tokenData?.userType;
     const router = useRouter();
     const handleRegisterClick = () => {
         router.push('/register');
@@ -113,7 +115,7 @@ export function NavDesktop(props: INavDesktopProps) {
                                 zIndex: 10,
                                 color: '#A61713',
                                 textTransform: 'capitalize',
-                                width: '120px',
+                                width: '130px',
                                 borderRadius: '8px',
                                 ':hover': {
                                     backgroundColor: 'transparent',
@@ -121,7 +123,8 @@ export function NavDesktop(props: INavDesktopProps) {
                                 },
                             }}
                         >
-                            <AccountCircleIcon /> Hoa Phi
+                            <AccountCircleIcon />{' '}
+                            {userType === 'landlord' ? 'Hoa Phi' : 'Hoàn Mỹ Ly'}
                         </Button>
                         <Button
                             onClick={handleLoginClick}

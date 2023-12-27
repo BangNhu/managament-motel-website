@@ -66,7 +66,7 @@ export default function AddTenant(props: IAddTenantProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             setMotelData(dataMotelLandlord as MotelsResponse);
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
             setMotelData(dataMotelStaff as MotelsResponse);
         }
     }, [dataMotelLandlord, tokenData]);

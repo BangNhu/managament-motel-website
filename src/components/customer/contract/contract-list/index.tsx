@@ -66,7 +66,7 @@ export function ContractList(props: IContractListProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             setContract(dataContractLandlord as ContractsResponse);
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
             setContract(dataContractStaff as ContractsResponse);
         }
     }, [dataContractLandlord, dataContractStaff, tokenData]);

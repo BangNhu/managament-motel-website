@@ -51,7 +51,7 @@ export function ServicesList(props: IServicesListProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             setServices(dataServicesLandlord as ServicesResponse);
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
             setServices(dataServicesStaff as ServicesResponse);
         }
     }, [dataServicesLandlord, dataServicesStaff, tokenData]);

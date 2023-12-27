@@ -81,7 +81,7 @@ export function Stats(props: IStatsProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             setMotelData(dataMotelLandlord as MotelsResponse);
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
             setMotelData(dataMotelStaff as MotelsResponse);
         }
     }, [dataMotelLandlord, tokenData]);
@@ -89,7 +89,7 @@ export function Stats(props: IStatsProps) {
     useEffect(() => {
         if (tokenData?.userType === 'landlord') {
             landlordId = tokenData?.userID;
-        } else if (tokenData?.account_type === 'staff') {
+        } else if (tokenData?.userType === 'staff') {
             const landlord_id = dataStaffLandlord?.result[0].landlord_id;
             landlordId = landlord_id;
         }
@@ -287,7 +287,7 @@ export function Stats(props: IStatsProps) {
                     }}
                 >
                     <Typography sx={{ margin: '15px', textAlign: 'center' }}>
-                        Gói: Cơ bản. Hạn dùng: 28/01/2024.
+                        Gói: Vip 2. Hạn dùng: 28/03/2024.
                     </Typography>
                 </Stack>
             </Stack>
