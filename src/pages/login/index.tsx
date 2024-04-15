@@ -22,6 +22,7 @@ import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
 import { checkToken } from '@/services/auth/check-token';
 import Link from 'next/link';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { SeoPage } from '@/components/common/seo';
 
 export interface ILoginProps {
     account_name: string;
@@ -103,6 +104,7 @@ export default function Login(props: ILoginProps) {
                 boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
             }}
         >
+            <SeoPage title="Đăng nhập" />
             <Typography
                 variant="h1"
                 sx={{

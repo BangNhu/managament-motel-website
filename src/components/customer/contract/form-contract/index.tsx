@@ -129,7 +129,7 @@ export default function AddContract(props: IAddContractProps) {
         } else if (tokenData?.userType === 'staff') {
             setTenantData(dataTenantStaff as TenantsResponse);
         }
-    }, [dataTenantLandlord, tokenData]);
+    }, [dataTenantLandlord, tokenData, dataTenantStaff]);
     const [tenants, setTenant] = useState<TenantsResponse | undefined>();
     useEffect(() => {
         if (tenantData) setTenant(tenantData);
@@ -704,14 +704,18 @@ export default function AddContract(props: IAddContractProps) {
                             variant="contained"
                             sx={{ textTransform: 'capitalize', width: '100px' }}
                             type="submit"
-                            onClick={handleSubmit}
+                            // onClick={() => {
+                            //     if (props.handleCloseModal) {
+                            //         props.handleCloseModal();
+                            //     }
+                            // }}
                         >
                             Thêm mới
                         </Button>
                         <Button
                             variant="contained"
                             sx={{ textTransform: 'capitalize', width: '100px' }}
-                            type="submit"
+                            // type="submit"
                             onClick={() => {
                                 if (props.handleCloseModal) {
                                     props.handleCloseModal();

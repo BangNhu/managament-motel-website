@@ -12,6 +12,7 @@ import {
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
+import { SeoPage } from '@/components/common/seo';
 
 export interface IResetPasswordProps {
     password: string;
@@ -105,6 +106,7 @@ export default function ResetPassword(props: IResetPasswordProps) {
                 boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
             }}
         >
+            <SeoPage title="Làm mới mật khẩu" />
             <Typography
                 variant="h1"
                 sx={{

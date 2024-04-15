@@ -5,14 +5,43 @@ import { useRouter } from 'next/router';
 export interface INavDesktopProps {}
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import useTokenData from '@/services/auth/token-data-loader';
+// const NavItem = [
+//     { title: 'Thống kê', path: '/management' },
+//     { title: 'Nhà trọ', path: '/management/motel' },
+//     { title: 'Dãy trọ', path: '/management/block-motel' },
+//     { title: 'Phòng trọ', path: '/management/bedsit' },
+//     { title: 'Hợp đồng', path: '/management/contract' },
+//     { title: 'Khách trọ', path: '/management/tenant' },
+//     { title: 'Dịch vụ', path: '/management/services' },
+//     // { title: '', path: '/management/services' },
+// ];
 const NavItem = [
-    { title: 'Thống kê', path: '/' },
-    { title: 'Nhà trọ >', path: '/' },
-    { title: 'Khách trọ >', path: '/' },
-    { title: 'Tài chính >', path: '/' },
-    { title: 'Báo Cáo >', path: '/' },
+    { title: 'Thống kê', path: '/management/' },
+    {
+        title: 'Quản lý',
+        path: '/management/',
+        subMenu: [
+            { title: 'Nhà trọ', path: '/management/' },
+            { title: 'Dãy trọ', path: '/management/' },
+            { title: 'Phòng trọ', path: '/management/' },
+            { title: 'Khách trọ', path: '/management/' },
+            { title: 'Hợp đồng', path: '/management/' },
+            { title: 'Nhân viên', path: '/management/' },
+        ],
+    },
+    { title: 'Tài chính', path: '/management/' },
 ];
+
 export function NavDesktop(props: INavDesktopProps) {
+    const [activeSubMenu, setActiveSubMenu] = useState(null);
+
+    const handleMouseEnter = (index: any) => {
+        setActiveSubMenu(index);
+    };
+
+    const handleMouseLeave = () => {
+        setActiveSubMenu(null);
+    };
     const MENU_HEIGHT = '80px';
     const tokenData = useTokenData();
     const userType = tokenData?.userType;
@@ -20,8 +49,8 @@ export function NavDesktop(props: INavDesktopProps) {
     const handleRegisterClick = () => {
         router.push('/register');
     };
-    const handleLoginClick = () => {
-        router.push('/login');
+    const handleLogOutClick = () => {
+        router.push('/');
     };
 
     return (
@@ -73,10 +102,14 @@ export function NavDesktop(props: INavDesktopProps) {
                         <Stack
                             direction="row"
                             alignItems="center"
-                            sx={{ gap: { xs: '10px', md: '20px', lg: '50px' } }}
+                            sx={{ gap: { xs: '10px', md: '5px', lg: '20px' } }}
                         >
                             {NavItem.map((item, index) => (
-                                <Stack key={`list-key-${index}`}>
+                                <Stack
+                                    key={`list-key-${index}`}
+                                    onMouseEnter={() => handleMouseEnter(index)}
+                                    onMouseLeave={handleMouseLeave}
+                                >
                                     <Typography
                                         component="a"
                                         href={item.path}
@@ -86,14 +119,54 @@ export function NavDesktop(props: INavDesktopProps) {
                                             letterSpacing: '-0.35px',
                                             zIndex: 10,
                                             textDecoration: 'none',
-
+                                            color:
+                                                activeSubMenu === index ||
+                                                (item.subMenu && activeSubMenu === 'subMenu')
+                                                    ? '#A61713'
+                                                    : '#020202',
                                             ':hover': { color: '#A61713', paddingBottom: '5px' },
                                             transition: 'all 0.2s ease-in-out',
-                                            color: '#020202',
                                         }}
                                     >
                                         {item.title}
                                     </Typography>
+                                    {activeSubMenu === index && item.subMenu && (
+                                        <Stack
+                                            sx={{
+                                                position: 'absolute',
+                                                backgroundColor: '#c6c6c6',
+
+                                                paddingTop: '50px',
+                                                zIndex: 1,
+                                            }}
+                                        >
+                                            {item.subMenu.map((subItem, subIndex) => (
+                                                <Typography
+                                                    key={`sub-list-key-${subIndex}`}
+                                                    component="a"
+                                                    href={subItem.path}
+                                                    sx={{
+                                                        textTransform: 'none',
+                                                        fontSize: {
+                                                            xs: '12px',
+                                                            md: '15px',
+                                                            lg: '16px',
+                                                        },
+                                                        letterSpacing: '-0.35px',
+                                                        textDecoration: 'none',
+                                                        color: '#020202',
+                                                        ':hover': {
+                                                            color: '#A61713',
+                                                        },
+                                                        transition: 'all 0.2s ease-in-out',
+                                                        margin: '2px 30px 5px 10px',
+                                                    }}
+                                                >
+                                                    {subItem.title}
+                                                </Typography>
+                                            ))}
+                                        </Stack>
+                                    )}
                                 </Stack>
                             ))}
                         </Stack>
@@ -127,7 +200,7 @@ export function NavDesktop(props: INavDesktopProps) {
                             {userType === 'landlord' ? 'Hoa Phi' : 'Hoàn Mỹ Ly'}
                         </Button>
                         <Button
-                            onClick={handleLoginClick}
+                            onClick={handleLogOutClick}
                             sx={{
                                 textTransform: 'uppercase',
                                 fontSize: { xs: '12px', md: '15px', lg: '16px' },

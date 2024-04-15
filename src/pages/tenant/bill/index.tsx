@@ -1,4 +1,5 @@
 import { TenantLayout } from '@/components/common/layout/tenant';
+import { SeoPage } from '@/components/common/seo';
 import useTokenData from '@/services/auth/token-data-loader';
 import { useGetBillsTenantQuery } from '@/services/bill.services';
 import { Divider, Stack, Typography } from '@mui/material';
@@ -31,6 +32,7 @@ export default function TenantBill(props: ITenantBillProps) {
                 boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
             }}
         >
+            <SeoPage title="Hóa đơn" />
             <Typography
                 variant="h1"
                 sx={{

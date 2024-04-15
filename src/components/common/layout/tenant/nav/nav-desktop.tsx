@@ -17,8 +17,8 @@ export function NavDesktop(props: INavDesktopProps) {
     const handleRegisterClick = () => {
         router.push('/register');
     };
-    const handleLoginClick = () => {
-        router.push('/login');
+    const handleLogOutClick = () => {
+        router.push('/');
     };
 
     return (
@@ -123,7 +123,7 @@ export function NavDesktop(props: INavDesktopProps) {
                             <AccountCircleIcon /> Kim Ti Hoa
                         </Button>
                         <Button
-                            onClick={handleLoginClick}
+                            onClick={handleLogOutClick}
                             sx={{
                                 textTransform: 'uppercase',
                                 fontSize: { xs: '12px', md: '15px', lg: '16px' },

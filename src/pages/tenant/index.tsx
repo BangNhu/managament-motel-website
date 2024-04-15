@@ -1,4 +1,5 @@
 import { TenantLayout } from '@/components/common/layout/tenant';
+import { SeoPage } from '@/components/common/seo';
 import { TenantInfo } from '@/components/tenant/info';
 import { Problem } from '@/components/tenant/problem';
 import { TemporaryResidence } from '@/components/tenant/temporary_residence';
@@ -76,6 +77,7 @@ export default function TenantPage(props: ITenantPageProps) {
                     </Stack>
                 </Modal>
             </Stack>
+            <SeoPage title="Thông tin" />
             <TenantInfo />
         </Stack>
     );

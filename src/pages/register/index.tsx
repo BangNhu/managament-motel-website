@@ -14,6 +14,7 @@ import {
 import { useRouter } from 'next/router';
 import { RegisterForm } from '@/components/register';
 import Link from 'next/link';
+import { SeoPage } from '@/components/common/seo';
 
 export interface IRegisterProps {
     landlord_name: string;
@@ -78,6 +79,7 @@ export default function Register(props: IRegisterProps) {
                 boxShadow: '4px 4px 16px rgba(0, 0, 0, 0.25)',
             }}
         >
+            <SeoPage title="Đăng ký" />
             <Typography
                 variant="h1"
                 sx={{

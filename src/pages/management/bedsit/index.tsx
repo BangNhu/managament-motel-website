@@ -1,5 +1,7 @@
 import { ManagementLayout } from '@/components/common/layout/management';
+import { SeoPage } from '@/components/common/seo';
 import { BedsitList } from '@/components/customer/bedsit';
+import FormBedsit from '@/components/customer/bedsit/form-bedsit';
 import AddMotel from '@/components/customer/motel/form-motel';
 import useTokenData from '@/services/auth/token-data-loader';
 import { useGetMotelsQuery } from '@/services/motel.services';
@@ -29,8 +31,14 @@ export default function ManageBedsit(props: IManageBedsitProps) {
     const [dataExport, setDataExport] = useState<any[][]>([]);
     const { data } = useGetMotelsQuery();
     // console.log('data redux tookit', data);
-
+    let hasnPermissionAdd = false;
     const tokenData = useTokenData();
+    if (tokenData?.userType === 'staff') {
+        const listPermissions = tokenData?.permissions;
+        hasnPermissionAdd = !listPermissions?.includes(10);
+    }
+
+    // console.log(hasnPermission);
     const { data: dataMotel } = useGetMotelsQuery();
     const motels = dataMotel?.result || [];
     // console.log(tokenData);
@@ -86,6 +94,7 @@ export default function ManageBedsit(props: IManageBedsitProps) {
                     variant="contained"
                     onClick={handleOpen}
                     sx={{ textTransform: 'capitalize' }}
+                    disabled={hasnPermissionAdd}
                 >
                     Thêm mới
                 </Button>
@@ -95,7 +104,7 @@ export default function ManageBedsit(props: IManageBedsitProps) {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Stack sx={style}> {<AddMotel handleCloseModal={handleClose} />}</Stack>
+                    <Stack sx={style}> {<FormBedsit handleCloseModal={handleClose} />}</Stack>
                 </Modal>
                 <Button
                     // variant="contained"
@@ -121,6 +130,7 @@ export default function ManageBedsit(props: IManageBedsitProps) {
                     </CSVLink>
                 </Button>
             </Stack>
+            <SeoPage title="Phòng trọ" />
             {/* <AddMotel /> */}
             <BedsitList />
         </Stack>

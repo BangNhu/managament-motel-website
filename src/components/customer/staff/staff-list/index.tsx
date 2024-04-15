@@ -1,41 +1,12 @@
-import { useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import {
-    Alert,
-    Button,
-    CircularProgress,
-    Grid,
-    Modal,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
-import { SimpleLayout } from '@/components/common/layout/main/simple-layout';
-import { checkToken } from '@/services/auth/check-token';
-import {
-    useAddMotelsMutation,
-    useDeleteMotelMutation,
-    useGetMotelsByLandLordQuery,
-    useGetMotelsQuery,
-} from '@/services/motel.services';
-import {
-    DataGrid,
-    GridColDef,
-    GridRenderCellParams,
-    GridValueGetterParams,
-} from '@mui/x-data-grid';
-import { useDispatch } from 'react-redux';
-import {
-    useDeleteStaffMutation,
-    useGetStaffQuery,
-    useGetStaffsByLandlordQuery,
-} from '@/services/staff.services';
-import AddMotel from '../form-staff';
 import useTokenData from '@/services/auth/token-data-loader';
-import { parseISO, format } from 'date-fns';
-import { cancelEditStaff, startEditStaff } from '@/slices/staff.slice';
-import FormDecentralize from '../decentral';
+import { useDeleteStaffMutation, useGetStaffsByLandlordQuery } from '@/services/staff.services';
+import { startEditStaff } from '@/slices/staff.slice';
+import { Button, Modal, Stack } from '@mui/material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import FormStaff from '../form-staff';
+import FormDecentralize from '../decentral';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -53,7 +24,7 @@ const style = {
 
 export interface IStaffListProps {}
 
-export function StaffList(props: IStaffListProps) {
+export default function StaffList(props: IStaffListProps) {
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);

@@ -79,7 +79,7 @@ export function ContractList(props: IContractListProps) {
     // const startEdit = (id: number) => {
     //     dispatch(startEditMotel(id));
     // };
-    const handleDeletContract = (id: number) => {
+    const handleDeleteContract = (id: number) => {
         deleteContract(id);
     };
 
@@ -171,7 +171,7 @@ export function ContractList(props: IContractListProps) {
                     <Button
                         variant="outlined"
                         sx={{ textTransform: 'capitalize' }}
-                        onClick={() => handleDeletContract(params.row.id)}
+                        onClick={() => handleDeleteContract(params.row.id)}
                     >
                         Xóa
                     </Button>

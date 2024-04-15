@@ -15,59 +15,74 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { Motel } from '@/types/motel.type';
-import {
-    useAddMotelsMutation,
-    useGetMotelQuery,
-    useUpdateMotelsMutation,
-} from '@/services/motel.services';
 import useTokenData from '@/services/auth/token-data-loader';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { useGetStaffsByLandlordQuery } from '@/services/staff.services';
+import { useGetStaffsByLandlordQuery, useUpdateStaffsMutation } from '@/services/staff.services';
+import { Bedsit } from '@/types/bedsit.type';
+import {
+    useAddBedsitsMutation,
+    useGetBedsitQuery,
+    useUpdateBedsitsMutation,
+} from '@/services/bedsit.services';
+import {
+    BlockMotelsResponse,
+    useGetBlockMotelsByLandLordQuery,
+    useGetBlockMotelsByStaffQuery,
+} from '@/services/block-motel.services';
 
-export interface IAddMotelProps {
+export interface IFormBedsitProps {
     handleCloseModal: () => void;
 }
 
-const intialState: Omit<Motel, 'id' | 'staff_name'> = {
-    motel_name: '',
-    address: '',
-    record_day: 0,
-    pay_day: 0,
-    staff_id: 0,
-    landlord_id: 0,
-    // staff_name: '',
+const intialState: Omit<Bedsit, 'id'> = {
+    bedsit_name: '',
+    block_motel_id: 0,
+    status: 0,
+    current_quantity: 0,
 };
-export default function AddMotel(props: IAddMotelProps) {
+export default function FormBedsit(props: IFormBedsitProps) {
     const tokenData = useTokenData();
     // console.log(tokenData);
-    const [formData, setFormData] = useState<Omit<Motel, 'id' | 'staff_name'>>(intialState);
-    const [addMotel, addMotelReslut] = useAddMotelsMutation();
-    const motelId = useSelector((state: RootState) => state.motel.id);
-    console.log('motel id', motelId);
+    const [formData, setFormData] = useState<Omit<Bedsit, 'id'>>(intialState);
+    const [addBedsit, addBedsitReslut] = useAddBedsitsMutation();
+    const bedsitId = useSelector((state: RootState) => state.bedsit.id);
+    console.log('bedsit id', bedsitId);
 
-    const { data: motelData } = useGetMotelQuery(motelId, { skip: !motelId });
+    const { data: bedsitData } = useGetBedsitQuery(bedsitId, { skip: !bedsitId });
     const { data: staffData } = useGetStaffsByLandlordQuery(tokenData?.userID);
-    const [updateMotel, updateMotelResult] = useUpdateMotelsMutation();
+    const [updateBedsit, updateBedsitResult] = useUpdateBedsitsMutation();
 
+    const { data: dataBlockMotelLandlord } = useGetBlockMotelsByLandLordQuery(tokenData?.userID);
+    console.log('dataMotelLandlord', dataBlockMotelLandlord);
+
+    const { data: dataBlockMotelStaff } = useGetBlockMotelsByStaffQuery(tokenData?.userID);
+    const [blockMotel, setBlockMotel] = useState<BlockMotelsResponse | undefined>();
+    useEffect(() => {
+        if (tokenData?.userType === 'landlord') {
+            setBlockMotel(dataBlockMotelLandlord as BlockMotelsResponse);
+        } else if (tokenData?.userType === 'staff') {
+            console.log('đúng rồi');
+            setBlockMotel(dataBlockMotelStaff as BlockMotelsResponse);
+        }
+    }, [tokenData, dataBlockMotelStaff, dataBlockMotelLandlord]);
     // console.log('infodata', motelData?.result);
     // console.log('infodata staff ', staffData?.result);
 
     useEffect(() => {
-        if (motelData) {
-            setFormData(motelData?.result as any);
+        if (bedsitData) {
+            setFormData(bedsitData?.result as any);
         }
-    }, [motelData]);
-    useEffect(() => {
-        if (tokenData) {
-            const newFormData = {
-                ...intialState,
-                landlord_id: tokenData.userID || 0,
-            };
-            setFormData(newFormData);
-        }
-    }, [tokenData]);
+    }, [bedsitData]);
+    // useEffect(() => {
+    //     if (tokenData) {
+    //         const newFormData = {
+    //             ...intialState,
+    //             landlord_id: tokenData.userID || 0,
+    //         };
+    //         setFormData(newFormData);
+    //     }
+    // }, [tokenData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -87,15 +102,15 @@ export default function AddMotel(props: IAddMotelProps) {
     const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
 
-        if (motelId) {
-            await updateMotel({
-                body: formData as Motel,
-                id: motelId,
+        if (bedsitId) {
+            await updateBedsit({
+                body: formData as Bedsit,
+                id: bedsitId,
             }).unwrap();
         } else {
             console.log('formData', formData);
-            await addMotel(formData).unwrap();
-            console.log('thành công');
+            const result = await addBedsit(formData).unwrap();
+            console.log('thành công', result);
         }
 
         setFormData(intialState);
@@ -117,7 +132,7 @@ export default function AddMotel(props: IAddMotelProps) {
             }}
         >
             {' '}
-            {motelId !== undefined && motelId !== 0 && (
+            {bedsitId !== undefined && bedsitId !== 0 && (
                 <Typography
                     variant="h1"
                     sx={{
@@ -130,10 +145,10 @@ export default function AddMotel(props: IAddMotelProps) {
                         // textTransform: 'uppercase',
                     }}
                 >
-                    Cập nhật nhà trọ
+                    Cập nhật phòng trọ
                 </Typography>
             )}
-            {!Boolean(motelId) && (
+            {!Boolean(bedsitId) && (
                 <Typography
                     variant="h1"
                     sx={{
@@ -146,7 +161,7 @@ export default function AddMotel(props: IAddMotelProps) {
                         // textTransform: 'uppercase',
                     }}
                 >
-                    Thêm mới nhà trọ
+                    Thêm mới phòng trọ
                 </Typography>
             )}
             <Divider
@@ -162,94 +177,66 @@ export default function AddMotel(props: IAddMotelProps) {
                 <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={12} md={6}>
                         <TextField
-                            name="motel_name"
-                            id="motel_name"
+                            name="bedsit_name"
+                            id="bedsit_name"
                             type="text"
                             variant="outlined"
                             color="secondary"
-                            label="Tên khu trọ"
+                            label="Tên phòng trọ"
                             onChange={handleChange}
-                            value={formData.motel_name}
+                            value={formData.bedsit_name}
                             fullWidth
                             required
                         />
-                    </Grid>
+                    </Grid>{' '}
                     <Grid item xs={12} md={6}>
-                        <TextField
-                            name="address"
-                            type="text"
-                            variant="outlined"
-                            color="secondary"
-                            label="Địa chỉ"
-                            onChange={handleChange}
-                            value={formData.address}
-                            fullWidth
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                            name="record_day"
-                            type="number"
-                            variant="outlined"
-                            color="secondary"
-                            label="Ngày ghi"
-                            onChange={handleChange}
-                            value={formData.record_day}
-                            fullWidth
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                            name="pay_day"
-                            type="number"
-                            variant="outlined"
-                            color="secondary"
-                            label="Ngày tính"
-                            onChange={handleChange}
-                            value={formData.pay_day}
-                            required
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        {/* <TextField
-                            name="staff_id"
-                            type="number"
-                            variant="outlined"
-                            color="secondary"
-                            label="Nhân viên"
-                            onChange={handleChange}
-                            value={formData.staff_id}
-                            fullWidth
-                            required
-                            sx={{ mb: 4 }}
-                        /> */}
                         <FormControl fullWidth variant="outlined" color="secondary">
-                            <InputLabel id="demo-simple-select-label">Nhân viên</InputLabel>
+                            <InputLabel id="demo-simple-select-label">Dãy trọ</InputLabel>
                             <Select
-                                name="staff_id"
+                                name="block_motel_id"
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                onChange={handleChangeSelect}
+                                label="dãy trọ"
+                                value={String(formData.block_motel_id)}
+                                fullWidth
+                            >
+                                {blockMotel?.result.map((item) => (
+                                    <MenuItem value={item.id} key={item.id}>
+                                        {item.block_motel_name}
+                                    </MenuItem>
+                                ))}
+                                {/* <MenuItem value={0}>Phòng trống</MenuItem>
+                                <MenuItem value={1}>Đã thuê</MenuItem>
+                                <MenuItem value={2}>Đang đặt cọc</MenuItem> */}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <FormControl fullWidth variant="outlined" color="secondary">
+                            <InputLabel id="demo-simple-select-label">Trạng thái</InputLabel>
+                            <Select
+                                name="status"
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 onChange={handleChangeSelect}
                                 label="Nhân viên"
-                                value={String(formData.staff_id)}
+                                value={String(formData.status)}
                                 fullWidth
                             >
-                                {staffData?.result.map((item) => (
+                                {/* {staffData?.result.map((item) => (
                                     <MenuItem value={item.id} key={item.id}>
                                         {item.staff_name}
                                     </MenuItem>
-                                ))}
-                                {/* <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem> */}
+                                ))} */}
+                                <MenuItem value={0}>Phòng trống</MenuItem>
+                                <MenuItem value={1}>Đã thuê</MenuItem>
+                                <MenuItem value={2}>Đang đặt cọc</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
                 </Grid>
-                {motelId !== undefined && motelId !== 0 && (
+                {bedsitId !== undefined && bedsitId !== 0 && (
                     <Stack
                         direction="row"
                         justifyContent="center"
@@ -277,7 +264,7 @@ export default function AddMotel(props: IAddMotelProps) {
                         </Button>
                     </Stack>
                 )}
-                {!Boolean(motelId) && (
+                {!Boolean(bedsitId) && (
                     <Stack
                         direction="row"
                         justifyContent="center"

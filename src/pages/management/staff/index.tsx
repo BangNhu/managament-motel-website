@@ -1,7 +1,8 @@
 import { ManagementLayout } from '@/components/common/layout/management';
-import { StaffList } from '@/components/customer';
+
 import FormDecentralize from '@/components/customer/staff/decentral';
 import FormStaff from '@/components/customer/staff/form-staff';
+import StaffList from '@/components/customer/staff/staff-list';
 import useTokenData from '@/services/auth/token-data-loader';
 import { useGetMotelsQuery } from '@/services/motel.services';
 import { Button, Modal, Stack } from '@mui/material';

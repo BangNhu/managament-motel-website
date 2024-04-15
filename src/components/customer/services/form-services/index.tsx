@@ -156,7 +156,7 @@ export default function AddService(props: IAddServiceProps) {
                         // textTransform: 'uppercase',
                     }}
                 >
-                    Cập nhật khách trọ
+                    Cập nhật dịch vụ
                 </Typography>
             )}
             {!Boolean(serviceId) && (
@@ -172,7 +172,7 @@ export default function AddService(props: IAddServiceProps) {
                         // textTransform: 'uppercase',
                     }}
                 >
-                    Thêm mới khách trọ
+                    Thêm mới dịch vụ
                 </Typography>
             )}
             <Divider

@@ -55,7 +55,7 @@ export function BlockMotelList(props: IBlockMotelListProps) {
             console.log('đúng rồi');
             setBlockMotel(dataBlockMotelStaff as BlockMotelsResponse);
         }
-    }, [tokenData]);
+    }, [tokenData, dataBlockMotelStaff, dataBlockMotelLandlord]);
     console.log('type', tokenData);
     console.log('first', blockMotel);
     //Danh sách nhà trọ
@@ -75,13 +75,13 @@ export function BlockMotelList(props: IBlockMotelListProps) {
         { field: 'motel_id', headerName: 'Tên nhà trọ', width: 130 },
         {
             field: 'max_quantity',
-            headerName: 'Ngày chốt',
+            headerName: 'Số lượng tối đa',
             type: 'number',
             width: 90,
         },
         {
             field: 'price',
-            headerName: 'Ngày tính',
+            headerName: 'Giá phòng',
             type: 'number',
             width: 90,
         },

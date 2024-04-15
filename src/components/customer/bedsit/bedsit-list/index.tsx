@@ -56,6 +56,19 @@ export function BedsitList(props: IBedsitListProps) {
         dispatch(startEditBedsit(0));
     };
     const tokenData = useTokenData();
+    let hasnPermissionEdit = false;
+    let hasnPermissionDelete = false;
+    let hasnPermissionElecWater = false;
+    let hasnPermissionCreateBill = false;
+
+    if (tokenData?.userType === 'staff') {
+        const listPermissions = tokenData?.permissions;
+        hasnPermissionEdit = !listPermissions?.includes(11);
+        hasnPermissionDelete = !listPermissions?.includes(12);
+        hasnPermissionElecWater = !listPermissions?.includes(22);
+        hasnPermissionCreateBill = !listPermissions?.includes(21);
+    }
+
     const [selectedMotelId, setSelectedMotelId] = useState<number | null>(null);
     const [deletePost] = useDeleteBedsitMutation();
     // const { data: dataMotel } = useGetMotelsQuery();
@@ -98,7 +111,7 @@ export function BedsitList(props: IBedsitListProps) {
     };
     const columns: GridColDef[] = [
         { field: 'index', headerName: 'STT', width: 70 },
-        { field: 'bedsit_name', headerName: 'Tên phòng', width: 130 },
+        { field: 'bedsit_name', headerName: 'Tên phòng', width: 100 },
         { field: 'motel_name', headerName: 'Thuộc nhà trọ', width: 120 },
         { field: 'block_motel_name', headerName: 'Thuộc dãy trọ', width: 130 },
         {
@@ -122,15 +135,15 @@ export function BedsitList(props: IBedsitListProps) {
             renderCell: (params: GridRenderCellParams) => (
                 <Stack direction="column" spacing={1}>
                     <Stack direction="row" sx={{ gap: '10px' }} justifyContent="space-between">
-                        <Button
+                        {/* <Button
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
                             // onClick={() => handleDeleteMotel(params.row.id)}
                         >
                             Thêm khách trọ
-                        </Button>
+                        </Button> */}
 
-                        <Button
+                        {/* <Button
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
                             // onClick={() => {
@@ -139,7 +152,7 @@ export function BedsitList(props: IBedsitListProps) {
                             // }}
                         >
                             Sửa
-                        </Button>
+                        </Button> */}
                         {/* <Modal
                         open={open}
                         onClose={() => {
@@ -164,23 +177,36 @@ export function BedsitList(props: IBedsitListProps) {
                             />
                         </Stack>
                     </Modal> */}
-                        <Button
+                        {/* <Button
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
                             // onClick={() => handleDeleteMotel(params.row.id)}
                         >
                             Chi tiết
-                        </Button>
+                        </Button> */}
+                    </Stack>
+                    <Stack direction="row" sx={{ gap: '10px' }} justifyContent="space-between">
                         <Button
+                            disabled={hasnPermissionEdit}
+                            variant="outlined"
+                            sx={{ textTransform: 'capitalize' }}
+                            // onClick={() => {
+                            //     dispatch(startEditMotel(params.row.id));
+                            //     handleOpen();
+                            // }}
+                        >
+                            Sửa
+                        </Button>{' '}
+                        <Button
+                            disabled={hasnPermissionDelete}
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
                             onClick={() => handleDeleteMotel(params.row.id)}
                         >
                             Xóa
                         </Button>
-                    </Stack>
-                    <Stack direction="row" sx={{ gap: '10px' }} justifyContent="space-between">
                         <Button
+                            disabled={hasnPermissionElecWater}
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
                             onClick={() => {
@@ -190,7 +216,7 @@ export function BedsitList(props: IBedsitListProps) {
                                 handleOpen();
                             }}
                         >
-                            Chốt Điện nước
+                            Điện nước
                         </Button>
                         <Modal
                             open={open}
@@ -215,14 +241,15 @@ export function BedsitList(props: IBedsitListProps) {
                                 />
                             </Stack>
                         </Modal>
-                        <Button
+                        {/* <Button
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
                             // onClick={() => handleDeleteMotel(params.row.id)}
                         >
                             Giữ chỗ
-                        </Button>{' '}
+                        </Button>{' '} */}
                         <Button
+                            disabled={hasnPermissionCreateBill}
                             variant="outlined"
                             sx={{ textTransform: 'capitalize' }}
                             onClick={() => {
@@ -272,7 +299,7 @@ export function BedsitList(props: IBedsitListProps) {
                 //    rowId={(row: { id: any; }) => row.id}
                 rows={rows} // Cast Bedsits to the expected type
                 columns={columns}
-                rowHeight={120}
+                // rowHeight={120}
                 initialState={{
                     pagination: {
                         paginationModel: { page: 0, pageSize: 5 },

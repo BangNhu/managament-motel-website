@@ -51,6 +51,7 @@ Bedsit.create = function (data, result) {
                     db.query('INSERT INTO bedsit SET ?', data, function (err, bedsit) {
                         if (err) {
                             result({ error: 'Không thể thêm dữ liệu vào database' });
+                            console.log(err);
                         } else {
                             result({ id: bedsit.insertId, ...data });
                         }

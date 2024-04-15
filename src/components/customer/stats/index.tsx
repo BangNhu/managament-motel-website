@@ -278,7 +278,7 @@ export function Stats(props: IStatsProps) {
                         Lọc
                     </Button>
                 </Stack>
-                <Stack
+                {/* <Stack
                     sx={{
                         border: '2px solid #A61713',
                         borderRadius: '8px',
@@ -289,7 +289,7 @@ export function Stats(props: IStatsProps) {
                     <Typography sx={{ margin: '15px', textAlign: 'center' }}>
                         Gói: Vip 2. Hạn dùng: 28/03/2024.
                     </Typography>
-                </Stack>
+                </Stack> */}
             </Stack>
             <StatsMotel data={dataMotel} />
             <StatsInOut data={dataBill} />
